@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Enia Virtual Web",
+            "name": "IVE Web",
             "type": "dart",
             "request": "launch",
             "program": "lib/main.dart",
@@ -16,7 +16,7 @@
         },
        
         {
-            "name": "Enia Virtual App",
+            "name": "IVE Virtual App",
             "program": "lib/main.dart",
             "request": "launch",
             "type": "dart"

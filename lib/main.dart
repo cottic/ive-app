@@ -44,12 +44,12 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Matrix(
-      clientName: 'enia@Virtual $platform',
+      clientName: 'iveapp $platform',
       child: Builder(
         builder: (BuildContext context) => ThemeSwitcherWidget(
           child: Builder(
             builder: (BuildContext context) => MaterialApp(
-              title: 'enia@virtual',
+              title: 'iveapp',
               builder: BotToastInit(),
               navigatorObservers: [BotToastNavigatorObserver()],
               theme: ThemeSwitcherWidget.of(context).themeData,
@@ -84,7 +84,6 @@ class App extends StatelessWidget {
                             L10n.of(context).loading,
                             style: TextStyle(color: Colors.white),
                           ),
-
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.05,
                           ),

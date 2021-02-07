@@ -81,7 +81,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "projectName": "enia@virtual",
+  "projectName": "IVE App",
   "@projectName": {
     "type": "text",
     "placeholders": {}
@@ -696,7 +696,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "FluffyChat": "ENIA@Virtual",
+  "FluffyChat": "IVE App",
   "@FluffyChat": {
     "type": "text",
     "placeholders": {}

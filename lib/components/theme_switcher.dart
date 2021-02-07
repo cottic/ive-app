@@ -13,10 +13,10 @@ final ThemeData lightTheme = ThemeData(
   primaryColorLight: Color(0xff121212),
   brightness: Brightness.light,
   // PRIMARY COLOR ENIA
-  primaryColor: Color(0xFF9283be),
-  accentColor: Color(0xffee3d8f),
+  primaryColor: Color(0xFF69d0a3),
+  accentColor: Color(0xff8edcb9),
   backgroundColor: Colors.white,
-  secondaryHeaderColor: Color(0xFFb0aac1),
+  secondaryHeaderColor: Color(0xFFd2f4d0),
   scaffoldBackgroundColor: Colors.white,
   snackBarTheme: SnackBarThemeData(
     behavior: kIsWeb ? SnackBarBehavior.floating : SnackBarBehavior.fixed,

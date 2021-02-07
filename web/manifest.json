@@ -1,11 +1,11 @@
 {
-    "name": "enia@virtual",
-    "short_name": "enia@virtual",
+    "name": "IVE App",
+    "short_name": "IVE App",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "enia@virtual",
+    "description": "IVE App",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

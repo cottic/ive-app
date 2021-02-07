@@ -205,7 +205,7 @@ class _LoginState extends State<Login> {
                 ),
               ),
               SizedBox(height: 40),
-              Row(
+/*               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset(
@@ -218,7 +218,7 @@ class _LoginState extends State<Login> {
                     width: 120,
                   )
                 ],
-              ),
+              ), */
             ],
           ),
         );
