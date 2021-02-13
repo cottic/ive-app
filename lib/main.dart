@@ -49,7 +49,7 @@ class App extends StatelessWidget {
         builder: (BuildContext context) => ThemeSwitcherWidget(
           child: Builder(
             builder: (BuildContext context) => MaterialApp(
-              title: 'iveapp',
+              title: 'SIILVE',
               builder: BotToastInit(),
               navigatorObservers: [BotToastNavigatorObserver()],
               theme: ThemeSwitcherWidget.of(context).themeData,

@@ -29,26 +29,19 @@ class Matrix extends StatefulWidget {
   // Here you set the Matrix server of the Chat
   static const String defaultHomeserver = 'matrix.codigoi.com.ar';
 
-
-  static const String mainGroup = '!HYkJsTHlawQWyzwLYK:matrix.codigoi.com.ar';
+  static const String mainGroup = '!guhSKhxLdnEsOJwCTb:matrix.codigoi.com.ar';
 
   //in ENIA is HELP
-  static const String secondGroup = '!POwBopuroioZAsSpNy:matrix.codigoi.com.ar';
+  static const String secondGroup = '!OOffUaJrpbQdoFIkrC:matrix.codigoi.com.ar';
 
   //in ENIA is HELP
   static const List<String> thirdGroup = [
-    '!qvcYgCfhjOdyDbUYjA:matrix.codigoi.com.ar',
-    '!BaWhhGGEEUVycuxsYL:matrix.codigoi.com.ar',
-    '!QcxKXftJGUepsZXEwf:matrix.codigoi.com.ar',
-    '!IRfvYJEEISOtmKCDbl:matrix.codigoi.com.ar',
-    '!vWcuZCGgFiLgACLaaQ:matrix.codigoi.com.ar',
-    '!avrkWsLgZOqVFLCOjL:matrix.codigoi.com.ar',
-    '!EPbitqVGxzEiXJNmUP:matrix.codigoi.com.ar',
-    '!hDRSwvGOzbWxSaBckL:matrix.codigoi.com.ar'
+    '!jNEFvzHCHlreAihImF:matrix.codigoi.com.ar',
+    '!BaWhhGGEEUVycuxsYL:matrix.codigoi.com.ar'
   ];
 
   //ENIA VERSION
-  static const String versionENIA = 'Versión 1.8.0';
+  static const String versionENIA = 'Versión 0.5.0';
 
   final Widget child;
 
@@ -237,8 +230,6 @@ class MatrixState extends State<Matrix> {
     final storage = await getLocalStorage();
     await storage.deleteItem(widget.clientName);
   }
-
-
 
   void _initWithStore() async {
     var initLoginState = client.onLoginStateChanged.stream.first;

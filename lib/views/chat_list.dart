@@ -433,7 +433,7 @@ class _ChatListState extends State<ChatList> {
                                   ),
                                 ),
                                 Divider(height: 1),
-                                ListTile(
+                                /* ListTile(
                                   leading: Icon(Icons.folder),
                                   title: Text(L10n.of(context).documents),
                                   onTap: () => _drawerTapAction(
@@ -456,7 +456,7 @@ class _ChatListState extends State<ChatList> {
                                     StatsEniaMenuView(),
                                   ),
                                 ),
-                                Divider(height: 1),
+                                Divider(height: 1), */
                                 ListTile(
                                   leading: Icon(Icons.map),
                                   title: Text(L10n.of(context).mapsTitle),

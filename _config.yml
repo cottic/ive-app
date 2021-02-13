@@ -6,9 +6,9 @@
 # 'jekyll serve'. If you change this file, please restart the server process.
 
 # Site settings
-title: iveapp
+title: SIILVE
 email: christian-pauly@posteo.de
-description: IVE app
+description: SIILVE
 baseurl: "/enia@virtual" # the subpath of your site, e.g. /blog
 url: "/" # the base hostname & protocol for your site
 gitlab_username:  christianpauly

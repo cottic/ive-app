@@ -102,7 +102,7 @@ class _MapsEniaMenuState extends State<MapsEniaMenu> {
             backgroundColor: Theme.of(context).primaryColor,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
-                'COLECCIÓN DE MAPAS',
+                'MAPAS',
                 style: TextStyle(color: Theme.of(context).backgroundColor),
               ),
               /*  background:  
@@ -121,7 +121,7 @@ class _MapsEniaMenuState extends State<MapsEniaMenu> {
           children: <Widget>[
             ListTile(
               title: Text(
-                'Dispositivo para el fortalecimiento de la oferta en Salud Sexual y Reproductiva',
+                'Sistema de Información ILE/IVE',
                 style: TextStyle(
                   color: Theme.of(context).primaryColor,
                   fontWeight: FontWeight.bold,
@@ -130,14 +130,12 @@ class _MapsEniaMenuState extends State<MapsEniaMenu> {
             ),
             ListTile(
               trailing: Icon(Icons.map_outlined),
-              title: Text(
-                  'Cobertura de población, meta de colocación de DIU e implantes en departamentos y provincias ENIA'),
-              subtitle: Text(
-                  'Actualización: Trimestral. Fuente: INDEC - Equipo Monitoreo ENIA'),
+              title: Text('Todos los efectores ILE/IVE'),
+              subtitle: Text('Actualización: Trimestral. Fuente: DSSyR'),
               onTap: () => launch(
-                  'https://google.com/maps/d/u/2/edit?mid=17D_NffBP-k32zyu0w3EjSYGfPtv-W-VF&usp=sharing'),
+                  'http://proyecto.codigoi.com.ar/ile/inicio/todos-los-efectores/'),
             ),
-            ListTile(
+            /* ListTile(
               trailing: Icon(Icons.map_outlined),
               title: Text(
                   'Nacidos vivos (de niñas y adolescentes menores de 20 años). Total país y departamentos ENIA. Año 2018'),
@@ -207,7 +205,7 @@ class _MapsEniaMenuState extends State<MapsEniaMenu> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
+            ), */
           ],
         ),
       ),

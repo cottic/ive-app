@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "iveapp-80c1d",
+    "site": "siilve",
     "public": "build/web",
     "ignore": [
       "firebase.json",
