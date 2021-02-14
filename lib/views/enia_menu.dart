@@ -35,7 +35,10 @@ class _EniaMenuState extends State<EniaMenu> {
 
   final _formKey = GlobalKey<FormBuilderState>();
 
-  var tipoEfectorOptions = ['Hospital', 'Centro de Salud', 'Otro'];
+  var tipoEfectorOptions = [
+    'HOSPITAL DRA. CECILIA GRIERSON (JUAN BAUTISTA ALBERDI 38, GUERNICA, BUENOS AIRES)',
+    'UNIDAD SANITARIA GLEW II (DE NAVAZIO Y DI CARLO S/N BO. ALMAFUERTE - GLEW, GLEW, BUENOS AIRES)'
+  ];
 
   Future<void> requestSSSSCache(BuildContext context) async {
     final handle = Matrix.of(context).client.encryption.ssss.open();
@@ -161,14 +164,34 @@ class _EniaMenuState extends State<EniaMenu> {
               autovalidateMode: AutovalidateMode.always,
               child: Column(
                 children: <Widget>[
-                  FormBuilderDropdown(
-                    name: 'gender',
+/*                   FormBuilderChoiceChip(
+                    spacing: 20.0,
+                    name: 'choice_chip',
                     decoration: InputDecoration(
-                      labelText: 'Gender',
+                      labelText: 'Seleccionar el tipo de efector',
+                    ),
+                    options: [
+                      FormBuilderFieldOption(
+                          value: 'hospital', child: Text('Hospital')),
+                      FormBuilderFieldOption(
+                          value: 'centro-de-salud',
+                          child: Text('Centro de Salud')),
+                      FormBuilderFieldOption(
+                          value: 'otro', child: Text('Otro')),
+                    ],
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(context,
+                          errorText: "* Requerido")
+                    ]),
+                  ), */
+                  FormBuilderDropdown(
+                    name: 'Efector',
+                    decoration: InputDecoration(
+                      labelText: 'Efector:',
                     ),
                     // initialValue: 'Male',
                     allowClear: true,
-                    hint: Text('Tipo de efector'),
+                    hint: Text('Efector:'),
                     validator: FormBuilderValidators.compose(
                         [FormBuilderValidators.required(context)]),
                     items: tipoEfectorOptions
@@ -178,6 +201,17 @@ class _EniaMenuState extends State<EniaMenu> {
                             ))
                         .toList(),
                   ),
+                  ListTile(
+                    title: Text(
+                      'Datos de la persona',
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
+                        height: 3.0,
+                      ),
+                    ),
+                  ),
+                  Divider(thickness: 1),
                   /* FormBuilderFilterChip(
                     spacing: 10.0,
 
@@ -223,8 +257,8 @@ class _EniaMenuState extends State<EniaMenu> {
                     initialValue: Colors.yellow,
                     colorPickerType: ColorPickerType.MaterialPicker,
                     decoration: InputDecoration(labelText: 'Pick Color'),
-                  ),
-                  FormBuilderChipsInput(
+                  ), */
+/*                   FormBuilderChipsInput(
                     decoration: InputDecoration(labelText: 'Chips'),
                     name: 'chips_test',
                     onChanged: (value) {},
@@ -277,7 +311,7 @@ class _EniaMenuState extends State<EniaMenu> {
                       );
                     },
                   ), */
-                  /* FormBuilderDateTimePicker(
+/*                   FormBuilderDateTimePicker(
                     name: 'date',
                     // onChanged: (value){},
                     inputType: InputType.time,
@@ -288,7 +322,17 @@ class _EniaMenuState extends State<EniaMenu> {
                     initialValue: DateTime.now(),
                     // enabled: true,
                   ), */
-                  FormBuilderDateRangePicker(
+                  FormBuilderDateTimePicker(
+                    name: 'date',
+                    // onChanged: (value){},
+                    inputType: InputType.date,
+                    decoration: InputDecoration(
+                      labelText: 'Fecha de consulta',
+                    ),
+                    initialValue: DateTime.now(),
+                    // enabled: true,
+                  ),
+                  /*           FormBuilderDateRangePicker(
                     name: 'date_range',
                     firstDate: DateTime(1970),
                     lastDate: DateTime(2030),
@@ -299,7 +343,7 @@ class _EniaMenuState extends State<EniaMenu> {
                       helperText: 'Helper text',
                       hintText: 'Hint text',
                     ),
-                  ),
+                  ), */
                   /* FormBuilderSlider(
                     name: 'slider',
                     validator: FormBuilderValidators.compose([
@@ -342,74 +386,79 @@ class _EniaMenuState extends State<EniaMenu> {
                     ),
                   ), */
                   FormBuilderTextField(
-                    name: 'age',
+                    name: 'dni',
                     decoration: InputDecoration(
                       labelText: 'DNI',
                     ),
                     onChanged: (value) {},
                     // valueTransformer: (text) => num.tryParse(text),
                     validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(context),
-                      FormBuilderValidators.numeric(context),
-                      FormBuilderValidators.max(context, 70),
+                      FormBuilderValidators.required(context,
+                          errorText: "* Requerido"),
+                      FormBuilderValidators.numeric(context,
+                          errorText: "Solo se permiten números"),
+                      FormBuilderValidators.minLength(context, 8,
+                          errorText: "No es un formato de DNI válido"),
+                      FormBuilderValidators.maxLength(context, 8,
+                          errorText:
+                              "Los DNI solo pueden tener hasta 8 digitos"),
                     ]),
                     keyboardType: TextInputType.number,
                   ),
                   FormBuilderTextField(
-                    name: 'age',
-                    decoration: InputDecoration(
-                      labelText: 'Primera 2 letras del nombre',
-                    ),
-                    onChanged: (value) {},
-                    // valueTransformer: (text) => num.tryParse(text),
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(context),
-                      FormBuilderValidators.numeric(context),
-                      FormBuilderValidators.max(context, 70),
-                    ]),
-                    keyboardType: TextInputType.number,
-                  ),
+                      name: '2nombre',
+                      decoration: InputDecoration(
+                        labelText: 'Primera 2 letras del nombre',
+                      ),
+                      onChanged: (value) {},
+                      // valueTransformer: (text) => num.tryParse(text),
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(context,
+                            errorText: "* Requerido"),
+                        FormBuilderValidators.maxLength(context, 2,
+                            errorText: "Solo las 2 primeras letras"),
+                      ])),
                   FormBuilderTextField(
-                    name: 'age',
-                    decoration: InputDecoration(
-                      labelText: 'Primeras 2 letras del apellido',
-                    ),
-                    onChanged: (value) {},
-                    // valueTransformer: (text) => num.tryParse(text),
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(context),
-                      FormBuilderValidators.numeric(context),
-                      FormBuilderValidators.max(context, 70),
-                    ]),
-                    keyboardType: TextInputType.number,
-                  ),
-                  FormBuilderTextField(
-                    name: 'age',
+                      name: '2apellido',
+                      decoration: InputDecoration(
+                        labelText: 'Primeras 2 letras del apellido',
+                      ),
+                      onChanged: (value) {},
+                      // valueTransformer: (text) => num.tryParse(text),
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(context,
+                            errorText: "* Requerido"),
+                        FormBuilderValidators.maxLength(context, 2,
+                            errorText: "Solo las 2 primeras letras"),
+                      ])),
+                  FormBuilderDateTimePicker(
+                    name: 'fechadenacimiento',
+                    // onChanged: (value){},
+                    inputType: InputType.date,
                     decoration: InputDecoration(
                       labelText: 'Fecha de nacimiento',
                     ),
-                    onChanged: (value) {},
-                    // valueTransformer: (text) => num.tryParse(text),
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(context),
-                      FormBuilderValidators.numeric(context),
-                      FormBuilderValidators.max(context, 70),
-                    ]),
-                    keyboardType: TextInputType.number,
+                    // enabled: true,
                   ),
-                  FormBuilderTextField(
-                    name: 'age',
+                  FormBuilderChoiceChip(
+                    spacing: 20.0,
+                    name: 'choice_chip',
                     decoration: InputDecoration(
-                      labelText: 'Identidada de genero',
+                      labelText: 'Identidad de género',
                     ),
-                    onChanged: (value) {},
-                    // valueTransformer: (text) => num.tryParse(text),
+                    options: [
+                      FormBuilderFieldOption(
+                          value: 'mujer', child: Text('Mujer')),
+                      FormBuilderFieldOption(
+                          value: 'varon-trans', child: Text('Varón trans')),
+                      FormBuilderFieldOption(
+                          value: 'otra',
+                          child: Text('Otra identidad de género no binaria')),
+                    ],
                     validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(context),
-                      FormBuilderValidators.numeric(context),
-                      FormBuilderValidators.max(context, 70),
+                      FormBuilderValidators.required(context,
+                          errorText: "* Requerido")
                     ]),
-                    keyboardType: TextInputType.number,
                   ),
                   FormBuilderCheckbox(
                     name: 'accept_terms',
@@ -424,12 +473,6 @@ class _EniaMenuState extends State<EniaMenu> {
                           ),
                         ],
                       ),
-                    ),
-                    validator: FormBuilderValidators.equal(
-                      context,
-                      true,
-                      errorText:
-                          'You must accept terms and conditions to continue',
                     ),
                   ),
                   FormBuilderTouchSpin(
@@ -454,21 +497,32 @@ class _EniaMenuState extends State<EniaMenu> {
                     decoration: InputDecoration(labelText: 'Abortos'),
                     name: 'stepper',
                     initialValue: 0,
-                    step: 0.5,
+                    step: 1,
                     iconSize: 48.0,
                     addIcon: Icon(Icons.arrow_right),
                     subtractIcon: Icon(Icons.arrow_left),
                   ),
+                  ListTile(
+                    title: Text(
+                      'Datos del caso',
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
+                        height: 3.0,
+                      ),
+                    ),
+                  ),
+                  Divider(thickness: 1),
                   FormBuilderSlider(
                     name: 'slider',
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.min(context, 9),
                     ]),
                     onChanged: (value) {},
-                    min: 9.0,
-                    max: 16.0,
-                    initialValue: 7.0,
-                    divisions: 20,
+                    min: 10.0,
+                    max: 20.0,
+                    initialValue: 14.6,
+                    divisions: 100,
                     activeColor: Colors.red,
                     inactiveColor: Colors.pink[100],
                     decoration: InputDecoration(
@@ -476,7 +530,274 @@ class _EniaMenuState extends State<EniaMenu> {
                           'Semanas de gestación al inicio de la consulta',
                     ),
                   ),
-                  FormBuilderDropdown(
+                  FormBuilderChoiceChip(
+                    spacing: 20.0,
+                    name: 'choice_chip',
+                    decoration: InputDecoration(
+                      labelText: 'Causal Riesgo para la vida ',
+                    ),
+                    options: [
+                      FormBuilderFieldOption(value: 'si', child: Text('Si')),
+                      FormBuilderFieldOption(value: 'no', child: Text('No')),
+                      FormBuilderFieldOption(
+                          value: 'no-corresponde',
+                          child: Text('No corresponde')),
+                    ],
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(context,
+                          errorText: "* Requerido")
+                    ]),
+                  ),
+                  FormBuilderChoiceChip(
+                    spacing: 20.0,
+                    name: 'choice_chip',
+                    decoration: InputDecoration(
+                      labelText: 'Causal violación',
+                    ),
+                    options: [
+                      FormBuilderFieldOption(value: 'si', child: Text('Si')),
+                      FormBuilderFieldOption(value: 'no', child: Text('No')),
+                      FormBuilderFieldOption(
+                          value: 'no-corresponde',
+                          child: Text('No corresponde')),
+                    ],
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(context,
+                          errorText: "* Requerido")
+                    ]),
+                  ),
+                  FormBuilderChoiceChip(
+                    spacing: 20.0,
+                    name: 'choice_chip',
+                    decoration: InputDecoration(
+                      labelText: '¿Cómo llega la consulta?',
+                    ),
+                    options: [
+                      FormBuilderFieldOption(
+                          value: 'es-usuario',
+                          child: Text('Es usuaria del efector')),
+                      FormBuilderFieldOption(
+                          value: 'recomendada',
+                          child: Text('Recomendada por conocido')),
+                      FormBuilderFieldOption(
+                          value: 'derivada',
+                          child: Text('Derivada de otro efector de salud')),
+                      FormBuilderFieldOption(
+                          value: 'ong',
+                          child: Text('Por una organización de la soc. civil')),
+                      FormBuilderFieldOption(
+                          value: 'programa',
+                          child: Text('Programa SSYR / 0800')),
+                      FormBuilderFieldOption(
+                          value: 'otro', child: Text('Otro')),
+                    ],
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(context,
+                          errorText: "* Requerido")
+                    ]),
+                  ),
+                  FormBuilderChoiceChip(
+                    spacing: 20.0,
+                    name: 'choice_chip',
+                    decoration: InputDecoration(
+                      labelText: 'Derivada a otro efector de salud',
+                    ),
+                    options: [
+                      FormBuilderFieldOption(value: 'si', child: Text('Si')),
+                      FormBuilderFieldOption(value: 'no', child: Text('No')),
+                    ],
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(context,
+                          errorText: "* Requerido")
+                    ]),
+                  ),
+                  FormBuilderTypeAhead(
+                    decoration: InputDecoration(
+                      labelText: 'Efector al que fue derivado',
+                    ),
+                    name: 'efector-derivado',
+                    onChanged: (value) {},
+                    itemBuilder: (context, country) {
+                      return ListTile(
+                        title: Text(country),
+                      );
+                    },
+                    controller: TextEditingController(text: ''),
+                    // initialValue: 'Uganda',
+                    suggestionsCallback: (query) {
+                      if (query.isNotEmpty) {
+                        var lowercaseQuery = query.toLowerCase();
+                        return allEfectores.where((country) {
+                          return country.toLowerCase().contains(lowercaseQuery);
+                        }).toList(growable: true)
+                          ..sort((a, b) => a
+                              .toLowerCase()
+                              .indexOf(lowercaseQuery)
+                              .compareTo(
+                                  b.toLowerCase().indexOf(lowercaseQuery)));
+                      } else {
+                        return allEfectores;
+                      }
+                    },
+                  ),
+                  FormBuilderChoiceChip(
+                    spacing: 20.0,
+                    labelPadding: EdgeInsets.symmetric(vertical: 10.0),
+                    name: 'choice_chip',
+                    decoration: InputDecoration(
+                      labelText: '¿Porque motivo fue derivado?',
+                    ),
+                    options: [
+                      FormBuilderFieldOption(
+                          value: 'edad', child: Text('Edad gestacional')),
+                      FormBuilderFieldOption(
+                          value: 'falla', child: Text('Falla de misoprostol')),
+                      FormBuilderFieldOption(
+                          value: 'contraindicacion',
+                          child: Text('Contraindicacion de Tto ambulatorio')),
+                      FormBuilderFieldOption(
+                          value: 'preferencia',
+                          child: Text('Preferencia de la paciente')),
+                      FormBuilderFieldOption(
+                          value: 'no', child: Text('No corresponde')),
+                    ],
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(context,
+                          errorText: "* Requerido")
+                    ]),
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Datos del tratamiento',
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold,
+                        height: 3.0,
+                      ),
+                    ),
+                  ),
+                  Divider(thickness: 1),
+                  FormBuilderDateTimePicker(
+                    name: 'date',
+                    // onChanged: (value){},
+                    inputType: InputType.date,
+                    decoration: InputDecoration(
+                      labelText:
+                          'Fecha de provisión de tratamiento farmacológico o quirúrgico',
+                    ),
+                    initialValue: DateTime.now(),
+                    // enabled: true,
+                  ),
+                  FormBuilderChoiceChip(
+                    spacing: 20.0,
+                    padding: EdgeInsets.symmetric(vertical: 2.0),
+                    name: 'choice_chip',
+                    decoration: InputDecoration(
+                      labelText: 'Tipo de tratamiento',
+                    ),
+                    options: [
+                      FormBuilderFieldOption(
+                          value: 'farmacologico', child: Text('Farmacológico')),
+                      FormBuilderFieldOption(
+                          value: 'quirurgico', child: Text('Quirúrgico')),
+                      FormBuilderFieldOption(
+                          value: 'farmacologico-y-quirurgico',
+                          child: Text('Farmacológico y Quirúrgico')),
+                    ],
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(context,
+                          errorText: "* Requerido")
+                    ]),
+                  ),
+                  FormBuilderTouchSpin(
+                    decoration:
+                        InputDecoration(labelText: 'Cantidad comprimidos'),
+                    name: 'stepper',
+                    initialValue: 0,
+                    step: 1,
+                    iconSize: 48.0,
+                    addIcon: Icon(Icons.arrow_right),
+                    subtractIcon: Icon(Icons.arrow_left),
+                  ),
+                  FormBuilderChoiceChip(
+                    spacing: 20.0,
+                    padding: EdgeInsets.symmetric(vertical: 2.0),
+                    name: 'choice_chip',
+                    decoration: InputDecoration(
+                      labelText: 'Vía de administración',
+                    ),
+                    options: [
+                      FormBuilderFieldOption(
+                          value: 'vaginal', child: Text('Vaginal')),
+                      FormBuilderFieldOption(
+                          value: 'sublingual', child: Text('Sublingual')),
+                      FormBuilderFieldOption(
+                          value: 'bucal', child: Text('Bucal')),
+                      FormBuilderFieldOption(
+                          value: 'Mas-de-una', child: Text('Más de una')),
+                    ],
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(context,
+                          errorText: "* Requerido")
+                    ]),
+                  ),
+                  FormBuilderChoiceChip(
+                    spacing: 20.0,
+                    padding: EdgeInsets.symmetric(vertical: 2.0),
+                    name: 'choice_chip',
+                    decoration: InputDecoration(
+                      labelText: 'Tratamiento Quirúrgico',
+                    ),
+                    options: [
+                      FormBuilderFieldOption(
+                          value: 'ameu', child: Text('AMEU')),
+                      FormBuilderFieldOption(
+                          value: 'rue-o-legrado', child: Text('RUE o Legrado')),
+                      FormBuilderFieldOption(
+                          value: 'ameurue', child: Text('AMEU + RUE')),
+                      FormBuilderFieldOption(
+                          value: 'dilatacion-evacuacion',
+                          child: Text('Dilatación y evacuación')),
+                      FormBuilderFieldOption(
+                          value: 'otros', child: Text('Otros')),
+                      FormBuilderFieldOption(
+                          value: 'sin-datos', child: Text('Sin datos')),
+                    ],
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(context,
+                          errorText: "* Requerido")
+                    ]),
+                  ),
+                  FormBuilderSlider(
+                    name: 'slider',
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.min(context, 9),
+                    ]),
+                    onChanged: (value) {},
+                    min: 10.0,
+                    max: 20.0,
+                    initialValue: 14.6,
+                    divisions: 100,
+                    activeColor: Colors.red,
+                    inactiveColor: Colors.pink[100],
+                    decoration: InputDecoration(
+                      labelText:
+                          'Semanas de gestación al momento de la resolución',
+                    ),
+                  ),
+                  FormBuilderTextField(
+                      name: 'complicacions',
+                      decoration: InputDecoration(
+                        labelText: 'Hubo complicaciones. Cuales?',
+                      ),
+                      onChanged: (value) {},
+                      // valueTransformer: (text) => num.tryParse(text),
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(context,
+                            errorText: "* Requerido"),
+                      ])),
+
+/*                   FormBuilderDropdown(
                     name: 'gender',
                     decoration: InputDecoration(
                       labelText: 'Gender',
@@ -492,8 +813,8 @@ class _EniaMenuState extends State<EniaMenu> {
                               child: Text('$gender'),
                             ))
                         .toList(),
-                  ),
-                  FormBuilderTypeAhead(
+                  ), */
+                  /*               FormBuilderTypeAhead(
                     decoration: InputDecoration(
                       labelText: 'Country',
                     ),
@@ -552,7 +873,7 @@ class _EniaMenuState extends State<EniaMenu> {
                     initialValue: 1.0,
                     max: 5.0,
                     onChanged: (value) {},
-                  ),
+                  ), */
                 ],
               ),
             ),
@@ -563,7 +884,7 @@ class _EniaMenuState extends State<EniaMenu> {
                   child: MaterialButton(
                     color: Theme.of(context).accentColor,
                     child: Text(
-                      "Submit",
+                      "Guardar",
                       style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () {
@@ -571,13 +892,13 @@ class _EniaMenuState extends State<EniaMenu> {
                       if (_formKey.currentState.validate()) {
                         print(_formKey.currentState.value);
                       } else {
-                        print("validation failed");
+                        print("La validación del formulario falló");
                       }
                     },
                   ),
                 ),
                 SizedBox(width: 20),
-                Expanded(
+                /*    Expanded(
                   child: MaterialButton(
                     color: Theme.of(context).accentColor,
                     child: Text(
@@ -588,7 +909,7 @@ class _EniaMenuState extends State<EniaMenu> {
                       _formKey.currentState.reset();
                     },
                   ),
-                ),
+                ), */
               ],
             ),
             SizedBox(height: 40),
@@ -622,127 +943,40 @@ class Contact {
   }
 }
 
-const allCountries = [
-  'Afghanistan',
-  'Albania',
-  'Algeria',
-  'American Samoa',
-  'Andorra',
-  'Angola',
-  'Anguilla',
-  'Antarctica',
-  'Antigua and Barbuda',
-  'Argentina',
-  'Armenia',
-  'Aruba',
-  'Australia',
-  'Austria',
-  'Azerbaijan',
-  'Bahamas',
-  'Bahrain',
-  'Bangladesh',
-  'Barbados',
-  'Belarus',
-  'Belgium',
-  'Belize',
-  'Benin',
-  'Bermuda',
-  'Bhutan',
-  'Bolivia',
-  'Bosnia and Herzegowina',
-  'Botswana',
-  'Bouvet Island',
-  'Brazil',
-  'British Indian Ocean Territory',
-  'Brunei Darussalam',
-  'Bulgaria',
-  'Burkina Faso',
-  'Burundi',
-  'Cambodia',
-  'Cameroon',
-  'Canada',
-  'Cape Verde',
-  'Cayman Islands',
-  'Central African Republic',
-  'Chad',
-  'Chile',
-  'China',
-  'Christmas Island',
-  'Cocos (Keeling) Islands',
-  'Colombia',
-  'Comoros',
-  'Congo',
-  'Congo, the Democratic Republic of the',
-  'Cook Islands',
-  'Costa Rica',
-  'Cote d\'Ivoire',
-  'Croatia (Hrvatska)',
-  'Cuba',
-  'Cyprus',
-  'Czech Republic',
-  'Denmark',
-  'Djibouti',
-  'Dominica',
-  'Dominican Republic',
-  'East Timor',
-  'Ecuador',
-  'Egypt',
-  'El Salvador',
-  'Equatorial Guinea',
-  'Eritrea',
-  'Estonia',
-  'Ethiopia',
-  'Falkland Islands (Malvinas)',
-  'Faroe Islands',
-  'Fiji',
-  'Finland',
-  'France',
-  'France Metropolitan',
-  'French Guiana',
-  'French Polynesia',
-  'French Southern Territories',
-  'Gabon',
-  'Gambia',
-  'Georgia',
-  'Germany',
-  'Ghana',
-  'Gibraltar',
-  'Greece',
-  'Greenland',
-  'Grenada',
-  'Guadeloupe',
-  'Guam',
-  'Guatemala',
-  'Guinea',
-  'Guinea-Bissau',
-  'Guyana',
-  'Haiti',
-  'Heard and Mc Donald Islands',
-  'Holy See (Vatican City State)',
-  'Honduras',
-  'Hong Kong',
-  'Hungary',
-  'Iceland',
-  'India',
-  'Indonesia',
-  'Iran (Islamic Republic of)',
-  'Iraq',
-  'Ireland',
-  'Israel',
-  'Italy',
-  'Jamaica',
-  'Japan',
-  'Jordan',
-  'Kazakhstan',
-  'Kenya',
-  'Kiribati',
-  'Korea, Democratic People\'s Republic of',
-  'Korea, Republic of',
-  'Kuwait',
-  'Kyrgyzstan',
-  'Lao, People\'s Democratic Republic',
-  'Latvia',
-  'Lebanon'
+const allEfectores = [
+  'UNIDAD SANITARIA GLEW II	DE NAVAZIO Y DI CARLO S/N BO. ALMAFUERTE - GLEW	BUENOS AIRES	ALMIRANTE BROWN	GLEW',
+  'UNIDAD SANITARIA N° 10 28 DE DICIEMBRE DE RAFAEL CALZADA	GORRION ENTRE JORGE Y ARROYO RAFAEL CALZADA	BUENOS AIRES	ALMIRANTE BROWN	RAFAEL CALZADA',
+  'UNIDAD SANITARIA N° 11 LA GLORIA DE SAN JOSE	LA CALANDRIA ENTRE BYNON Y MITRE S/N LA TABLADA SAN JOSE	BUENOS AIRES	ALMIRANTE BROWN	SAN JOSE',
+  'UNIDAD SANITARIA N° 12 DON ORIONE DE CLAYPOLE	CALLE 11 Y AV. EVA PERON - BARRIO DON ORIONE	BUENOS AIRES	ALMIRANTE BROWN	CLAYPOLE',
+  'UNIDAD SANITARIA N° 13 DE BURZACO	ALSINA Y MARTIN FIERRO	BUENOS AIRES	ALMIRANTE BROWN	BURZACO',
+  'UNIDAD SANITARIA N° 16 DE RAFAEL CALZADA	AV. SAN MARTIN 4900 Y SAN CARLOS BARRIO SAN GERONIMO RAFAEL CALZADA	BUENOS AIRES	ALMIRANTE BROWN	RAFAEL CALZADA',
+  'UNIDAD SANITARIA N° 4 SAN JOSE DE ALMIRANTE BROWN	SAN LUIS 166 SAN JOSE	BUENOS AIRES	ALMIRANTE BROWN	SAN JOSE',
+  'UNIDAD SANITARIA N° 7 13 DE JULIO DE CLAYPOLE	ANEMONAS 6545 ENTRE CLAVEL Y CAMELIA	BUENOS AIRES	ALMIRANTE BROWN	CLAYPOLE',
+  'UNIDAD SANITARIA Nº 23 RAMON CARRILLO	ZUFRIATEGUI 3550	BUENOS AIRES	ALMIRANTE BROWN	GLEW',
+  'CENTRO DE ATENCION PRIMARIA DE LA SALUD SAKURA	MOLINA MASSEY 3212 E/ LORETO Y MONTE SANTIAGO	BUENOS AIRES	ALMIRANTE BROWN	LONGCHAMPS',
+  'UNIDAD SANITARIA E. MAGUILLANSKY N° 1	CALLE 38 1169 BARRIO SAN FRANCISCO	BUENOS AIRES	AZUL	AZUL',
+  'UNIDAD SANITARIA N° 44 DR RAMON CARRILLO	CALLE 122 BIS	BUENOS AIRES	BERISSO	BERISSO',
+  'CENTRO PERIFERICO N° 4 DE CAMPANA	ZARATE ENTRE S.DELLEPIANE Y UGARTEMENDIA - SAN CAYETANO	BUENOS AIRES	CAMPANA	CAMPANA',
+  'UNIDAD SANITARIA SAGRADO CORAZON DE JESUS MAXIMO PAZ	PERU Y BENAVIDEZ S/Nº Bº SAN CARLOS	BUENOS AIRES	CAÑUELAS	MAXIMO PAZ',
+  'CENTRO DE ATENCION PRIMARIA DR. PASCUAL GUIDICE	ESTADOS UNIDOS Y SAN MARTIN	BUENOS AIRES	ENSENADA	ENSENADA',
+  'UNIDAD SANITARIA 1° DE MAYO DE ENSENADA	ECUADOR Y SAENZ PEÑA BARRIO 1° DE MAYO 17	BUENOS AIRES	ENSENADA	ENSENADA',
+  'UNIDAD SANITARIA N° 5	BELGRANO Y CANALE	BUENOS AIRES	EZEIZA	TRISTAN SUAREZ',
+  'UNIDAD SANITARIA BARRIO 2 DE ABRIL DE MAR DEL PLATA	SOLDADO PACHEOLZUK 850 - BARRIO 2 DE ABRIL	BUENOS AIRES	GENERAL PUEYRREDON	PUNTA MOGOTES',
+  'SUBCENTRO DE SALUD JORGE NEWBERY	MORENO 9375 - BARRIO JORGE NEWBERY	BUENOS AIRES	GENERAL PUEYRREDON	MAR DEL PLATA',
+  'UNIDAD SANITARIA MARENGO	CALLE 51 (REPUBLICA) 10 ESQUINA CALLE 110 (PUEYRREDON)	BUENOS AIRES	GENERAL SAN MARTIN	VILLA BALLESTER',
+  'UNIDAD SANITARIA BARRIO ANGEL	POTOSI Y LEVALLE - BARRIO SAN DAMIAN	BUENOS AIRES	HURLINGHAM	HURLINGHAM',
+  'HOSPITAL DE ATENCION MEDICA PRIMARIA DE ITUZAINGO	BRANDSEN 3859	BUENOS AIRES	ITUZAINGO	ITUZAINGO SUR',
+  'CENTRO DE SALUD SAKAMOTO	NICOLAS DAVILA 2110	BUENOS AIRES	LA MATANZA	RAFAEL CASTILLO',
+  'CENTRO DE SALUD LA LOMA	LOS HELECHOS ESQUINA LOS TULIPANES S/N BARRIO LA LOMA	BUENOS AIRES	LUJAN	LUJAN',
+  'UNIDAD SANITARIA BARRIO LOS LAURELES	LAS ESTRELLAS Y VENUS S/N BARRIO LOS LAURELES	BUENOS AIRES	LUJAN	LUJAN',
+  'UNIDAD SANITARIA N° 11 DE MERLO	AV. SAN MARTIN Y BARILOCHE	BUENOS AIRES	MERLO	MERLO',
+  'UNIDAD SANITARIA N° 4 LA FORTUNA DE MORENO	ENRIQUE LARRETA 10471	BUENOS AIRES	MORENO	TRUJUI',
+  'UNIDAD SANITARIA SAMBRIZZI SANGUINETTI	CORRIENTES 2301 - BARRIO SANGUINETTI	BUENOS AIRES	MORENO	PASO DEL REY',
+  'CENTRO DE SALUD MERCEDES SOSA	EVA PERON ESQUINA BARADERO	BUENOS AIRES	MORON	MORON',
+  'CENTRO DE SALUD SANTA LAURA	GRAL. CORNELIO SAAVEDRA 1265 - BARRIO SANTA LAURA	BUENOS AIRES	MORON	MORON',
+  'UNIDAD SANITARIA PRESIDENTE IBAÑEZ	PRESIDENTE IBAÑEZ 1824 - BARRIO SAN JOSE	BUENOS AIRES	MORON	MORON',
+  'CENTRO DE ATENCION PRIMARIA RAMON CARRILLO DE PERGAMINO	DEAN FUNES Y COSTA RICA BARRIO GUEMES	BUENOS AIRES	PERGAMINO	PERGAMINO',
+  'UNIDAD SANITARIA VILLA ROSA	SERRANO Y PERON	BUENOS AIRES	PILAR	VILLA ROSA'
 ];
 
 const contacts = <Contact>[
