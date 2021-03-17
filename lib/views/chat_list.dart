@@ -448,7 +448,7 @@ class _ChatListState extends State<ChatList> {
                                     FormationEniaMenuView(),
                                   ),
                                 ),
-                                Divider(height: 1),
+                                Divider(height: 1), */
                                 ListTile(
                                   leading: Icon(Icons.insert_chart),
                                   title: Text(L10n.of(context).statsTitle),
@@ -456,7 +456,7 @@ class _ChatListState extends State<ChatList> {
                                     StatsEniaMenuView(),
                                   ),
                                 ),
-                                Divider(height: 1), */
+                                Divider(height: 1),
                                 ListTile(
                                   leading: Icon(Icons.map),
                                   title: Text(L10n.of(context).mapsTitle),
