@@ -18,7 +18,21 @@ class DashboardService {
     if (response.statusCode == 200) {
       chartFromApi = _source;
       return chartFromApi;
-    } 
+    }
+    return null;
+  }
+
+  Future<String> sendFormToApi(String formdata) async {
+    final url = '$_baseUrl/users/';
+
+    var response = await http.post(url, body: json.encode(formdata));
+
+    var _source = Utf8Decoder().convert(response.bodyBytes);
+
+    if (response.statusCode == 200) {
+      chartFromApi = _source;
+      return chartFromApi;
+    }
     return null;
   }
 }

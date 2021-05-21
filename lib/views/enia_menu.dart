@@ -5,6 +5,7 @@ import '../components/adaptive_page_layout.dart';
 import '../components/dialogs/simple_dialogs.dart';
 import '../components/matrix.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:fluffychat/stats_dashboard/services/dashboard_services.dart';
 
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
@@ -83,6 +84,12 @@ class _EniaMenuState extends State<EniaMenu> {
     }
   }
 
+  Future<void> sendFormToApi(formdata) async {
+    var barChartInfoJson = await DashboardService().sendFormToApi(formdata);
+
+    return barChartInfoJson;
+  }
+
   @override
   Widget build(BuildContext context) {
     final client = Matrix.of(context).client;
@@ -114,76 +121,17 @@ class _EniaMenuState extends State<EniaMenu> {
                 'Formulario IVE/ILE',
                 style: TextStyle(color: Theme.of(context).backgroundColor),
               ),
-              /*  background:  
-              ContentBanner(
-                profile?.avatarUrl,
-                
-                height: 300,
-                //defaultIcon: Icons.account_circle,
-                loading: profile == null,
-                //onEdit: () => setAvatarAction(context),
-              ), */
             ),
           ),
         ],
         body: ListView(
           padding: EdgeInsets.symmetric(horizontal: 40.0),
           children: <Widget>[
-/*             ListTile(
-              title: Text(
-                  'A partir de una mirada integral e intersectorial buscamos prevenir los embarazos no intencionales en la adolescencia. Los Ministerios Nacionales de Salud, de Desarrollo Social y de Educación, trabajamos en conjunto para garantizar los derechos de los y las adolescentes al acceso gratuito de métodos anticonceptivos, la educación sexual integral y asesorías en las escuelas, la consejería en salud sexual y reproductiva y actividades de promoción comunitarias.'),
-            ),
-            Divider(thickness: 1),
-            ListTile(
-              title: Text(
-                '¿Qué nos proponemos?',
-                style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            ListTile(
-              title: Text(bullet +
-                  ' Sensibilizar sobre la importancia de prevenir el embarazo no intencional en la adolescencia.'),
-            ),
-            ListTile(
-              title: Text(bullet +
-                  ' Potenciar el ejercicio de los derechos sexuales y reproductivos en la adolescencia.'),
-            ),
-            ListTile(
-              title: Text(bullet +
-                  ' Brindar información sobre salud sexual y reproductiva y métodos anticonceptivos en forma gratuita en los servicios de salud.'),
-            ),
-            ListTile(
-              title: Text(bullet +
-                  ' Fortalecer políticas para la prevención del abuso, la violencia sexual y el acceso a la interrupción legal del embarazo según el marco normativo vigente.'),
-            ), */
             FormBuilder(
               key: _formKey,
               autovalidateMode: AutovalidateMode.always,
               child: Column(
                 children: <Widget>[
-/*                   FormBuilderChoiceChip(
-                    spacing: 20.0,
-                    name: 'choice_chip',
-                    decoration: InputDecoration(
-                      labelText: 'Seleccionar el tipo de efector',
-                    ),
-                    options: [
-                      FormBuilderFieldOption(
-                          value: 'hospital', child: Text('Hospital')),
-                      FormBuilderFieldOption(
-                          value: 'centro-de-salud',
-                          child: Text('Centro de Salud')),
-                      FormBuilderFieldOption(
-                          value: 'otro', child: Text('Otro')),
-                    ],
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(context,
-                          errorText: "* Requerido")
-                    ]),
-                  ), */
                   FormBuilderDropdown(
                     name: 'efector',
                     decoration: InputDecoration(
@@ -214,115 +162,6 @@ class _EniaMenuState extends State<EniaMenu> {
                       ),
                     ),
                   ),
-                  /* FormBuilderFilterChip(
-                    spacing: 10.0,
-                    // labelPadding: EdgeInsets.all(8.0),
-                    name: 'filter_chip',
-                    decoration: InputDecoration(
-                      labelText: 'Select many options',
-                    ),
-                    options: [
-                      FormBuilderFieldOption(
-                          value: 'Test', child: Text('Test')),
-                      FormBuilderFieldOption(
-                          value: 'Test 1', child: Text('Test 1')),
-                      FormBuilderFieldOption(
-                          value: 'Test 2', child: Text('Test 2')),
-                      FormBuilderFieldOption(
-                          value: 'Test 3', child: Text('Test 3')),
-                      FormBuilderFieldOption(
-                          value: 'Test 4', child: Text('Test 4')),
-                    ],
-                  ),
-                  FormBuilderChoiceChip(
-                    spacing: 10.0,
-                    name: 'choice_chip',
-                    decoration: InputDecoration(
-                      labelText: 'Select an option',
-                    ),
-                    options: [
-                      FormBuilderFieldOption(
-                          value: 'Test', child: Text('Test')),
-                      FormBuilderFieldOption(
-                          value: 'Test 1', child: Text('Test 1')),
-                      FormBuilderFieldOption(
-                          value: 'Test 2', child: Text('Test 2')),
-                      FormBuilderFieldOption(
-                          value: 'Test 3', child: Text('Test 3')),
-                      FormBuilderFieldOption(
-                          value: 'Test 4', child: Text('Test 4')),
-                    ],
-                  ),
-                  FormBuilderColorPickerField(
-                    name: 'color_picker',
-                    initialValue: Colors.yellow,
-                    colorPickerType: ColorPickerType.MaterialPicker,
-                    decoration: InputDecoration(labelText: 'Pick Color'),
-                  ), */
-/*                   FormBuilderChipsInput(
-                    decoration: InputDecoration(labelText: 'Chips'),
-                    name: 'chips_test',
-                    onChanged: (value) {},
-                    initialValue: [
-                      Contact('Andrew', 'stock@man.com',
-                          'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-                    ],
-                    maxChips: 5,
-                    findSuggestions: (String query) {
-                      if (query.isNotEmpty) {
-                        var lowercaseQuery = query.toLowerCase();
-                        return contacts.where((profile) {
-                          return profile.name
-                                  .toLowerCase()
-                                  .contains(query.toLowerCase()) ||
-                              profile.email
-                                  .toLowerCase()
-                                  .contains(query.toLowerCase());
-                        }).toList(growable: false)
-                          ..sort((a, b) => a.name
-                              .toLowerCase()
-                              .indexOf(lowercaseQuery)
-                              .compareTo(b.name
-                                  .toLowerCase()
-                                  .indexOf(lowercaseQuery)));
-                      } else {
-                        return const <Contact>[];
-                      }
-                    },
-                    chipBuilder: (context, state, profile) {
-                      return InputChip(
-                        key: ObjectKey(profile),
-                        label: Text(profile.name),
-                        avatar: CircleAvatar(
-                          backgroundImage: NetworkImage(profile.imageUrl),
-                        ),
-                        onDeleted: () => state.deleteChip(profile),
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      );
-                    },
-                    suggestionBuilder: (context, state, profile) {
-                      return ListTile(
-                        key: ObjectKey(profile),
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(profile.imageUrl),
-                        ),
-                        title: Text(profile.name),
-                        subtitle: Text(profile.email),
-                        onTap: () => state.selectSuggestion(profile),
-                      );
-                    },
-                  ), */
-/*                   FormBuilderDateTimePicker(
-                    name: 'date',
-                    // onChanged: (value){},
-                    inputType: InputType.time,
-                    decoration: InputDecoration(
-                      labelText: 'Appointment Time',
-                    ),
-                    initialTime: TimeOfDay(hour: 8, minute: 0),
-                    initialValue: DateTime.now(),
-                    // enabled: true,
-                  ), */
                   FormBuilderDateTimePicker(
                     name: 'date',
                     // onChanged: (value){},
@@ -333,59 +172,6 @@ class _EniaMenuState extends State<EniaMenu> {
                     initialValue: DateTime.now(),
                     // enabled: true,
                   ),
-                  /*           FormBuilderDateRangePicker(
-                    name: 'date_range',
-                    firstDate: DateTime(1970),
-                    lastDate: DateTime(2030),
-                    // format: DateFormat('yyyy-MM-dd'),
-                    onChanged: (value) {},
-                    decoration: InputDecoration(
-                      labelText: 'Fecha de consulta',
-                      helperText: 'Helper text',
-                      hintText: 'Hint text',
-                    ),
-                  ), */
-                  /* FormBuilderSlider(
-                    name: 'slider',
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.min(context, 6),
-                    ]),
-                    onChanged: (value) {},
-                    min: 0.0,
-                    max: 10.0,
-                    initialValue: 7.0,
-                    divisions: 20,
-                    activeColor: Colors.red,
-                    inactiveColor: Colors.pink[100],
-                    decoration: InputDecoration(
-                      labelText: 'Number of things',
-                    ),
-                  ),
-                  FormBuilderCheckbox(
-                    name: 'accept_terms',
-                    initialValue: false,
-                    onChanged: (value) {},
-                    title: RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'I have read and agree to the ',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          TextSpan(
-                            text: 'Terms and Conditions',
-                            style: TextStyle(color: Colors.blue),
-                          ),
-                        ],
-                      ),
-                    ),
-                    validator: FormBuilderValidators.equal(
-                      context,
-                      true,
-                      errorText:
-                          'You must accept terms and conditions to continue',
-                    ),
-                  ), */
                   FormBuilderTextField(
                     name: 'dni',
                     decoration: InputDecoration(
@@ -443,8 +229,7 @@ class _EniaMenuState extends State<EniaMenu> {
                   ),
                   FormBuilderChoiceChip(
                     name: 'identidad-de-genero',
-                    alignment: WrapAlignment.center,
-                    spacing: 6.0,
+                    spacing: 20.0,
                     decoration: InputDecoration(
                       labelText: 'Identidad de género',
                     ),
@@ -462,21 +247,6 @@ class _EniaMenuState extends State<EniaMenu> {
                           errorText: "* Requerido")
                     ]),
                   ),
-/*                   FormBuilderCheckbox(
-                    name: 'accept_terms',
-                    initialValue: false,
-                    onChanged: (value) {},
-                    title: RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '¿Tuvo gestas previas?',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ), */
                   FormBuilderTouchSpin(
                     decoration: InputDecoration(labelText: 'partos'),
                     name: 'partos',
@@ -532,8 +302,8 @@ class _EniaMenuState extends State<EniaMenu> {
                     ),
                   ),
                   FormBuilderChoiceChip(
-                    spacing: 20.0,
                     name: 'consulta-situacion',
+                    spacing: 20.0,
                     decoration: InputDecoration(
                       labelText: 'La situación se encuadra como',
                     ),
@@ -865,84 +635,6 @@ class _EniaMenuState extends State<EniaMenu> {
                     ),
                     onChanged: (value) {},
                   ),
-
-/*                   FormBuilderDropdown(
-                    name: 'gender',
-                    decoration: InputDecoration(
-                      labelText: 'Gender',
-                    ),
-                    // initialValue: 'Male',
-                    allowClear: true,
-                    hint: Text('Select Gender'),
-                    validator: FormBuilderValidators.compose(
-                        [FormBuilderValidators.required(context)]),
-                    items: tipoEfectorOptions
-                        .map((gender) => DropdownMenuItem(
-                              value: gender,
-                              child: Text('$gender'),
-                            ))
-                        .toList(),
-                  ), */
-                  /*               FormBuilderTypeAhead(
-                    decoration: InputDecoration(
-                      labelText: 'Country',
-                    ),
-                    name: 'country',
-                    onChanged: (value) {},
-                    itemBuilder: (context, country) {
-                      return ListTile(
-                        title: Text(country),
-                      );
-                    },
-                    controller: TextEditingController(text: ''),
-                    // initialValue: 'Uganda',
-                    suggestionsCallback: (query) {
-                      if (query.isNotEmpty) {
-                        var lowercaseQuery = query.toLowerCase();
-                        return allCountries.where((country) {
-                          return country.toLowerCase().contains(lowercaseQuery);
-                        }).toList(growable: true)
-                          ..sort((a, b) => a
-                              .toLowerCase()
-                              .indexOf(lowercaseQuery)
-                              .compareTo(
-                                  b.toLowerCase().indexOf(lowercaseQuery)));
-                      } else {
-                        return allCountries;
-                      }
-                    },
-                  ),
-                  FormBuilderRadioGroup(
-                    decoration:
-                        InputDecoration(labelText: 'My chosen language'),
-                    name: 'best_language',
-                    onChanged: (value) {},
-                    validator: FormBuilderValidators.compose(
-                        [FormBuilderValidators.required(context)]),
-                    options: ['Dart', 'Kotlin', 'Java', 'Swift', 'Objective-C']
-                        .map((lang) => FormBuilderFieldOption(
-                              value: lang,
-                              child: Text('$lang'),
-                            ))
-                        .toList(growable: false),
-                  ),
-                  FormBuilderTouchSpin(
-                    decoration: InputDecoration(labelText: 'Stepper'),
-                    name: 'stepper',
-                    initialValue: 10,
-                    step: 1,
-                    iconSize: 48.0,
-                    addIcon: Icon(Icons.arrow_right),
-                    subtractIcon: Icon(Icons.arrow_left),
-                  ),
-                  FormBuilderRating(
-                    decoration: InputDecoration(labelText: 'Rate this form'),
-                    name: 'rate',
-                    iconSize: 32.0,
-                    initialValue: 1.0,
-                    max: 5.0,
-                    onChanged: (value) {},
-                  ), */
                 ],
               ),
             ),
@@ -959,26 +651,35 @@ class _EniaMenuState extends State<EniaMenu> {
                     onPressed: () {
                       _formKey.currentState.save();
                       if (_formKey.currentState.validate()) {
+                        sendFormToApi(_formKey.currentState.value.toString());
+
                         print(_formKey.currentState.value);
+                        _formKey.currentState.reset();
+
+                        FocusScope.of(context).unfocus();
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              duration: Duration(seconds: 3),
+                              backgroundColor: Theme.of(context).primaryColor,
+                              content:
+                                  Text('El registro se guardo correctamente')),
+                        );
                       } else {
                         print("La validación del formulario falló");
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              duration: Duration(seconds: 3),
+                              backgroundColor: Colors.redAccent,
+                              content: Text(
+                                  'Revisar el formulario. Esta incompleto')),
+                        );
                       }
                     },
                   ),
                 ),
                 SizedBox(width: 20),
-                /*    Expanded(
-                  child: MaterialButton(
-                    color: Theme.of(context).accentColor,
-                    child: Text(
-                      "Reset",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: () {
-                      _formKey.currentState.reset();
-                    },
-                  ),
-                ), */
               ],
             ),
             SizedBox(height: 40),
