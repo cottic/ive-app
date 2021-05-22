@@ -8,6 +8,7 @@ import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:fluffychat/stats_dashboard/services/dashboard_services.dart';
 
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:intl/intl.dart';
 
 class EniaMenuView extends StatelessWidget {
   @override
@@ -33,6 +34,7 @@ class _EniaMenuState extends State<EniaMenu> {
   Future<bool> megolmBackupCachedFuture;
   bool megolmBackupCached;
   String bullet = '\u2022';
+  double semanasResolucionMin = 5.0;
 
   final _formKey = GlobalKey<FormBuilderState>();
 
@@ -164,6 +166,7 @@ class _EniaMenuState extends State<EniaMenu> {
                   ),
                   FormBuilderDateTimePicker(
                     name: 'date',
+                    format: DateFormat('dd/MM/yyyy'),
                     // onChanged: (value){},
                     inputType: InputType.date,
                     decoration: InputDecoration(
@@ -180,11 +183,10 @@ class _EniaMenuState extends State<EniaMenu> {
                     onChanged: (value) {},
                     // valueTransformer: (text) => num.tryParse(text),
                     validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(context,
-                          errorText: '* Requerido'),
                       FormBuilderValidators.numeric(context,
                           errorText: 'Solo se permiten números'),
                       FormBuilderValidators.minLength(context, 8,
+                          allowEmpty: true,
                           errorText: 'No es un formato de DNI válido'),
                       FormBuilderValidators.maxLength(context, 8,
                           errorText:
@@ -194,6 +196,8 @@ class _EniaMenuState extends State<EniaMenu> {
                   ),
                   FormBuilderTextField(
                       name: '2nombre',
+                      maxLengthEnforced: true,
+                      maxLength: 2,
                       decoration: InputDecoration(
                         labelText: 'Primeras 2 letras del nombre',
                       ),
@@ -204,9 +208,13 @@ class _EniaMenuState extends State<EniaMenu> {
                             errorText: '* Requerido'),
                         FormBuilderValidators.maxLength(context, 2,
                             errorText: 'Solo las 2 primeras letras'),
+                        FormBuilderValidators.match(context, '[A-Za-z]',
+                            errorText: 'Solo se permiten letras'),
                       ])),
                   FormBuilderTextField(
                       name: '2apellido',
+                      maxLengthEnforced: true,
+                      maxLength: 2,
                       decoration: InputDecoration(
                         labelText: 'Primeras 2 letras del apellido',
                       ),
@@ -217,9 +225,12 @@ class _EniaMenuState extends State<EniaMenu> {
                             errorText: '* Requerido'),
                         FormBuilderValidators.maxLength(context, 2,
                             errorText: 'Solo las 2 primeras letras'),
+                        FormBuilderValidators.match(context, '[A-Za-z]',
+                            errorText: 'Solo se permiten letras'),
                       ])),
                   FormBuilderDateTimePicker(
                     name: 'fecha-de-nacimiento',
+                    format: DateFormat('dd/MM/yyyy'),
                     // onChanged: (value){},
                     inputType: InputType.date,
                     decoration: InputDecoration(
@@ -247,11 +258,35 @@ class _EniaMenuState extends State<EniaMenu> {
                           errorText: "* Requerido")
                     ]),
                   ),
+                  FormBuilderChoiceChip(
+                    name: 'con-discapacidad',
+                    spacing: 20.0,
+                    decoration: InputDecoration(
+                      labelText: '¿Se trata de una persona con discapacidad?',
+                    ),
+                    options: [
+                      FormBuilderFieldOption(value: 'si', child: Text('Si')),
+                      FormBuilderFieldOption(
+                          value: 'no', child: Text('No esta consignado')),
+                    ],
+                  ),
+                  FormBuilderChoiceChip(
+                    name: 'obra-social',
+                    spacing: 20.0,
+                    decoration: InputDecoration(
+                      labelText: '¿Tiene obra social?',
+                    ),
+                    options: [
+                      FormBuilderFieldOption(value: 'si', child: Text('Si')),
+                      FormBuilderFieldOption(value: 'no', child: Text('No')),
+                    ],
+                  ),
                   FormBuilderTouchSpin(
                     decoration: InputDecoration(labelText: 'partos'),
                     name: 'partos',
                     initialValue: 0,
                     step: 1,
+                    min: 0,
                     iconSize: 48.0,
                     addIcon: Icon(Icons.arrow_right),
                     subtractIcon: Icon(Icons.arrow_left),
@@ -261,6 +296,7 @@ class _EniaMenuState extends State<EniaMenu> {
                     name: 'cesareas',
                     initialValue: 0,
                     step: 1,
+                    min: 0,
                     iconSize: 48.0,
                     addIcon: Icon(Icons.arrow_right),
                     subtractIcon: Icon(Icons.arrow_left),
@@ -270,6 +306,7 @@ class _EniaMenuState extends State<EniaMenu> {
                     name: 'abortos',
                     initialValue: 0,
                     step: 1,
+                    min: 0,
                     iconSize: 48.0,
                     addIcon: Icon(Icons.arrow_right),
                     subtractIcon: Icon(Icons.arrow_left),
@@ -287,13 +324,32 @@ class _EniaMenuState extends State<EniaMenu> {
                   FormBuilderSlider(
                     name: 'semanas-gestacion',
                     validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.min(context, 9),
+                      FormBuilderValidators.min(context, 5),
                     ]),
-                    onChanged: (value) {},
-                    min: 10.0,
-                    max: 20.0,
+                    displayValues: DisplayValues.current,
+                    min: 5.0,
+                    max: 32.0,
                     initialValue: 14.6,
-                    divisions: 100,
+                    divisions: 270,
+                    onChangeEnd: (val) {
+                      var decimalVal =
+                          int.tryParse(val.toString().split('.')[1]);
+                      var integerVal =
+                          int.tryParse(val.toString().split('.')[0]);
+                      semanasResolucionMin = val;
+                      if (decimalVal > 6) {
+                        _formKey.currentState.fields['semanas-gestacion']
+                            .didChange(integerVal + 0.6);
+                        semanasResolucionMin = integerVal + 0.6;
+                        _formKey.currentState.save();
+                      }
+                      if (integerVal > 14) {
+                        _formKey.currentState.fields['consulta-situacion']
+                            .didChange('ile');
+                        _formKey.currentState.fields['consulta-situacion'];
+                        _formKey.currentState.save();
+                      }
+                    },
                     activeColor: Colors.red,
                     inactiveColor: Colors.pink[100],
                     decoration: InputDecoration(
@@ -310,10 +366,14 @@ class _EniaMenuState extends State<EniaMenu> {
                     options: [
                       FormBuilderFieldOption(value: 'ive', child: Text('IVE')),
                       FormBuilderFieldOption(value: 'ile', child: Text('ILE')),
-                      FormBuilderFieldOption(
-                          value: 'no-corresponde',
-                          child: Text('No corresponde')),
                     ],
+                    onChanged: (val) {
+                      if (val == 'ive') {
+                        _formKey.currentState.fields['consulta-causal']
+                            .didChange('no-corresponde');
+                        _formKey.currentState.save();
+                      }
+                    },
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(context,
                           errorText: '* Requerido')
@@ -332,6 +392,9 @@ class _EniaMenuState extends State<EniaMenu> {
                           value: 'salud', child: Text('Riesgo para la salud')),
                       FormBuilderFieldOption(
                           value: 'violacion', child: Text('Violación')),
+                      FormBuilderFieldOption(
+                          value: 'no-corresponde',
+                          child: Text('No corresponde')),
                     ],
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(context,
@@ -342,7 +405,7 @@ class _EniaMenuState extends State<EniaMenu> {
                     spacing: 20.0,
                     name: 'consulta-origen',
                     decoration: InputDecoration(
-                      labelText: '¿Cómo llega la consulta?',
+                      labelText: '¿Cómo llega a la consulta?',
                     ),
                     options: [
                       FormBuilderFieldOption(
@@ -361,18 +424,17 @@ class _EniaMenuState extends State<EniaMenu> {
                           value: 'programa',
                           child: Text('Programa SSYR / 0800')),
                       FormBuilderFieldOption(
+                          value: 'por-desicion-propia',
+                          child: Text('Por desición propia')),
+                      FormBuilderFieldOption(
                           value: 'otro', child: Text('Otro')),
                     ],
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(context,
-                          errorText: "* Requerido")
-                    ]),
                   ),
                   FormBuilderChoiceChip(
                     spacing: 20.0,
                     name: 'consulta-derivacion',
                     decoration: InputDecoration(
-                      labelText: 'Derivada a otro efector de salud',
+                      labelText: 'Derivado a otro efector:',
                     ),
                     options: [
                       FormBuilderFieldOption(value: 'si', child: Text('Si')),
@@ -424,7 +486,7 @@ class _EniaMenuState extends State<EniaMenu> {
                       FormBuilderFieldOption(
                           value: 'edad', child: Text('Edad gestacional')),
                       FormBuilderFieldOption(
-                          value: 'falla', child: Text('Falla de misoprostol')),
+                          value: 'falla', child: Text('Falla de tratamiento')),
                       FormBuilderFieldOption(
                           value: 'contraindicacion',
                           child: Text('Contraindicacion de Tto ambulatorio')),
@@ -476,6 +538,13 @@ class _EniaMenuState extends State<EniaMenu> {
                           value: 'farmacologico-y-quirurgico',
                           child: Text('Farmacológico y Quirúrgico')),
                     ],
+                    onChanged: (val) {
+                      if (val == 'quirurgico') {
+                        _formKey.currentState.fields['tratamiento-comprimidos']
+                            .didChange(0);
+                        _formKey.currentState.save();
+                      }
+                    },
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(context,
                           errorText: "* Requerido")
@@ -486,12 +555,13 @@ class _EniaMenuState extends State<EniaMenu> {
                         InputDecoration(labelText: 'Cantidad de comprimidos'),
                     name: 'tratamiento-comprimidos',
                     initialValue: 0,
+                    min: 0,
                     step: 1,
                     iconSize: 48.0,
                     addIcon: Icon(Icons.arrow_right),
                     subtractIcon: Icon(Icons.arrow_left),
                   ),
-                  FormBuilderChoiceChip(
+/*                   FormBuilderChoiceChip(
                     spacing: 20.0,
                     padding: EdgeInsets.symmetric(vertical: 2.0),
                     name: 'tratamiento-via',
@@ -512,7 +582,7 @@ class _EniaMenuState extends State<EniaMenu> {
                       FormBuilderValidators.required(context,
                           errorText: "* Requerido")
                     ]),
-                  ),
+                  ), */
                   FormBuilderChoiceChip(
                     spacing: 20.0,
                     padding: EdgeInsets.symmetric(vertical: 2.0),
@@ -543,13 +613,25 @@ class _EniaMenuState extends State<EniaMenu> {
                   FormBuilderSlider(
                     name: 'semanas-resolucion',
                     validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.min(context, 9),
+                      FormBuilderValidators.min(context, 5),
                     ]),
+                    displayValues: DisplayValues.current,
                     onChanged: (value) {},
-                    min: 10.0,
-                    max: 20.0,
+                    min: semanasResolucionMin,
+                    max: 32.0,
                     initialValue: 14.6,
-                    divisions: 100,
+                    divisions: 270,
+                    onChangeEnd: (val) {
+                      var decimalVal =
+                          int.tryParse(val.toString().split('.')[1]);
+                      var integerVal =
+                          int.tryParse(val.toString().split('.')[0]);
+                      if (decimalVal > 6) {
+                        _formKey.currentState.fields['semanas-resolucion']
+                            .didChange(integerVal + 0.6);
+                        _formKey.currentState.save();
+                      }
+                    },
                     activeColor: Colors.red,
                     inactiveColor: Colors.pink[100],
                     decoration: InputDecoration(
@@ -562,7 +644,7 @@ class _EniaMenuState extends State<EniaMenu> {
                     padding: EdgeInsets.symmetric(vertical: 2.0),
                     name: 'complicaciones',
                     decoration: InputDecoration(
-                      labelText: 'Hubo complicaciones. Cuales?',
+                      labelText: 'Hubo complicaciones. ¿Cual?',
                     ),
                     options: [
                       FormBuilderFieldOption(value: 'No', child: Text('no')),
