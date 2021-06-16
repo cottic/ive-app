@@ -38,11 +38,6 @@ class _EniaMenuState extends State<EniaMenu> {
 
   final _formKey = GlobalKey<FormBuilderState>();
 
-  var tipoEfectorOptions = [
-    'HOSPITAL DRA. CECILIA GRIERSON (JUAN BAUTISTA ALBERDI 38, GUERNICA, BUENOS AIRES)',
-    'UNIDAD SANITARIA GLEW II (DE NAVAZIO Y DI CARLO S/N BO. ALMAFUERTE - GLEW, GLEW, BUENOS AIRES)'
-  ];
-
   Future<void> requestSSSSCache(BuildContext context) async {
     final handle = Matrix.of(context).client.encryption.ssss.open();
     final str = await SimpleDialogs(context).enterText(
@@ -138,6 +133,7 @@ class _EniaMenuState extends State<EniaMenu> {
                     name: 'efector',
                     decoration: InputDecoration(
                       labelText: 'Efector:',
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     allowClear: true,
                     hint: Text('Efector:'),
@@ -147,12 +143,18 @@ class _EniaMenuState extends State<EniaMenu> {
                         errorText: '* Requerido',
                       )
                     ]),
-                    items: tipoEfectorOptions
-                        .map((gender) => DropdownMenuItem(
-                              value: gender,
-                              child: Text('$gender'),
-                            ))
-                        .toList(),
+                    items: [
+                      DropdownMenuItem(
+                        value: 1,
+                        child: Text(
+                            'HOSPITAL DRA. CECILIA GRIERSON (JUAN BAUTISTA ALBERDI 38, GUERNICA, BUENOS AIRES)'),
+                      ),
+                      DropdownMenuItem(
+                        value: 2,
+                        child: Text(
+                            'UNIDAD SANITARIA GLEW II (DE NAVAZIO Y DI CARLO S/N BO. ALMAFUERTE - GLEW, GLEW, BUENOS AIRES)'),
+                      )
+                    ],
                   ),
                   ListTile(
                     title: Text(
@@ -160,28 +162,33 @@ class _EniaMenuState extends State<EniaMenu> {
                       style: TextStyle(
                         color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.bold,
-                        height: 1.0,
+                        fontSize: 26.0,
+                        height: 4.0,
                       ),
                     ),
+                    contentPadding: EdgeInsets.only(top: 30.0),
                   ),
                   FormBuilderDateTimePicker(
-                    name: 'date',
+                    name: 'persona-consulta-fecha',
                     format: DateFormat('dd/MM/yyyy'),
                     // onChanged: (value){},
                     inputType: InputType.date,
                     decoration: InputDecoration(
                       labelText: 'Fecha de consulta',
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     initialValue: DateTime.now(),
                     // enabled: true,
                   ),
                   FormBuilderTextField(
-                    name: 'dni',
+                    name: 'persona-dni',
+                    maxLengthEnforced: true,
+                    maxLength: 8,
                     decoration: InputDecoration(
                       labelText: 'DNI',
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     onChanged: (value) {},
-                    // valueTransformer: (text) => num.tryParse(text),
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.numeric(context,
                           errorText: 'Solo se permiten números'),
@@ -195,14 +202,13 @@ class _EniaMenuState extends State<EniaMenu> {
                     keyboardType: TextInputType.number,
                   ),
                   FormBuilderTextField(
-                      name: '2nombre',
+                      name: 'persona-2nombre',
                       maxLengthEnforced: true,
                       maxLength: 2,
                       decoration: InputDecoration(
                         labelText: 'Primeras 2 letras del nombre',
                       ),
                       onChanged: (value) {},
-                      // valueTransformer: (text) => num.tryParse(text),
                       validator: FormBuilderValidators.compose([
                         FormBuilderValidators.required(context,
                             errorText: '* Requerido'),
@@ -212,11 +218,13 @@ class _EniaMenuState extends State<EniaMenu> {
                             errorText: 'Solo se permiten letras'),
                       ])),
                   FormBuilderTextField(
-                      name: '2apellido',
+                      name: 'persona-2apellido',
                       maxLengthEnforced: true,
                       maxLength: 2,
                       decoration: InputDecoration(
                         labelText: 'Primeras 2 letras del apellido',
+                        contentPadding:
+                            EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                       ),
                       onChanged: (value) {},
                       // valueTransformer: (text) => num.tryParse(text),
@@ -229,7 +237,7 @@ class _EniaMenuState extends State<EniaMenu> {
                             errorText: 'Solo se permiten letras'),
                       ])),
                   FormBuilderDateTimePicker(
-                    name: 'fecha-de-nacimiento',
+                    name: 'persona-nacimiento-fecha',
                     format: DateFormat('dd/MM/yyyy'),
                     // onChanged: (value){},
                     inputType: InputType.date,
@@ -239,10 +247,16 @@ class _EniaMenuState extends State<EniaMenu> {
                     // enabled: true,
                   ),
                   FormBuilderChoiceChip(
-                    name: 'identidad-de-genero',
+                    name: 'persona-identidad-de-genero',
                     spacing: 20.0,
+                    runSpacing: 5.0,
                     decoration: InputDecoration(
                       labelText: 'Identidad de género',
+                      labelStyle: TextStyle(
+                        fontSize: 20,
+                        height: 1.0,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     options: [
                       FormBuilderFieldOption(
@@ -255,26 +269,40 @@ class _EniaMenuState extends State<EniaMenu> {
                     ],
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(context,
-                          errorText: "* Requerido")
+                          errorText: '* Requerido')
                     ]),
                   ),
                   FormBuilderChoiceChip(
-                    name: 'con-discapacidad',
+                    name: 'persona-con-discapacidad',
                     spacing: 20.0,
+                    runSpacing: 5.0,
                     decoration: InputDecoration(
                       labelText: '¿Se trata de una persona con discapacidad?',
+                      labelStyle: TextStyle(
+                        fontSize: 20,
+                        height: 1.0,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     options: [
                       FormBuilderFieldOption(value: 'si', child: Text('Si')),
+                      FormBuilderFieldOption(value: 'no', child: Text('No')),
                       FormBuilderFieldOption(
-                          value: 'no', child: Text('No esta consignado')),
+                          value: 'no-consignado',
+                          child: Text('No esta consignado')),
                     ],
                   ),
                   FormBuilderChoiceChip(
-                    name: 'obra-social',
+                    name: 'persona-obra-social',
                     spacing: 20.0,
+                    runSpacing: 5.0,
                     decoration: InputDecoration(
                       labelText: '¿Tiene obra social?',
+                      labelStyle: TextStyle(
+                        fontSize: 20,
+                        height: 1.0,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     options: [
                       FormBuilderFieldOption(value: 'si', child: Text('Si')),
@@ -282,7 +310,13 @@ class _EniaMenuState extends State<EniaMenu> {
                     ],
                   ),
                   FormBuilderTouchSpin(
-                    decoration: InputDecoration(labelText: 'partos'),
+                    decoration: InputDecoration(
+                      labelText: 'partos',
+                      labelStyle: TextStyle(
+                        fontSize: 20,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
+                    ),
                     name: 'partos',
                     initialValue: 0,
                     step: 1,
@@ -292,7 +326,13 @@ class _EniaMenuState extends State<EniaMenu> {
                     subtractIcon: Icon(Icons.arrow_left),
                   ),
                   FormBuilderTouchSpin(
-                    decoration: InputDecoration(labelText: 'cesareas'),
+                    decoration: InputDecoration(
+                      labelText: 'cesareas',
+                      labelStyle: TextStyle(
+                        fontSize: 20,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
+                    ),
                     name: 'cesareas',
                     initialValue: 0,
                     step: 1,
@@ -302,7 +342,13 @@ class _EniaMenuState extends State<EniaMenu> {
                     subtractIcon: Icon(Icons.arrow_left),
                   ),
                   FormBuilderTouchSpin(
-                    decoration: InputDecoration(labelText: 'abortos'),
+                    decoration: InputDecoration(
+                      labelText: 'abortos',
+                      labelStyle: TextStyle(
+                        fontSize: 20,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
+                    ),
                     name: 'abortos',
                     initialValue: 0,
                     step: 1,
@@ -318,8 +364,10 @@ class _EniaMenuState extends State<EniaMenu> {
                         color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.bold,
                         height: 4.0,
+                        fontSize: 26.0,
                       ),
                     ),
+                    contentPadding: EdgeInsets.only(top: 30.0),
                   ),
                   FormBuilderSlider(
                     name: 'semanas-gestacion',
@@ -355,13 +403,22 @@ class _EniaMenuState extends State<EniaMenu> {
                     decoration: InputDecoration(
                       labelText:
                           'Semanas de gestación al inicio de la consulta',
+                      labelStyle: TextStyle(
+                        fontSize: 20,
+                      ),
                     ),
                   ),
                   FormBuilderChoiceChip(
                     name: 'consulta-situacion',
                     spacing: 20.0,
+                    runSpacing: 5.0,
                     decoration: InputDecoration(
                       labelText: 'La situación se encuadra como',
+                      labelStyle: TextStyle(
+                        fontSize: 20,
+                        height: 1.0,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     options: [
                       FormBuilderFieldOption(value: 'ive', child: Text('IVE')),
@@ -381,9 +438,15 @@ class _EniaMenuState extends State<EniaMenu> {
                   ),
                   FormBuilderChoiceChip(
                     spacing: 20.0,
+                    runSpacing: 5.0,
                     name: 'consulta-causal',
                     decoration: InputDecoration(
                       labelText: 'Causal',
+                      labelStyle: TextStyle(
+                        fontSize: 20,
+                        height: 1.0,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     options: [
                       FormBuilderFieldOption(
@@ -403,9 +466,15 @@ class _EniaMenuState extends State<EniaMenu> {
                   ),
                   FormBuilderChoiceChip(
                     spacing: 20.0,
+                    runSpacing: 5.0,
                     name: 'consulta-origen',
                     decoration: InputDecoration(
                       labelText: '¿Cómo llega a la consulta?',
+                      labelStyle: TextStyle(
+                        fontSize: 20,
+                        height: 1.0,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     options: [
                       FormBuilderFieldOption(
@@ -424,8 +493,8 @@ class _EniaMenuState extends State<EniaMenu> {
                           value: 'programa',
                           child: Text('Programa SSYR / 0800')),
                       FormBuilderFieldOption(
-                          value: 'por-desicion-propia',
-                          child: Text('Por desición propia')),
+                          value: 'por-decision-propia',
+                          child: Text('Por decisión propia')),
                       FormBuilderFieldOption(
                           value: 'otro', child: Text('Otro')),
                     ],
@@ -435,6 +504,11 @@ class _EniaMenuState extends State<EniaMenu> {
                     name: 'consulta-derivacion',
                     decoration: InputDecoration(
                       labelText: 'Derivado a otro efector:',
+                      labelStyle: TextStyle(
+                        fontSize: 20,
+                        height: 1.0,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     options: [
                       FormBuilderFieldOption(value: 'si', child: Text('Si')),
@@ -448,8 +522,9 @@ class _EniaMenuState extends State<EniaMenu> {
                   FormBuilderTypeAhead(
                     decoration: InputDecoration(
                       labelText: 'Efector al que fue derivado',
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
-                    name: 'derivacion-efector',
+                    name: 'efector-derivacion',
                     onChanged: (value) {},
                     itemBuilder: (context, country) {
                       return ListTile(
@@ -476,11 +551,16 @@ class _EniaMenuState extends State<EniaMenu> {
                   ),
                   FormBuilderChoiceChip(
                     spacing: 20.0,
-                    runSpacing: 20.0,
+                    runSpacing: 5.0,
 /*                     labelPadding: EdgeInsets.symmetric(vertical: 10.0), */
                     name: 'derivacion-motivo',
                     decoration: InputDecoration(
                       labelText: '¿Porque motivo fue derivado?',
+                      labelStyle: TextStyle(
+                        fontSize: 20,
+                        height: 1.0,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     options: [
                       FormBuilderFieldOption(
@@ -508,16 +588,20 @@ class _EniaMenuState extends State<EniaMenu> {
                         color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.bold,
                         height: 4.0,
+                        fontSize: 26.0,
                       ),
                     ),
+                    contentPadding: EdgeInsets.only(top: 30.0),
                   ),
                   FormBuilderDateTimePicker(
                     name: 'tratamiento-fecha',
+                    format: DateFormat('dd/MM/yyyy'),
                     // onChanged: (value){},
                     inputType: InputType.date,
                     decoration: InputDecoration(
                       labelText:
                           'Fecha de provisión de tratamiento farmacológico o quirúrgico',
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     initialValue: DateTime.now(),
                     // enabled: true,
@@ -528,6 +612,11 @@ class _EniaMenuState extends State<EniaMenu> {
                     name: 'tratamiento-tipo',
                     decoration: InputDecoration(
                       labelText: 'Tipo de tratamiento',
+                      labelStyle: TextStyle(
+                        fontSize: 20,
+                        height: 1.0,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     options: [
                       FormBuilderFieldOption(
@@ -551,8 +640,13 @@ class _EniaMenuState extends State<EniaMenu> {
                     ]),
                   ),
                   FormBuilderTouchSpin(
-                    decoration:
-                        InputDecoration(labelText: 'Cantidad de comprimidos'),
+                    decoration: InputDecoration(
+                      labelText: 'Cantidad de comprimidos',
+                      labelStyle: TextStyle(
+                        fontSize: 20,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
+                    ),
                     name: 'tratamiento-comprimidos',
                     initialValue: 0,
                     min: 0,
@@ -589,6 +683,11 @@ class _EniaMenuState extends State<EniaMenu> {
                     name: 'tratamiento-quirurgico',
                     decoration: InputDecoration(
                       labelText: 'Tratamiento Quirúrgico',
+                      labelStyle: TextStyle(
+                        fontSize: 20,
+                        height: 1.0,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     options: [
                       FormBuilderFieldOption(
@@ -637,14 +736,24 @@ class _EniaMenuState extends State<EniaMenu> {
                     decoration: InputDecoration(
                       labelText:
                           'Semanas de gestación al momento de la resolución',
+                      labelStyle: TextStyle(
+                        fontSize: 20,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                   ),
                   FormBuilderChoiceChip(
                     spacing: 20.0,
+                    runSpacing: 5.0,
                     padding: EdgeInsets.symmetric(vertical: 2.0),
                     name: 'complicaciones',
                     decoration: InputDecoration(
                       labelText: 'Hubo complicaciones. ¿Cual?',
+                      labelStyle: TextStyle(
+                        fontSize: 20,
+                        height: 1.0,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     options: [
                       FormBuilderFieldOption(value: 'No', child: Text('no')),
@@ -673,11 +782,17 @@ class _EniaMenuState extends State<EniaMenu> {
                   ),
                   FormBuilderChoiceChip(
                     spacing: 20.0,
+                    runSpacing: 5.0,
                     padding: EdgeInsets.symmetric(vertical: 2.0),
                     name: 'aipe',
                     decoration: InputDecoration(
                       labelText:
                           'Provisión de Anticoncepción Inmediata Post Aborto ¿Que método?',
+                      labelStyle: TextStyle(
+                        fontSize: 20,
+                        height: 1.0,
+                      ),
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     options: [
                       FormBuilderFieldOption(value: 'No', child: Text('no')),
@@ -714,6 +829,7 @@ class _EniaMenuState extends State<EniaMenu> {
                     name: 'observaciones',
                     decoration: InputDecoration(
                       labelText: 'Observaciones',
+                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     onChanged: (value) {},
                   ),

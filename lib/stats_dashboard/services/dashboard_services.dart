@@ -6,7 +6,7 @@ class DashboardService {
   String chartFromApi;
 
   static final String _baseUrl =
-      'https://proyecto.codigoi.com.ar/appenia/enia-api-tableros';
+      'https://proyecto.codigoi.com.ar/ile/ile-api-tableros';
 
   Future<String> loadChartFromApi(String chartNumber) async {
     final url = '$_baseUrl/dashboard0/?chart=${chartNumber}';
