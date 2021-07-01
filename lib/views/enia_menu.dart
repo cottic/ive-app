@@ -36,7 +36,15 @@ class _EniaMenuState extends State<EniaMenu> {
   String bullet = '\u2022';
   double semanasResolucionMin = 5.0;
 
+  bool isCausalEnabled = true;
   final _formKey = GlobalKey<FormBuilderState>();
+
+  int calculateDifference(DateTime date) {
+    DateTime now = DateTime.now();
+    return DateTime(date.year, date.month, date.day)
+        .difference(DateTime(now.year, now.month, now.day))
+        .inDays;
+  }
 
   Future<void> requestSSSSCache(BuildContext context) async {
     final handle = Matrix.of(context).client.encryption.ssss.open();
@@ -45,6 +53,7 @@ class _EniaMenuState extends State<EniaMenu> {
       hintText: L10n.of(context).passphraseOrKey,
       password: true,
     );
+
     if (str != null) {
       SimpleDialogs(context).showLoadingDialog(context);
       // make sure the loading spinner shows before we test the keys
@@ -90,6 +99,19 @@ class _EniaMenuState extends State<EniaMenu> {
   @override
   Widget build(BuildContext context) {
     final client = Matrix.of(context).client;
+    final username = client.userID;
+    var efectorName = '';
+
+    if (username == '@maria.jose.mattioli:matrix.codigoi.com.ar') {
+      efectorName = 'Hospital de Clínicas “José de San Martín”';
+    } else if (username == '@julieta.minasi:matrix.codigoi.com.ar' ||
+        username == '@graciela.beatriz.rodriguez:matrix.codigoi.com.ar' ||
+        username == '@maria.elida.del.pino:matrix.codigoi.com.ar' ||
+        username == '@estefania.cioffi:matrix.codigoi.com.ar') {
+      efectorName = 'Hospital Iriarte (Quilmes)”';
+    } else {
+      efectorName = 'Hospital General de Agudos “Dr. Teodoro Álvarez”';
+    }
     profileFuture ??= client.ownProfile.then((p) {
       if (mounted) setState(() => profile = p);
       return p;
@@ -136,6 +158,7 @@ class _EniaMenuState extends State<EniaMenu> {
                       contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     allowClear: true,
+                    initialValue: 1,
                     hint: Text('Efector:'),
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(
@@ -146,13 +169,7 @@ class _EniaMenuState extends State<EniaMenu> {
                     items: [
                       DropdownMenuItem(
                         value: 1,
-                        child: Text(
-                            'HOSPITAL DRA. CECILIA GRIERSON (JUAN BAUTISTA ALBERDI 38, GUERNICA, BUENOS AIRES)'),
-                      ),
-                      DropdownMenuItem(
-                        value: 2,
-                        child: Text(
-                            'UNIDAD SANITARIA GLEW II (DE NAVAZIO Y DI CARLO S/N BO. ALMAFUERTE - GLEW, GLEW, BUENOS AIRES)'),
+                        child: Text(efectorName),
                       )
                     ],
                   ),
@@ -178,6 +195,16 @@ class _EniaMenuState extends State<EniaMenu> {
                       contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     initialValue: DateTime.now(),
+                    validator: (val) {
+                      if (val == null) {
+                        return '* Requerido';
+                      } else {
+                        if (calculateDifference(val) > 0) {
+                          return 'La fecha de consulta no puede ser definida en el futuro';
+                        }
+                      }
+                      return null;
+                    },
                     // enabled: true,
                   ),
                   FormBuilderTextField(
@@ -239,12 +266,23 @@ class _EniaMenuState extends State<EniaMenu> {
                   FormBuilderDateTimePicker(
                     name: 'persona-nacimiento-fecha',
                     format: DateFormat('dd/MM/yyyy'),
+                    initialDate: DateTime(2001),
                     // onChanged: (value){},
+                    validator: (val) {
+                      if (val == null) {
+                        return '* Requerido';
+                      } else {
+                        if (val.year > 2018) {
+                          return 'No es posible definir una edad menor a 5 años';
+                        }
+                      }
+                      return null;
+                    },
                     inputType: InputType.date,
                     decoration: InputDecoration(
                       labelText: 'Fecha de nacimiento',
                     ),
-                    // enabled: true,
+                    // enabled: false,
                   ),
                   FormBuilderChoiceChip(
                     name: 'persona-identidad-de-genero',
@@ -359,7 +397,7 @@ class _EniaMenuState extends State<EniaMenu> {
                   ),
                   ListTile(
                     title: Text(
-                      'Datos del caso',
+                      'Datos de la situación',
                       style: TextStyle(
                         color: Theme.of(context).primaryColor,
                         fontWeight: FontWeight.bold,
@@ -368,45 +406,6 @@ class _EniaMenuState extends State<EniaMenu> {
                       ),
                     ),
                     contentPadding: EdgeInsets.only(top: 30.0),
-                  ),
-                  FormBuilderSlider(
-                    name: 'semanas-gestacion',
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.min(context, 5),
-                    ]),
-                    displayValues: DisplayValues.current,
-                    min: 5.0,
-                    max: 32.0,
-                    initialValue: 14.6,
-                    divisions: 270,
-                    onChangeEnd: (val) {
-                      var decimalVal =
-                          int.tryParse(val.toString().split('.')[1]);
-                      var integerVal =
-                          int.tryParse(val.toString().split('.')[0]);
-                      semanasResolucionMin = val;
-                      if (decimalVal > 6) {
-                        _formKey.currentState.fields['semanas-gestacion']
-                            .didChange(integerVal + 0.6);
-                        semanasResolucionMin = integerVal + 0.6;
-                        _formKey.currentState.save();
-                      }
-                      if (integerVal > 14) {
-                        _formKey.currentState.fields['consulta-situacion']
-                            .didChange('ile');
-                        _formKey.currentState.fields['consulta-situacion'];
-                        _formKey.currentState.save();
-                      }
-                    },
-                    activeColor: Colors.red,
-                    inactiveColor: Colors.pink[100],
-                    decoration: InputDecoration(
-                      labelText:
-                          'Semanas de gestación al inicio de la consulta',
-                      labelStyle: TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
                   ),
                   FormBuilderChoiceChip(
                     name: 'consulta-situacion',
@@ -436,34 +435,105 @@ class _EniaMenuState extends State<EniaMenu> {
                           errorText: '* Requerido')
                     ]),
                   ),
-                  FormBuilderChoiceChip(
-                    spacing: 20.0,
-                    runSpacing: 5.0,
-                    name: 'consulta-causal',
+                  FormBuilderSlider(
+                    name: 'semanas-gestacion',
+                    validator: (val) {
+                      final selected = _formKey
+                          .currentState.fields['consulta-situacion']?.value;
+                      if (selected == 'ive') {
+                        if (val > 14.6) {
+                          return 'No es posible definir la semana de gestación despues de las 14 semanas y 6 días si el caso se encuadra como IVE';
+                        }
+                      }
+                      if (val == null) {
+                        return '* Requerido';
+                      }
+                      return null;
+                    },
+                    displayValues: DisplayValues.current,
+                    min: 5.0,
+                    max: 32.0,
+                    initialValue: 14.6,
+                    divisions: 270,
+                    onChangeEnd: (val) {
+                      var decimalVal =
+                          int.tryParse(val.toString().split('.')[1]);
+                      var integerVal =
+                          int.tryParse(val.toString().split('.')[0]);
+                      semanasResolucionMin = val;
+                      if (decimalVal > 6) {
+                        _formKey.currentState.fields['semanas-gestacion']
+                            .didChange(integerVal + 0.6);
+                        semanasResolucionMin = integerVal + 0.6;
+                        _formKey.currentState.save();
+                      }
+                      /* if (integerVal > 14) {
+                        _formKey.currentState.fields['consulta-situacion']
+                            .didChange('ile');
+                        _formKey.currentState.fields['consulta-situacion'];
+                        _formKey.currentState.save();
+                      } */
+                    },
+                    activeColor: Colors.red,
+                    inactiveColor: Colors.pink[100],
                     decoration: InputDecoration(
-                      labelText: 'Causal',
+                      labelText:
+                          'Semanas de gestación al inicio de la consulta',
                       labelStyle: TextStyle(
                         fontSize: 20,
-                        height: 1.0,
                       ),
-                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
-                    options: [
-                      FormBuilderFieldOption(
-                          value: 'vida', child: Text('Riesgo para la vida')),
-                      FormBuilderFieldOption(
-                          value: 'salud', child: Text('Riesgo para la salud')),
-                      FormBuilderFieldOption(
-                          value: 'violacion', child: Text('Violación')),
-                      FormBuilderFieldOption(
-                          value: 'no-corresponde',
-                          child: Text('No corresponde')),
-                    ],
-                    validator: FormBuilderValidators.compose([
+                  ),
+                  FormBuilderChoiceChip(
+                      spacing: 20.0,
+                      runSpacing: 5.0,
+                      name: 'consulta-causal',
+                      enabled: isCausalEnabled,
+                      decoration: InputDecoration(
+                        labelText: 'Causal',
+                        labelStyle: TextStyle(
+                          fontSize: 20,
+                          height: 1.0,
+                        ),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
+                      ),
+                      options: [
+                        FormBuilderFieldOption(
+                            value: 'vida', child: Text('Riesgo para la vida')),
+                        FormBuilderFieldOption(
+                            value: 'salud',
+                            child: Text('Riesgo para la salud')),
+                        FormBuilderFieldOption(
+                            value: 'violacion', child: Text('Violación')),
+                        FormBuilderFieldOption(
+                            value: 'no-corresponde',
+                            child: Text('No corresponde')),
+                      ],
+                      /* validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(context,
                           errorText: "* Requerido")
-                    ]),
-                  ),
+                    ]), */
+                      validator: (val) {
+                        final selected = _formKey
+                            .currentState.fields['consulta-situacion']?.value;
+                        if (selected == 'ive') {
+                          if (val == 'vida' ||
+                              val == 'salud' ||
+                              val == 'violacion') {
+                            return 'No es posible esta opción si la situación se encuadra como IVE. Debe indicarse "No corresponde"';
+                          }
+                        }
+                        if (selected == 'ile') {
+                          if (val == 'no-corresponde') {
+                            return 'No es posible esta opción si la situación se encuadra como ILE.';
+                          }
+                        }
+                        if (val == null || val.isEmpty) {
+                          return '* Requerido';
+                        }
+                        return null;
+                      }),
                   FormBuilderChoiceChip(
                     spacing: 20.0,
                     runSpacing: 5.0,
@@ -491,7 +561,7 @@ class _EniaMenuState extends State<EniaMenu> {
                           child: Text('Por una organización de la soc. civil')),
                       FormBuilderFieldOption(
                           value: 'programa',
-                          child: Text('Programa SSYR / 0800')),
+                          child: Text('Programa SSR / 0800')),
                       FormBuilderFieldOption(
                           value: 'por-decision-propia',
                           child: Text('Por decisión propia')),
@@ -510,6 +580,13 @@ class _EniaMenuState extends State<EniaMenu> {
                       ),
                       contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
+                    onChanged: (val) {
+                      if (val == 'no') {
+                        _formKey.currentState.fields['derivacion-motivo']
+                            .didChange('no-corresponde');
+                        _formKey.currentState.save();
+                      }
+                    },
                     options: [
                       FormBuilderFieldOption(value: 'si', child: Text('Si')),
                       FormBuilderFieldOption(value: 'no', child: Text('No')),
@@ -574,12 +651,32 @@ class _EniaMenuState extends State<EniaMenu> {
                           value: 'preferencia',
                           child: Text('Preferencia de la paciente')),
                       FormBuilderFieldOption(
-                          value: 'no', child: Text('No corresponde')),
+                          value: 'no-corresponde',
+                          child: Text('No corresponde')),
                     ],
-                    validator: FormBuilderValidators.compose([
+                    /* validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(context,
                           errorText: "* Requerido")
-                    ]),
+                    ]), */
+                    validator: (val) {
+                      final selected = _formKey
+                          .currentState.fields['consulta-derivacion']?.value;
+                      if (selected == 'si') {
+                        if (val == null || val.isEmpty) {
+                          return '* Requerido';
+                        }
+                      }
+                      if (selected == 'no') {
+                        if (val == 'edad' ||
+                            val == 'falla' ||
+                            val == 'contraindicacion' ||
+                            val == 'preferencia') {
+                          return 'No es posible esta opción si no fue derivado. Debe indicarse "No corresponde"';
+                        }
+                      }
+
+                      return null;
+                    },
                   ),
                   ListTile(
                     title: Text(
@@ -633,6 +730,11 @@ class _EniaMenuState extends State<EniaMenu> {
                             .didChange(0);
                         _formKey.currentState.save();
                       }
+                      if (val == 'farmacologico') {
+                        _formKey.currentState.fields['tratamiento-quirurgico']
+                            .didChange('no-corresponde');
+                        _formKey.currentState.save();
+                      }
                     },
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(context,
@@ -651,6 +753,17 @@ class _EniaMenuState extends State<EniaMenu> {
                     initialValue: 0,
                     min: 0,
                     step: 1,
+                    validator: (val) {
+                      final selected = _formKey
+                          .currentState.fields['tratamiento-tipo']?.value;
+                      if (selected == 'quirurgico') {
+                        if (val != 0) {
+                          return 'Si el tipo de tratamiento es solo quirúrgico, el número de comprimidos debe ser "0"';
+                        }
+                      }
+
+                      return null;
+                    },
                     iconSize: 48.0,
                     addIcon: Icon(Icons.arrow_right),
                     subtractIcon: Icon(Icons.arrow_left),
@@ -703,17 +816,48 @@ class _EniaMenuState extends State<EniaMenu> {
                           value: 'otros', child: Text('Otros')),
                       FormBuilderFieldOption(
                           value: 'sin-datos', child: Text('Sin datos')),
+                      FormBuilderFieldOption(
+                          value: 'no-corresponde',
+                          child: Text('No corresponde')),
                     ],
-                    validator: FormBuilderValidators.compose([
+                    /* validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(context,
                           errorText: "* Requerido")
-                    ]),
+                    ]), */
+                    validator: (val) {
+                      final selected = _formKey
+                          .currentState.fields['tratamiento-tipo']?.value;
+                      if (selected == 'farmacologico') {
+                        if (val == 'ameu' ||
+                            val == 'rue-o-legrado' ||
+                            val == 'ameurue' ||
+                            val == 'dilatacion-evacuacion' ||
+                            val == 'otros' ||
+                            val == 'sin-datos') {
+                          return 'No es posible esta opción si el tratamiento es solo Farmacológico. Debe indicarse "No corresponde"';
+                        }
+                      } else {
+                        if (val == null || val.isEmpty) {
+                          return '* Requerido';
+                        }
+                      }
+
+                      return null;
+                    },
                   ),
                   FormBuilderSlider(
                     name: 'semanas-resolucion',
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.min(context, 5),
-                    ]),
+                    validator: (val) {
+                      final selected = _formKey
+                          .currentState.fields['semanas-gestacion']?.value;
+                      if (val < selected) {
+                        return 'No es posible definir el momento de la resolución como anterior al inicio de la consulta';
+                      }
+                      if (val == null) {
+                        return '* Requerido';
+                      }
+                      return null;
+                    },
                     displayValues: DisplayValues.current,
                     onChanged: (value) {},
                     min: semanasResolucionMin,

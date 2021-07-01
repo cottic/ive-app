@@ -14,7 +14,7 @@ import 'package:fluffychat/stats_dashboard/dashboard_menu_screen.dart';
 import 'package:fluffychat/views/enia_menu.dart';
 import 'package:fluffychat/views/files_enia_menu.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
-// import 'package:fluffychat/views/status_view.dart';
+import 'package:fluffychat/views/status_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
@@ -31,7 +31,7 @@ import 'archive.dart';
 import 'formation_enia_menu.dart';
 import 'maps_enia_menu.dart';
 import 'homeserver_picker.dart';
-// import 'new_private_chat.dart';
+import 'new_private_chat.dart';
 import 'settings.dart';
 
 enum SelectMode { normal, share, select }
@@ -299,7 +299,7 @@ class _ChatListState extends State<ChatList> {
     );
   }
 
-  /* void _setStatus(BuildContext context, {bool fromDrawer = false}) async {
+  void _setStatus(BuildContext context, {bool fromDrawer = false}) async {
     if (fromDrawer) Navigator.of(context).pop();
     final ownProfile = await SimpleDialogs(context)
         .tryRequestWithLoadingDialog(Matrix.of(context).client.ownProfile);
@@ -323,7 +323,7 @@ class _ChatListState extends State<ChatList> {
       );
     }
     return;
-  } */
+  }
 
   @override
   void dispose() {
@@ -576,15 +576,14 @@ class _ChatListState extends State<ChatList> {
                                 ),
                               ),
                   ),
-                  //This allows to create new chats and set Status, not available on version 1
-                  /*floatingActionButton:
+                  floatingActionButton:
                       (AdaptivePageLayout.columnMode(context) ||
                               selectMode != SelectMode.normal)
                           ? null
                           : Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                FloatingActionButton(
+                                /* FloatingActionButton(
                                   heroTag: null,
                                   child: Icon(
                                     Icons.edit,
@@ -594,7 +593,7 @@ class _ChatListState extends State<ChatList> {
                                   backgroundColor:
                                       Theme.of(context).secondaryHeaderColor,
                                   onPressed: () => _setStatus(context),
-                                ),
+                                ), */
                                 // SizedBox(height: 16.0),
                                 FloatingActionButton(
                                   child: Icon(Icons.add),
@@ -603,15 +602,15 @@ class _ChatListState extends State<ChatList> {
                                   onPressed: () => Navigator.of(context)
                                       .pushAndRemoveUntil(
                                           AppRoute.defaultRoute(
-                                              context, NewPrivateChatView()),
+                                              context, EniaMenuView()),
                                           (r) => r.isFirst),
-                                ), 
+                                ),
                               ],
-                            ),*/
+                            ),
                   body: Column(
                     children: [
                       ConnectionStatusHeader(),
-                      Expanded(
+                      /* Expanded( MOSTRAR SOLO LISTADO DE CASOS
                         child: StreamBuilder(
                             stream:
                                 Matrix.of(context).client.onSync.stream.where(
@@ -643,7 +642,7 @@ class _ChatListState extends State<ChatList> {
                                     var mainGroupListSearch =
                                         List<User>.from(mainGroupList);
 
-                                    if (mainGroupListSearch != null &&
+                                    /* if (mainGroupListSearch != null &&
                                         mainGroupListSearch.isNotEmpty) {
                                       mainGroupListSearch.removeWhere(
                                         (User item) => (searchMode &&
@@ -654,7 +653,7 @@ class _ChatListState extends State<ChatList> {
                                                         .toLowerCase() ??
                                                     '')),
                                       );
-                                    }
+                                    } */
 
                                     if (rooms.isEmpty &&
                                         (!searchMode ||
@@ -797,7 +796,7 @@ class _ChatListState extends State<ChatList> {
                                 },
                               );
                             }),
-                      ),
+                      ), */
                     ],
                   ),
                 );

@@ -1188,7 +1188,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "searchForAChat": "Buscar un chat",
+  "searchForAChat": "Buscar",
   "@searchForAChat": {
     "type": "text",
     "placeholders": {}
