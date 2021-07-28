@@ -9,6 +9,7 @@ import 'package:fluffychat/stats_dashboard/services/dashboard_services.dart';
 
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
+import 'dart:convert';
 
 class EniaMenuView extends StatelessWidget {
   @override
@@ -36,13 +37,13 @@ class _EniaMenuState extends State<EniaMenu> {
   String bullet = '\u2022';
   double semanasResolucionMin = 5.0;
 
+  bool showTratamiento = true;
   bool isCausalEnabled = true;
   final _formKey = GlobalKey<FormBuilderState>();
 
-  int calculateDifference(DateTime date) {
-    DateTime now = DateTime.now();
+  int calculateDifference(DateTime date, DateTime compare) {
     return DateTime(date.year, date.month, date.day)
-        .difference(DateTime(now.year, now.month, now.day))
+        .difference(DateTime(compare.year, compare.month, compare.day))
         .inDays;
   }
 
@@ -148,6 +149,32 @@ class _EniaMenuState extends State<EniaMenu> {
           children: <Widget>[
             FormBuilder(
               key: _formKey,
+              initialValue: {
+                'efector': 1,
+                'persona-consulta-fecha': DateTime.now(),
+                'persona-dni': '25385786',
+                'persona-nombre': 'jm',
+                'persona-apellido': 'hl',
+                'persona-nacimiento-fecha': DateTime(2001),
+                'persona-identidad-de-genero': 'varon-trans',
+                'persona-con-discapacidad': 'no-consignado',
+                'persona-obra-social': 'varon-trans',
+                'partos': 2,
+                'cesareas': 1,
+                'abortos': 2,
+                'consulta-situacion': 'ile',
+                'consulta-origen': 'otro',
+                'consulta-derivacion': 'no',
+                'semanas-gestacion': 14.6,
+                'consulta-causal': 'vida',
+                'tratamiento-tipo': 'quirurgico',
+                'tratamiento-comprimidos': 0,
+                'tratamiento-quirurgico': 'rue-o-legrado',
+                'semanas-resolucion': 14.6,
+                'complicaciones': 'complicaciones-anestesia',
+                'aipe': 'anticoncepcion-inyectable',
+                'observaciones': 'Prueba',
+              },
               autovalidateMode: AutovalidateMode.always,
               child: Column(
                 children: <Widget>[
@@ -195,11 +222,13 @@ class _EniaMenuState extends State<EniaMenu> {
                       contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     initialValue: DateTime.now(),
+                    valueTransformer: (value) => value.toString(),
                     validator: (val) {
                       if (val == null) {
                         return '* Requerido';
                       } else {
-                        if (calculateDifference(val) > 0) {
+                        DateTime now = DateTime.now();
+                        if (calculateDifference(val, now) > 0) {
                           return 'La fecha de consulta no puede ser definida en el futuro';
                         }
                       }
@@ -229,7 +258,7 @@ class _EniaMenuState extends State<EniaMenu> {
                     keyboardType: TextInputType.number,
                   ),
                   FormBuilderTextField(
-                      name: 'persona-2nombre',
+                      name: 'persona-nombre',
                       maxLengthEnforced: true,
                       maxLength: 2,
                       decoration: InputDecoration(
@@ -245,7 +274,7 @@ class _EniaMenuState extends State<EniaMenu> {
                             errorText: 'Solo se permiten letras'),
                       ])),
                   FormBuilderTextField(
-                      name: 'persona-2apellido',
+                      name: 'persona-apellido',
                       maxLengthEnforced: true,
                       maxLength: 2,
                       decoration: InputDecoration(
@@ -267,6 +296,7 @@ class _EniaMenuState extends State<EniaMenu> {
                     name: 'persona-nacimiento-fecha',
                     format: DateFormat('dd/MM/yyyy'),
                     initialDate: DateTime(2001),
+                    valueTransformer: (value) => value.toString(),
                     // onChanged: (value){},
                     validator: (val) {
                       if (val == null) {
@@ -282,6 +312,7 @@ class _EniaMenuState extends State<EniaMenu> {
                     decoration: InputDecoration(
                       labelText: 'Fecha de nacimiento',
                     ),
+
                     // enabled: false,
                   ),
                   FormBuilderChoiceChip(
@@ -356,7 +387,6 @@ class _EniaMenuState extends State<EniaMenu> {
                       contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     name: 'partos',
-                    initialValue: 0,
                     step: 1,
                     min: 0,
                     iconSize: 48.0,
@@ -372,7 +402,6 @@ class _EniaMenuState extends State<EniaMenu> {
                       contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     name: 'cesareas',
-                    initialValue: 0,
                     step: 1,
                     min: 0,
                     iconSize: 48.0,
@@ -388,7 +417,6 @@ class _EniaMenuState extends State<EniaMenu> {
                       contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     name: 'abortos',
-                    initialValue: 0,
                     step: 1,
                     min: 0,
                     iconSize: 48.0,
@@ -453,7 +481,6 @@ class _EniaMenuState extends State<EniaMenu> {
                     displayValues: DisplayValues.current,
                     min: 5.0,
                     max: 32.0,
-                    initialValue: 14.6,
                     divisions: 270,
                     onChangeEnd: (val) {
                       var decimalVal =
@@ -585,6 +612,14 @@ class _EniaMenuState extends State<EniaMenu> {
                         _formKey.currentState.fields['derivacion-motivo']
                             .didChange('no-corresponde');
                         _formKey.currentState.save();
+                        setState(() {
+                          showTratamiento = true;
+                        });
+                      }
+                      if (val == 'si') {
+                        setState(() {
+                          showTratamiento = false;
+                        });
                       }
                     },
                     options: [
@@ -596,40 +631,49 @@ class _EniaMenuState extends State<EniaMenu> {
                           errorText: '* Requerido')
                     ]),
                   ),
-                  FormBuilderTypeAhead(
-                    decoration: InputDecoration(
-                      labelText: 'Efector al que fue derivado',
-                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
+                  Visibility(
+                    visible: !showTratamiento,
+                    child: FormBuilderTypeAhead(
+                      decoration: InputDecoration(
+                        labelText: 'Efector al que fue derivado',
+                        contentPadding:
+                            EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
+                      ),
+                      name: 'derivacion-efector',
+                      onChanged: (value) {},
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(context,
+                            errorText: '* Requerido')
+                      ]),
+                      itemBuilder: (context, country) {
+                        return ListTile(
+                          title: Text(country),
+                        );
+                      },
+                      controller: TextEditingController(text: ''),
+                      // initialValue: 'Uganda',
+                      suggestionsCallback: (query) {
+                        if (query.isNotEmpty) {
+                          var lowercaseQuery = query.toLowerCase();
+                          return allEfectores.where((country) {
+                            return country
+                                .toLowerCase()
+                                .contains(lowercaseQuery);
+                          }).toList(growable: true)
+                            ..sort((a, b) => a
+                                .toLowerCase()
+                                .indexOf(lowercaseQuery)
+                                .compareTo(
+                                    b.toLowerCase().indexOf(lowercaseQuery)));
+                        } else {
+                          return allEfectores;
+                        }
+                      },
                     ),
-                    name: 'efector-derivacion',
-                    onChanged: (value) {},
-                    itemBuilder: (context, country) {
-                      return ListTile(
-                        title: Text(country),
-                      );
-                    },
-                    controller: TextEditingController(text: ''),
-                    // initialValue: 'Uganda',
-                    suggestionsCallback: (query) {
-                      if (query.isNotEmpty) {
-                        var lowercaseQuery = query.toLowerCase();
-                        return allEfectores.where((country) {
-                          return country.toLowerCase().contains(lowercaseQuery);
-                        }).toList(growable: true)
-                          ..sort((a, b) => a
-                              .toLowerCase()
-                              .indexOf(lowercaseQuery)
-                              .compareTo(
-                                  b.toLowerCase().indexOf(lowercaseQuery)));
-                      } else {
-                        return allEfectores;
-                      }
-                    },
                   ),
                   FormBuilderChoiceChip(
                     spacing: 20.0,
                     runSpacing: 5.0,
-/*                     labelPadding: EdgeInsets.symmetric(vertical: 10.0), */
                     name: 'derivacion-motivo',
                     decoration: InputDecoration(
                       labelText: '¿Porque motivo fue derivado?',
@@ -678,304 +722,333 @@ class _EniaMenuState extends State<EniaMenu> {
                       return null;
                     },
                   ),
-                  ListTile(
-                    title: Text(
-                      'Datos del tratamiento',
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.bold,
-                        height: 4.0,
-                        fontSize: 26.0,
+                  Visibility(
+                    visible: showTratamiento,
+                    child: ListTile(
+                      title: Text(
+                        'Datos del tratamiento',
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontWeight: FontWeight.bold,
+                          height: 4.0,
+                          fontSize: 26.0,
+                        ),
                       ),
+                      contentPadding: EdgeInsets.only(top: 30.0),
                     ),
-                    contentPadding: EdgeInsets.only(top: 30.0),
                   ),
-                  FormBuilderDateTimePicker(
-                    name: 'tratamiento-fecha',
-                    format: DateFormat('dd/MM/yyyy'),
-                    // onChanged: (value){},
-                    inputType: InputType.date,
-                    decoration: InputDecoration(
-                      labelText:
-                          'Fecha de provisión de tratamiento farmacológico o quirúrgico',
-                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
-                    ),
-                    initialValue: DateTime.now(),
-                    // enabled: true,
-                  ),
-                  FormBuilderChoiceChip(
-                    spacing: 20.0,
-                    padding: EdgeInsets.symmetric(vertical: 2.0),
-                    name: 'tratamiento-tipo',
-                    decoration: InputDecoration(
-                      labelText: 'Tipo de tratamiento',
-                      labelStyle: TextStyle(
-                        fontSize: 20,
-                        height: 1.0,
+                  Visibility(
+                    visible: showTratamiento,
+                    child: FormBuilderDateTimePicker(
+                      name: 'tratamiento-fecha',
+                      format: DateFormat('dd/MM/yyyy'),
+                      // onChanged: (value){},
+                      inputType: InputType.date,
+                      decoration: InputDecoration(
+                        labelText:
+                            'Fecha de provisión de tratamiento farmacológico o quirúrgico',
+                        contentPadding:
+                            EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                       ),
-                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
-                    ),
-                    options: [
-                      FormBuilderFieldOption(
-                          value: 'farmacologico', child: Text('Farmacológico')),
-                      FormBuilderFieldOption(
-                          value: 'quirurgico', child: Text('Quirúrgico')),
-                      FormBuilderFieldOption(
-                          value: 'farmacologico-y-quirurgico',
-                          child: Text('Farmacológico y Quirúrgico')),
-                    ],
-                    onChanged: (val) {
-                      if (val == 'quirurgico') {
-                        _formKey.currentState.fields['tratamiento-comprimidos']
-                            .didChange(0);
-                        _formKey.currentState.save();
-                      }
-                      if (val == 'farmacologico') {
-                        _formKey.currentState.fields['tratamiento-quirurgico']
-                            .didChange('no-corresponde');
-                        _formKey.currentState.save();
-                      }
-                    },
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(context,
-                          errorText: "* Requerido")
-                    ]),
-                  ),
-                  FormBuilderTouchSpin(
-                    decoration: InputDecoration(
-                      labelText: 'Cantidad de comprimidos',
-                      labelStyle: TextStyle(
-                        fontSize: 20,
-                      ),
-                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
-                    ),
-                    name: 'tratamiento-comprimidos',
-                    initialValue: 0,
-                    min: 0,
-                    step: 1,
-                    validator: (val) {
-                      final selected = _formKey
-                          .currentState.fields['tratamiento-tipo']?.value;
-                      if (selected == 'quirurgico') {
-                        if (val != 0) {
-                          return 'Si el tipo de tratamiento es solo quirúrgico, el número de comprimidos debe ser "0"';
+                      initialValue: DateTime.now(),
+                      valueTransformer: (value) => value.toString(),
+                      validator: (val) {
+                        if (val == null) {
+                          return '* Requerido';
+                        } else {
+                          final selected = _formKey.currentState
+                              .fields['persona-consulta-fecha']?.value;
+                          if (calculateDifference(val, selected) < 0) {
+                            return 'La fecha de provision del tratamiento no puede ser anterior a la fecha de consulta';
+                          }
                         }
-                      }
+                        return null;
+                      },
+                      // enabled: true,
+                    ),
+                  ),
+                  Visibility(
+                    visible: showTratamiento,
+                    child: FormBuilderChoiceChip(
+                      spacing: 20.0,
+                      padding: EdgeInsets.symmetric(vertical: 2.0),
+                      name: 'tratamiento-tipo',
+                      decoration: InputDecoration(
+                        labelText: 'Tipo de tratamiento',
+                        labelStyle: TextStyle(
+                          fontSize: 20,
+                          height: 1.0,
+                        ),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
+                      ),
+                      options: [
+                        FormBuilderFieldOption(
+                            value: 'farmacologico',
+                            child: Text('Farmacológico')),
+                        FormBuilderFieldOption(
+                            value: 'quirurgico', child: Text('Quirúrgico')),
+                        FormBuilderFieldOption(
+                            value: 'farmacologico-y-quirurgico',
+                            child: Text('Farmacológico y Quirúrgico')),
+                      ],
+                      onChanged: (val) {
+                        if (val == 'quirurgico') {
+                          _formKey
+                              .currentState.fields['tratamiento-comprimidos']
+                              .didChange(0);
+                          _formKey.currentState.save();
+                        }
+                        if (val == 'farmacologico') {
+                          _formKey.currentState.fields['tratamiento-quirurgico']
+                              .didChange('no-corresponde');
+                          _formKey.currentState.save();
+                        }
+                      },
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(context,
+                            errorText: "* Requerido")
+                      ]),
+                    ),
+                  ),
+                  Visibility(
+                    visible: showTratamiento,
+                    child: FormBuilderTouchSpin(
+                      decoration: InputDecoration(
+                        labelText: 'Cantidad de comprimidos',
+                        labelStyle: TextStyle(
+                          fontSize: 20,
+                        ),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
+                      ),
+                      name: 'tratamiento-comprimidos',
+                      min: 0,
+                      step: 1,
+                      validator: (val) {
+                        final selected = _formKey
+                            .currentState.fields['tratamiento-tipo']?.value;
+                        if (selected == 'quirurgico') {
+                          if (val != 0) {
+                            return 'Si el tipo de tratamiento es solo quirúrgico, el número de comprimidos debe ser "0"';
+                          }
+                        }
 
-                      return null;
-                    },
-                    iconSize: 48.0,
-                    addIcon: Icon(Icons.arrow_right),
-                    subtractIcon: Icon(Icons.arrow_left),
+                        return null;
+                      },
+                      iconSize: 48.0,
+                      addIcon: Icon(Icons.arrow_right),
+                      subtractIcon: Icon(Icons.arrow_left),
+                    ),
                   ),
-/*                   FormBuilderChoiceChip(
-                    spacing: 20.0,
-                    padding: EdgeInsets.symmetric(vertical: 2.0),
-                    name: 'tratamiento-via',
-                    decoration: InputDecoration(
-                      labelText: 'Vía de administración',
-                    ),
-                    options: [
-                      FormBuilderFieldOption(
-                          value: 'vaginal', child: Text('Vaginal')),
-                      FormBuilderFieldOption(
-                          value: 'sublingual', child: Text('Sublingual')),
-                      FormBuilderFieldOption(
-                          value: 'bucal', child: Text('Bucal')),
-                      FormBuilderFieldOption(
-                          value: 'Mas-de-una', child: Text('Más de una')),
-                    ],
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(context,
-                          errorText: "* Requerido")
-                    ]),
-                  ), */
-                  FormBuilderChoiceChip(
-                    spacing: 20.0,
-                    padding: EdgeInsets.symmetric(vertical: 2.0),
-                    name: 'tratamiento-quirurgico',
-                    decoration: InputDecoration(
-                      labelText: 'Tratamiento Quirúrgico',
-                      labelStyle: TextStyle(
-                        fontSize: 20,
-                        height: 1.0,
+                  Visibility(
+                    visible: showTratamiento,
+                    child: FormBuilderChoiceChip(
+                      spacing: 20.0,
+                      padding: EdgeInsets.symmetric(vertical: 2.0),
+                      name: 'tratamiento-quirurgico',
+                      decoration: InputDecoration(
+                        labelText: 'Tratamiento Quirúrgico',
+                        labelStyle: TextStyle(
+                          fontSize: 20,
+                          height: 1.0,
+                        ),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                       ),
-                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
-                    ),
-                    options: [
-                      FormBuilderFieldOption(
-                          value: 'ameu', child: Text('AMEU')),
-                      FormBuilderFieldOption(
-                          value: 'rue-o-legrado', child: Text('RUE o Legrado')),
-                      FormBuilderFieldOption(
-                          value: 'ameurue', child: Text('AMEU + RUE')),
-                      FormBuilderFieldOption(
-                          value: 'dilatacion-evacuacion',
-                          child: Text('Dilatación y evacuación')),
-                      FormBuilderFieldOption(
-                          value: 'otros', child: Text('Otros')),
-                      FormBuilderFieldOption(
-                          value: 'sin-datos', child: Text('Sin datos')),
-                      FormBuilderFieldOption(
-                          value: 'no-corresponde',
-                          child: Text('No corresponde')),
-                    ],
-                    /* validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(context,
-                          errorText: "* Requerido")
-                    ]), */
-                    validator: (val) {
-                      final selected = _formKey
-                          .currentState.fields['tratamiento-tipo']?.value;
-                      if (selected == 'farmacologico') {
-                        if (val == 'ameu' ||
-                            val == 'rue-o-legrado' ||
-                            val == 'ameurue' ||
-                            val == 'dilatacion-evacuacion' ||
-                            val == 'otros' ||
-                            val == 'sin-datos') {
-                          return 'No es posible esta opción si el tratamiento es solo Farmacológico. Debe indicarse "No corresponde"';
+                      options: [
+                        FormBuilderFieldOption(
+                            value: 'ameu', child: Text('AMEU')),
+                        FormBuilderFieldOption(
+                            value: 'rue-o-legrado',
+                            child: Text('RUE o Legrado')),
+                        FormBuilderFieldOption(
+                            value: 'ameurue', child: Text('AMEU + RUE')),
+                        FormBuilderFieldOption(
+                            value: 'dilatacion-evacuacion',
+                            child: Text('Dilatación y evacuación')),
+                        FormBuilderFieldOption(
+                            value: 'otros', child: Text('Otros')),
+                        FormBuilderFieldOption(
+                            value: 'sin-datos', child: Text('Sin datos')),
+                        FormBuilderFieldOption(
+                            value: 'no-corresponde',
+                            child: Text('No corresponde')),
+                      ],
+                      /* validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(context,
+                              errorText: "* Requerido")
+                        ]), */
+                      validator: (val) {
+                        final selected = _formKey
+                            .currentState.fields['tratamiento-tipo']?.value;
+                        if (selected == 'farmacologico') {
+                          if (val == 'ameu' ||
+                              val == 'rue-o-legrado' ||
+                              val == 'ameurue' ||
+                              val == 'dilatacion-evacuacion' ||
+                              val == 'otros' ||
+                              val == 'sin-datos') {
+                            return 'No es posible esta opción si el tratamiento es solo Farmacológico. Debe indicarse "No corresponde"';
+                          }
+                        } else {
+                          if (val == null || val.isEmpty) {
+                            return '* Requerido';
+                          }
                         }
-                      } else {
-                        if (val == null || val.isEmpty) {
+
+                        return null;
+                      },
+                    ),
+                  ),
+                  Visibility(
+                    visible: showTratamiento,
+                    child: FormBuilderSlider(
+                      name: 'semanas-resolucion',
+                      validator: (val) {
+                        final selected = _formKey
+                            .currentState.fields['semanas-gestacion']?.value;
+                        if (val < selected) {
+                          return 'No es posible definir el momento de la resolución como anterior al inicio de la consulta';
+                        }
+                        if (val == null) {
                           return '* Requerido';
                         }
-                      }
-
-                      return null;
-                    },
-                  ),
-                  FormBuilderSlider(
-                    name: 'semanas-resolucion',
-                    validator: (val) {
-                      final selected = _formKey
-                          .currentState.fields['semanas-gestacion']?.value;
-                      if (val < selected) {
-                        return 'No es posible definir el momento de la resolución como anterior al inicio de la consulta';
-                      }
-                      if (val == null) {
-                        return '* Requerido';
-                      }
-                      return null;
-                    },
-                    displayValues: DisplayValues.current,
-                    onChanged: (value) {},
-                    min: semanasResolucionMin,
-                    max: 32.0,
-                    initialValue: 14.6,
-                    divisions: 270,
-                    onChangeEnd: (val) {
-                      var decimalVal =
-                          int.tryParse(val.toString().split('.')[1]);
-                      var integerVal =
-                          int.tryParse(val.toString().split('.')[0]);
-                      if (decimalVal > 6) {
-                        _formKey.currentState.fields['semanas-resolucion']
-                            .didChange(integerVal + 0.6);
-                        _formKey.currentState.save();
-                      }
-                    },
-                    activeColor: Colors.red,
-                    inactiveColor: Colors.pink[100],
-                    decoration: InputDecoration(
-                      labelText:
-                          'Semanas de gestación al momento de la resolución',
-                      labelStyle: TextStyle(
-                        fontSize: 20,
+                        return null;
+                      },
+                      displayValues: DisplayValues.current,
+                      onChanged: (value) {},
+                      min: 5.0,
+                      max: 32.0,
+                      divisions: 270,
+                      onChangeEnd: (val) {
+                        var decimalVal =
+                            int.tryParse(val.toString().split('.')[1]);
+                        var integerVal =
+                            int.tryParse(val.toString().split('.')[0]);
+                        if (decimalVal > 6) {
+                          _formKey.currentState.fields['semanas-resolucion']
+                              .didChange(integerVal + 0.6);
+                          _formKey.currentState.save();
+                        }
+                      },
+                      activeColor: Colors.red,
+                      inactiveColor: Colors.pink[100],
+                      decoration: InputDecoration(
+                        labelText:
+                            'Semanas de gestación al momento de la resolución',
+                        labelStyle: TextStyle(
+                          fontSize: 20,
+                        ),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                       ),
-                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                   ),
-                  FormBuilderChoiceChip(
-                    spacing: 20.0,
-                    runSpacing: 5.0,
-                    padding: EdgeInsets.symmetric(vertical: 2.0),
-                    name: 'complicaciones',
-                    decoration: InputDecoration(
-                      labelText: 'Hubo complicaciones. ¿Cual?',
-                      labelStyle: TextStyle(
-                        fontSize: 20,
-                        height: 1.0,
+                  Visibility(
+                    visible: showTratamiento,
+                    child: FormBuilderChoiceChip(
+                      spacing: 20.0,
+                      runSpacing: 5.0,
+                      padding: EdgeInsets.symmetric(vertical: 2.0),
+                      name: 'complicaciones',
+                      decoration: InputDecoration(
+                        labelText: 'Hubo complicaciones. ¿Cual?',
+                        labelStyle: TextStyle(
+                          fontSize: 20,
+                          height: 1.0,
+                        ),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                       ),
-                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
+                      options: [
+                        FormBuilderFieldOption(value: 'No', child: Text('no')),
+                        FormBuilderFieldOption(
+                            value: 'aborto-incompleto',
+                            child: Text('Aborto incompleto')),
+                        FormBuilderFieldOption(
+                            value: 'interrupcion-fallida',
+                            child: Text('Interrupción fallida')),
+                        FormBuilderFieldOption(
+                            value: 'hemorragia', child: Text('Hemorragia')),
+                        FormBuilderFieldOption(
+                            value: 'infeccion', child: Text('Infección')),
+                        FormBuilderFieldOption(
+                            value: 'perforacion-uterina',
+                            child: Text('Perforación uterina')),
+                        FormBuilderFieldOption(
+                            value: 'complicaciones-anestesia',
+                            child: Text(
+                                'Complicaciones relacionadas con la anestesia')),
+                      ],
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(context,
+                            errorText: '* Requerido')
+                      ]),
                     ),
-                    options: [
-                      FormBuilderFieldOption(value: 'No', child: Text('no')),
-                      FormBuilderFieldOption(
-                          value: 'aborto-incompleto',
-                          child: Text('Aborto incompleto')),
-                      FormBuilderFieldOption(
-                          value: 'interrupcion-fallida',
-                          child: Text('Interrupción fallida')),
-                      FormBuilderFieldOption(
-                          value: 'hemorragia', child: Text('Hemorragia')),
-                      FormBuilderFieldOption(
-                          value: 'infeccion', child: Text('Infección')),
-                      FormBuilderFieldOption(
-                          value: 'perforacion-uterina',
-                          child: Text('Perforación uterina')),
-                      FormBuilderFieldOption(
-                          value: 'complicaciones-anestesia',
-                          child: Text(
-                              'Complicaciones relacionadas con la anestesia')),
-                    ],
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(context,
-                          errorText: '* Requerido')
-                    ]),
                   ),
-                  FormBuilderChoiceChip(
-                    spacing: 20.0,
-                    runSpacing: 5.0,
-                    padding: EdgeInsets.symmetric(vertical: 2.0),
-                    name: 'aipe',
-                    decoration: InputDecoration(
-                      labelText:
-                          'Provisión de Anticoncepción Inmediata Post Aborto ¿Que método?',
-                      labelStyle: TextStyle(
-                        fontSize: 20,
-                        height: 1.0,
+                  Visibility(
+                    visible: showTratamiento,
+                    child: FormBuilderChoiceChip(
+                      spacing: 20.0,
+                      runSpacing: 5.0,
+                      padding: EdgeInsets.symmetric(vertical: 2.0),
+                      name: 'aipe',
+                      decoration: InputDecoration(
+                        labelText:
+                            'Provisión de Anticoncepción Inmediata Post Aborto ¿Que método?',
+                        labelStyle: TextStyle(
+                          fontSize: 20,
+                          height: 1.0,
+                        ),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                       ),
-                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
+                      options: [
+                        FormBuilderFieldOption(value: 'No', child: Text('no')),
+                        FormBuilderFieldOption(
+                            value: 'anticoncepcion-oral',
+                            child: Text('Anticoncepción Hormonal Oral')),
+                        FormBuilderFieldOption(
+                            value: 'anticoncepcion-inyectable',
+                            child: Text('Anticoncepción Hormonal Inyectable')),
+                        FormBuilderFieldOption(
+                            value: 'diu', child: Text('DIU')),
+                        FormBuilderFieldOption(
+                            value: 'implante',
+                            child: Text('Implante subdérmico')),
+                        FormBuilderFieldOption(
+                            value: 'siu', child: Text('SIU')),
+                        FormBuilderFieldOption(
+                            value: 'preservativo', child: Text('Preservativo')),
+                        FormBuilderFieldOption(
+                            value: 'preservativo-hormonal',
+                            child:
+                                Text('Preservativo + Anticonceptivo Hormonal')),
+                        FormBuilderFieldOption(
+                            value: 'preservativo-diu',
+                            child: Text('Preservativo + DIU, SIU o implante')),
+                        FormBuilderFieldOption(
+                            value: 'ligadura-tubaria',
+                            child: Text('Ligadura tubaria')),
+                      ],
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(context,
+                            errorText: '* Requerido')
+                      ]),
                     ),
-                    options: [
-                      FormBuilderFieldOption(value: 'No', child: Text('no')),
-                      FormBuilderFieldOption(
-                          value: 'anticoncepcion-oral',
-                          child: Text('Anticoncepción Hormonal Oral')),
-                      FormBuilderFieldOption(
-                          value: 'anticoncepcion-inyectable',
-                          child: Text('Anticoncepción Hormonal Inyectable')),
-                      FormBuilderFieldOption(value: 'diu', child: Text('DIU')),
-                      FormBuilderFieldOption(
-                          value: 'implante',
-                          child: Text('Implante subdérmico')),
-                      FormBuilderFieldOption(value: 'siu', child: Text('SIU')),
-                      FormBuilderFieldOption(
-                          value: 'preservativo', child: Text('Preservativo')),
-                      FormBuilderFieldOption(
-                          value: 'preservativo-hormonal',
-                          child:
-                              Text('Preservativo + Anticonceptivo Hormonal')),
-                      FormBuilderFieldOption(
-                          value: 'preservativo-diu',
-                          child: Text('Preservativo + DIU, SIU o implante')),
-                      FormBuilderFieldOption(
-                          value: 'ligadura-tubaria',
-                          child: Text('Ligadura tubaria')),
-                    ],
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(context,
-                          errorText: '* Requerido')
-                    ]),
                   ),
-                  FormBuilderTextField(
-                    name: 'observaciones',
-                    decoration: InputDecoration(
-                      labelText: 'Observaciones',
-                      contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
+                  Visibility(
+                    visible: showTratamiento,
+                    child: FormBuilderTextField(
+                      name: 'observaciones',
+                      decoration: InputDecoration(
+                        labelText: 'Observaciones',
+                        contentPadding:
+                            EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
+                      ),
+                      onChanged: (value) {},
                     ),
-                    onChanged: (value) {},
                   ),
                 ],
               ),
@@ -993,16 +1066,14 @@ class _EniaMenuState extends State<EniaMenu> {
                     onPressed: () {
                       _formKey.currentState.save();
                       if (_formKey.currentState.validate()) {
-                        sendFormToApi(_formKey.currentState.value.toString());
-
-                        print(_formKey.currentState.value);
+                        sendFormToApi(json.encode(_formKey.currentState.value));
                         _formKey.currentState.reset();
-
-                        FocusScope.of(context).unfocus();
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        // FocusScope.of(context).unfocus();
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                              duration: Duration(seconds: 3),
+                              duration: Duration(seconds: 6),
                               backgroundColor: Theme.of(context).primaryColor,
                               content:
                                   Text('El registro se guardo correctamente')),
@@ -1012,7 +1083,7 @@ class _EniaMenuState extends State<EniaMenu> {
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                              duration: Duration(seconds: 3),
+                              duration: Duration(seconds: 6),
                               backgroundColor: Colors.redAccent,
                               content: Text(
                                   'Revisar el formulario. Esta incompleto')),
@@ -1089,31 +1160,4 @@ const allEfectores = [
   'UNIDAD SANITARIA PRESIDENTE IBAÑEZ	PRESIDENTE IBAÑEZ 1824 - BARRIO SAN JOSE	BUENOS AIRES	MORON	MORON',
   'CENTRO DE ATENCION PRIMARIA RAMON CARRILLO DE PERGAMINO	DEAN FUNES Y COSTA RICA BARRIO GUEMES	BUENOS AIRES	PERGAMINO	PERGAMINO',
   'UNIDAD SANITARIA VILLA ROSA	SERRANO Y PERON	BUENOS AIRES	PILAR	VILLA ROSA'
-];
-
-const contacts = <Contact>[
-  Contact('Andrew', 'stock@man.com',
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Contact('Paul', 'paul@google.com',
-      'https://media.istockphoto.com/photos/man-with-crossed-arms-isolated-on-gray-background-picture-id1171169099'),
-  Contact('Fred', 'fred@google.com',
-      'https://media.istockphoto.com/photos/confident-businessman-posing-in-the-office-picture-id891418990'),
-  Contact('Brian', 'brian@flutter.io',
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Contact('John', 'john@flutter.io',
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Contact('Thomas', 'thomas@flutter.io',
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Contact('Nelly', 'nelly@flutter.io',
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Contact('Marie', 'marie@flutter.io',
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Contact('Charlie', 'charlie@flutter.io',
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Contact('Diana', 'diana@flutter.io',
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Contact('Ernie', 'ernie@flutter.io',
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Contact('Gina', 'gina@flutter.io',
-      'https://media.istockphoto.com/photos/all-set-for-a-productive-night-ahead-picture-id637233964'),
 ];

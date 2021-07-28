@@ -25,7 +25,12 @@ class DashboardService {
   Future<String> sendFormToApi(String formdata) async {
     final url = '$_baseUrl/users/';
 
-    var response = await http.post(url, body: json.encode(formdata));
+    var response = await http.post(url,
+        /* headers: {
+          "content-type": "application/json",
+          "accept": "application/json",
+        },*/
+        body: formdata);
 
     var _source = Utf8Decoder().convert(response.bodyBytes);
 
