@@ -1,7 +1,7 @@
 {
   "@@locale": "es",
   "@@last_modified": "2020-09-23 11:46:02.754339",
-  "resolutionIncompatible": "El acceso a las estadisticas de Monitoreo no es compatible con dispotivos móviles o pantallas de baja resolución. Se recomienda la versión web en https://plan-enia.web.app",
+  "resolutionIncompatible": "El acceso a las estadisticas no es compatible con dispotivos móviles o pantallas de baja resolución. Se recomienda la versión web en https://siilve.web.app/#/",
   "@resolutionIncompatible": {
     "type": "text",
     "placeholders": {}

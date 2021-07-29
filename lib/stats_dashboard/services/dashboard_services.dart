@@ -22,7 +22,7 @@ class DashboardService {
     return null;
   }
 
-  Future<String> sendFormToApi(String formdata) async {
+  Future<String> sendSituacion(String formdata) async {
     final url = '$_baseUrl/users/';
 
     var response = await http.post(url,
@@ -31,6 +31,26 @@ class DashboardService {
           "accept": "application/json",
         },*/
         body: formdata);
+
+    var _source = Utf8Decoder().convert(response.bodyBytes);
+
+    if (response.statusCode == 200) {
+      chartFromApi = _source;
+      return chartFromApi;
+    }
+    return null;
+  }
+
+  Future<String> getSituaciones(String user) async {
+    final url = '$_baseUrl/users/?user=' + user;
+
+    var response = await http.get(
+      url,
+      /* headers: {
+          "content-type": "application/json",
+          "accept": "application/json",
+        },*/
+    );
 
     var _source = Utf8Decoder().convert(response.bodyBytes);
 

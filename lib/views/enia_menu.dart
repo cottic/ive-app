@@ -37,6 +37,34 @@ class _EniaMenuState extends State<EniaMenu> {
   String bullet = '\u2022';
   double semanasResolucionMin = 5.0;
 
+  var initialValues = {
+    'efector': 1,
+    'persona-consulta-fecha': DateTime.now(),
+    'persona-dni': '25385786',
+    'persona-nombre': 'jm',
+    'persona-apellido': 'hl',
+    'persona-nacimiento-fecha': DateTime(2001),
+    'persona-identidad-de-genero': 'varon-trans',
+    'persona-con-discapacidad': 'no-consignado',
+    'persona-obra-social': 'si',
+    'partos': 2,
+    'cesareas': 1,
+    'abortos': 2,
+    'consulta-situacion': 'ile',
+    'consulta-origen': 'otro',
+    'consulta-derivacion': 'no',
+    'semanas-gestacion': 14.6,
+    'consulta-causal': 'vida',
+    'tratamiento-tipo': 'quirurgico',
+    'tratamiento-comprimidos': 0,
+    'tratamiento-quirurgico': 'rue-o-legrado',
+    'semanas-resolucion': 14.6,
+    'complicaciones': 'complicaciones-anestesia',
+    'aipe': 'anticoncepcion-inyectable',
+    'observaciones': 'Prueba',
+    'user': 'juanma@matrix.codigoi.com.ar',
+  };
+
   bool showTratamiento = true;
   bool isCausalEnabled = true;
   final _formKey = GlobalKey<FormBuilderState>();
@@ -91,8 +119,8 @@ class _EniaMenuState extends State<EniaMenu> {
     }
   }
 
-  Future<void> sendFormToApi(formdata) async {
-    var barChartInfoJson = await DashboardService().sendFormToApi(formdata);
+  Future<void> sendSituacion(formdata) async {
+    var barChartInfoJson = await DashboardService().sendSituacion(formdata);
 
     return barChartInfoJson;
   }
@@ -138,7 +166,7 @@ class _EniaMenuState extends State<EniaMenu> {
             backgroundColor: Theme.of(context).primaryColor,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
-                'Formulario IVE/ILE',
+                'Situaciones IVE/ILE',
                 style: TextStyle(color: Theme.of(context).backgroundColor),
               ),
             ),
@@ -149,32 +177,7 @@ class _EniaMenuState extends State<EniaMenu> {
           children: <Widget>[
             FormBuilder(
               key: _formKey,
-              initialValue: {
-                'efector': 1,
-                'persona-consulta-fecha': DateTime.now(),
-                'persona-dni': '25385786',
-                'persona-nombre': 'jm',
-                'persona-apellido': 'hl',
-                'persona-nacimiento-fecha': DateTime(2001),
-                'persona-identidad-de-genero': 'varon-trans',
-                'persona-con-discapacidad': 'no-consignado',
-                'persona-obra-social': 'varon-trans',
-                'partos': 2,
-                'cesareas': 1,
-                'abortos': 2,
-                'consulta-situacion': 'ile',
-                'consulta-origen': 'otro',
-                'consulta-derivacion': 'no',
-                'semanas-gestacion': 14.6,
-                'consulta-causal': 'vida',
-                'tratamiento-tipo': 'quirurgico',
-                'tratamiento-comprimidos': 0,
-                'tratamiento-quirurgico': 'rue-o-legrado',
-                'semanas-resolucion': 14.6,
-                'complicaciones': 'complicaciones-anestesia',
-                'aipe': 'anticoncepcion-inyectable',
-                'observaciones': 'Prueba',
-              },
+              initialValue: initialValues,
               autovalidateMode: AutovalidateMode.always,
               child: Column(
                 children: <Widget>[
@@ -633,6 +636,7 @@ class _EniaMenuState extends State<EniaMenu> {
                   ),
                   Visibility(
                     visible: !showTratamiento,
+                    maintainState: true,
                     child: FormBuilderTypeAhead(
                       decoration: InputDecoration(
                         labelText: 'Efector al que fue derivado',
@@ -641,10 +645,16 @@ class _EniaMenuState extends State<EniaMenu> {
                       ),
                       name: 'derivacion-efector',
                       onChanged: (value) {},
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(context,
-                            errorText: '* Requerido')
-                      ]),
+                      validator: (val) {
+                        final selected = _formKey
+                            .currentState.fields['consulta-derivacion']?.value;
+                        if (selected == 'si') {
+                          if (val == null || val.isEmpty) {
+                            return '* Requerido';
+                          }
+                        }
+                        return null;
+                      },
                       itemBuilder: (context, country) {
                         return ListTile(
                           title: Text(country),
@@ -724,6 +734,7 @@ class _EniaMenuState extends State<EniaMenu> {
                   ),
                   Visibility(
                     visible: showTratamiento,
+                    maintainState: true,
                     child: ListTile(
                       title: Text(
                         'Datos del tratamiento',
@@ -739,6 +750,7 @@ class _EniaMenuState extends State<EniaMenu> {
                   ),
                   Visibility(
                     visible: showTratamiento,
+                    maintainState: true,
                     child: FormBuilderDateTimePicker(
                       name: 'tratamiento-fecha',
                       format: DateFormat('dd/MM/yyyy'),
@@ -769,6 +781,7 @@ class _EniaMenuState extends State<EniaMenu> {
                   ),
                   Visibility(
                     visible: showTratamiento,
+                    maintainState: true,
                     child: FormBuilderChoiceChip(
                       spacing: 20.0,
                       padding: EdgeInsets.symmetric(vertical: 2.0),
@@ -813,6 +826,7 @@ class _EniaMenuState extends State<EniaMenu> {
                   ),
                   Visibility(
                     visible: showTratamiento,
+                    maintainState: true,
                     child: FormBuilderTouchSpin(
                       decoration: InputDecoration(
                         labelText: 'Cantidad de comprimidos',
@@ -843,6 +857,7 @@ class _EniaMenuState extends State<EniaMenu> {
                   ),
                   Visibility(
                     visible: showTratamiento,
+                    maintainState: true,
                     child: FormBuilderChoiceChip(
                       spacing: 20.0,
                       padding: EdgeInsets.symmetric(vertical: 2.0),
@@ -903,6 +918,7 @@ class _EniaMenuState extends State<EniaMenu> {
                   ),
                   Visibility(
                     visible: showTratamiento,
+                    maintainState: true,
                     child: FormBuilderSlider(
                       name: 'semanas-resolucion',
                       validator: (val) {
@@ -947,6 +963,7 @@ class _EniaMenuState extends State<EniaMenu> {
                   ),
                   Visibility(
                     visible: showTratamiento,
+                    maintainState: true,
                     child: FormBuilderChoiceChip(
                       spacing: 20.0,
                       runSpacing: 5.0,
@@ -989,6 +1006,7 @@ class _EniaMenuState extends State<EniaMenu> {
                   ),
                   Visibility(
                     visible: showTratamiento,
+                    maintainState: true,
                     child: FormBuilderChoiceChip(
                       spacing: 20.0,
                       runSpacing: 5.0,
@@ -1040,10 +1058,37 @@ class _EniaMenuState extends State<EniaMenu> {
                   ),
                   Visibility(
                     visible: showTratamiento,
+                    maintainState: true,
                     child: FormBuilderTextField(
                       name: 'observaciones',
                       decoration: InputDecoration(
                         labelText: 'Observaciones',
+                        contentPadding:
+                            EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
+                      ),
+                      onChanged: (value) {},
+                    ),
+                  ),
+                  Visibility(
+                    visible: false,
+                    maintainState: true,
+                    child: FormBuilderTextField(
+                      name: 'user',
+                      decoration: InputDecoration(
+                        labelText: 'user',
+                        contentPadding:
+                            EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
+                      ),
+                      onChanged: (value) {},
+                    ),
+                  ),
+                  Visibility(
+                    visible: false,
+                    maintainState: true,
+                    child: FormBuilderTextField(
+                      name: 'id',
+                      decoration: InputDecoration(
+                        labelText: 'id',
                         contentPadding:
                             EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                       ),
@@ -1066,7 +1111,8 @@ class _EniaMenuState extends State<EniaMenu> {
                     onPressed: () {
                       _formKey.currentState.save();
                       if (_formKey.currentState.validate()) {
-                        sendFormToApi(json.encode(_formKey.currentState.value));
+                        sendSituacion(json.encode(_formKey.currentState.value));
+                        print(json.encode(_formKey.currentState.value));
                         _formKey.currentState.reset();
                         FocusScope.of(context).requestFocus(FocusNode());
                         // FocusScope.of(context).unfocus();
@@ -1085,8 +1131,7 @@ class _EniaMenuState extends State<EniaMenu> {
                           SnackBar(
                               duration: Duration(seconds: 6),
                               backgroundColor: Colors.redAccent,
-                              content: Text(
-                                  'Revisar el formulario. Esta incompleto')),
+                              content: Text('El formulario esta incompleto')),
                         );
                       }
                     },

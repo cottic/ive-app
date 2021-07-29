@@ -128,12 +128,13 @@ class ChatListItem extends StatelessWidget {
         color: chatListItemColor(context, activeChat, selected),
         child: ListTile(
           onLongPress: onLongPress,
-          leading: Avatar(room.avatar, room.displayname),
+          leading: Avatar(room.avatar, room.displayname), // LOGO
           title: Row(
             children: <Widget>[
               Expanded(
                 child: Text(
-                  room.getLocalizedDisplayname(MatrixLocals(L10n.of(context))),
+                  room.getLocalizedDisplayname(
+                      MatrixLocals(L10n.of(context))), // TITULO DEL ITEM
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,
@@ -160,7 +161,7 @@ class ChatListItem extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 4.0),
                 child: Text(
-                  room.timeCreated.localizedTimeShort(context),
+                  room.timeCreated.localizedTimeShort(context), // FEcha
                   style: TextStyle(
                     fontSize: 13,
                   ),
@@ -174,7 +175,7 @@ class ChatListItem extends StatelessWidget {
               Expanded(
                 child: room.membership == Membership.invite
                     ? Text(
-                        L10n.of(context).youAreInvitedToThisChat,
+                        L10n.of(context).youAreInvitedToThisChat, // SUBTITULO
                         style: TextStyle(
                           color: Theme.of(context).primaryColor,
                         ),
@@ -187,7 +188,7 @@ class ChatListItem extends StatelessWidget {
                                   room.lastEvent.senderId == room.client.userID,
                               hideReply: true,
                             ) ??
-                            '',
+                            '', // SUBTITULO
                         softWrap: false,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,

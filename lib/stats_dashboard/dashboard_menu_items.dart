@@ -13,13 +13,6 @@ import 'models/app_settings_model.dart';
 import 'widgets/dashboard_menu_item_widget.dart';
 import 'dashboard_02.dart';
 import 'dashboard_03.dart';
-import 'dashboard_04.dart';
-import 'dashboard_05.dart';
-import 'dashboard_06.dart';
-import 'dashboard_07.dart';
-import 'dashboard_08.dart';
-import 'dashboard_09.dart';
-import 'dashboard_10.dart';
 
 class DashboardMainMenu extends StatefulWidget {
   @override
