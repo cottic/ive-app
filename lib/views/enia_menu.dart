@@ -126,7 +126,44 @@ class _EniaMenuState extends State<EniaMenu> {
       if (mounted) setState(() => profile = p);
       return p;
     });
+    var Json = json.decode(
+        '[{"id":5,"efector":1,"persona-consulta-fecha":"2021-07-28","persona-dni":25385786,"persona-nombre":"GH","persona-apellido":"hl","persona-nacimiento-fecha":"2001-01-01","persona-identidad-de-genero":"varon-trans","persona-con-discapacidad":"no-consignado","persona-obra-social":"si","partos":2,"cesareas":1,"abortos":2,"consulta-situacion":"ile","semanas-gestacion":14.6,"consulta-causal":"vida","consulta-origen":"ong","consulta-derivacion":"si","derivacion-efector":0,"derivacion-motivo":"contraindicacion","tratamiento-fecha":"2021-07-28","tratamiento-tipo":"quirurgico","tratamiento-comprimidos":0,"tratamiento-quirurgico":"rue-o-legrado","semanas-resolucion":14.6,"complicaciones":"complicaciones-anestesia","aipe":"anticoncepcion-inyectable","observaciones":"Prueba","user":"@juanma:matrix.codigoi.com.ar"}]');
+    var situaciones = Json.map((i) => Situacion.fromJson(i)).toList();
 
+    // TODO derivacion efector listado sin ID y recoleccion desde modelo
+
+    var initialFromSituacion = {
+      'id': situaciones[0].id,
+      'efector': situaciones[0].efector,
+      'persona-consulta-fecha': situaciones[0].persona_consulta_fecha,
+      'persona-dni': situaciones[0].persona_dni.toString(),
+      'persona-nombre': situaciones[0].persona_nombre,
+      'persona-apellido': situaciones[0].persona_apellido,
+      'persona-nacimiento-fecha': situaciones[0].persona_nacimiento_fecha,
+      'persona-identidad-de-genero': situaciones[0].persona_identidad_de_genero,
+      'persona-con-discapacidad': situaciones[0].persona_con_discapacidad,
+      'persona-obra-social': situaciones[0].persona_obra_social,
+      'partos': situaciones[0].partos,
+      'cesareas': situaciones[0].cesareas,
+      'abortos': situaciones[0].abortos,
+      'consulta-situacion': situaciones[0].consulta_situacion,
+      'semanas-gestacion': situaciones[0].semanas_gestacion,
+      'consulta-causal': situaciones[0].consulta_causal,
+      'consulta-origen': situaciones[0].consulta_origen,
+      'consulta-derivacion': situaciones[0].consulta_derivacion,
+      'derivacion-efector': situaciones[0].derivacion_efector.toString(),
+      'derivacion-motivo': situaciones[0].derivacion_motivo,
+      'tratamiento-fecha': situaciones[0].tratamiento_fecha,
+      'tratamiento-tipo': situaciones[0].tratamiento_tipo,
+      'tratamiento-comprimidos': situaciones[0].tratamiento_comprimidos,
+      'tratamiento-quirurgico': situaciones[0].tratamiento_quirurgico,
+      'semanas-resolucion': situaciones[0].semanas_resolucion,
+      'complicaciones': situaciones[0].complicaciones,
+      'aipe': situaciones[0].aipe,
+      'observaciones': situaciones[0].observaciones,
+      'user': username,
+    };
+    // TODO
     var initialValuesJM = {
       'id': 1,
       'efector': efector,
@@ -190,6 +227,8 @@ class _EniaMenuState extends State<EniaMenu> {
       'observaciones': '',
       'user': username,
     };
+
+    initialValues = initialFromSituacion;
 
     crossSigningCachedFuture ??=
         client.encryption.crossSigning.isCached().then((c) {
@@ -701,9 +740,9 @@ class _EniaMenuState extends State<EniaMenu> {
                         }
                         return null;
                       },
-                      itemBuilder: (context, country) {
+                      itemBuilder: (context, efectores) {
                         return ListTile(
-                          title: Text(country),
+                          title: Text(efectores),
                         );
                       },
                       controller: TextEditingController(text: ''),
@@ -711,8 +750,8 @@ class _EniaMenuState extends State<EniaMenu> {
                       suggestionsCallback: (query) {
                         if (query.isNotEmpty) {
                           var lowercaseQuery = query.toLowerCase();
-                          return allEfectores.where((country) {
-                            return country
+                          return allEfectores.where((efectores) {
+                            return efectores
                                 .toLowerCase()
                                 .contains(lowercaseQuery);
                           }).toList(growable: true)

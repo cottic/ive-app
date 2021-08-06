@@ -41,7 +41,7 @@ class Matrix extends StatefulWidget {
   ];
 
   //ENIA VERSION
-  static const String versionENIA = 'Versión 0.8.6';
+  static const String versionENIA = 'Versión 0.8.7';
 
   final Widget child;
 
