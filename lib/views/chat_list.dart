@@ -8,21 +8,19 @@ import 'package:fluffychat/components/connection_status_header.dart';
 import 'package:fluffychat/components/dialogs/simple_dialogs.dart';
 // import 'package:fluffychat/components/list_items/status_list_item.dart';
 import 'package:fluffychat/components/list_items/public_room_list_item.dart';
-import 'package:fluffychat/components/list_items/enia_presence_list_item.dart';
-import 'package:fluffychat/components/list_items/private_room_list_item.dart';
 import 'package:fluffychat/stats_dashboard/dashboard_menu_screen.dart';
 import 'package:fluffychat/views/enia_menu.dart';
-import 'package:fluffychat/views/files_enia_menu.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/views/status_view.dart';
+// import 'package:fluffychat/views/status_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:fluffychat/stats_dashboard/services/dashboard_services.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
-import 'package:share/share.dart';
+// import 'package:share/share.dart';
 import 'dart:convert';
 
+import '../stats_dashboard/models/situacion_model.dart';
 import '../components/adaptive_page_layout.dart';
 import '../components/list_items/chat_list_item.dart';
 import '../components/matrix.dart';
@@ -30,10 +28,8 @@ import '../utils/app_route.dart';
 import '../utils/matrix_file_extension.dart';
 import '../utils/url_launcher.dart';
 import 'archive.dart';
-import 'formation_enia_menu.dart';
 import 'maps_enia_menu.dart';
 import 'homeserver_picker.dart';
-import 'new_private_chat.dart';
 import 'settings.dart';
 
 enum SelectMode { normal, share, select }
@@ -63,9 +59,6 @@ class ChatList extends StatefulWidget {
 }
 
 class _ChatListState extends State<ChatList> {
-  bool get searchMode => searchController.text?.isNotEmpty ?? false;
-  final TextEditingController searchController = TextEditingController();
-  final FocusNode _searchFocusNode = FocusNode();
   Timer coolDown;
   PublicRoomsResponse publicRoomsResponse;
   bool loadingPublicRooms = false;
@@ -93,18 +86,20 @@ class _ChatListState extends State<ChatList> {
 
   bool _scrolledToTop = true;
 
-  StreamController _postsController;
-
-  Future getSituaciones(user) async {
-    var barChartInfoJson = await DashboardService().getSituaciones(user);
-    return json.decode(barChartInfoJson);
-  }
-
-  loadSituaciones() async {
-    getSituaciones('juanma@matrix.codigoi.com.ar').then((res) async {
-      _postsController.add(res);
-      return res;
+  getSituaciones(user) async {
+    var situacionesInfoJson;
+    final result =
+        await DashboardService().getSituaciones(user).then((String result) {
+      setState(() {
+        situacionesInfoJson = result;
+      });
     });
+    ;
+    var parsedJson = json.decode(situacionesInfoJson);
+    print(situacionesInfoJson);
+    var situaciones = parsedJson.map((i) => Situacion.fromJson(i)).toList();
+    print(situaciones);
+    return situaciones;
   }
 
   @override
@@ -116,49 +111,8 @@ class _ChatListState extends State<ChatList> {
         setState(() => _scrolledToTop = true);
       }
     });
-    /* searchController.addListener(() {
-      coolDown?.cancel();
-      if (searchController.text.isEmpty) {
-        setState(() {
-          loadingPublicRooms = false;
-          publicRoomsResponse = null;
-        });
-        return;
-      }
-      coolDown = Timer(Duration(seconds: 1), () async {
-        setState(() => loadingPublicRooms = true);
-        final newPublicRoomsResponse =
-            await SimpleDialogs(context).tryRequestWithErrorToast(
-          Matrix.of(context).client.searchPublicRooms(
-                limit: 30,
-                includeAllNetworks: true,
-                genericSearchTerm: searchController.text,
-                server: searchServer,
-              ),
-        );
-        setState(() {
-          loadingPublicRooms = false;
-          if (newPublicRoomsResponse != false) {
-            publicRoomsResponse = newPublicRoomsResponse;
-            if (searchController.text.isNotEmpty &&
-                searchController.text.isValidMatrixId &&
-                searchController.text.sigil == '#') {
-              publicRoomsResponse.chunk.add(
-                PublicRoom.fromJson({
-                  'aliases': [searchController.text],
-                  'name': searchController.text,
-                  'room_id': searchController.text,
-                }),
-              );
-            }
-          }
-        });
-      });
-      setState(() => null);
-    }); */
+
     _initReceiveSharingIntent();
-    _postsController = new StreamController();
-    loadSituaciones();
     super.initState();
   }
 
@@ -235,56 +189,11 @@ class _ChatListState extends State<ChatList> {
     );
   }
 
-  void _setStatus(BuildContext context, {bool fromDrawer = false}) async {
-    if (fromDrawer) Navigator.of(context).pop();
-    final ownProfile = await SimpleDialogs(context)
-        .tryRequestWithLoadingDialog(Matrix.of(context).client.ownProfile);
-    String composeText;
-    if (Matrix.of(context).shareContent != null &&
-        Matrix.of(context).shareContent['msgtype'] == 'm.text') {
-      composeText = Matrix.of(context).shareContent['body'];
-      Matrix.of(context).shareContent = null;
-    }
-    if (ownProfile is Profile) {
-      await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => StatusView(
-            composeMode: true,
-            avatarUrl: ownProfile.avatarUrl,
-            displayname: ownProfile.displayname ??
-                Matrix.of(context).client.userID.localpart,
-            composeText: composeText,
-          ),
-        ),
-      );
-    }
-    return;
-  }
-
   @override
   void dispose() {
-    searchController.removeListener(
-      () => setState(() => null),
-    );
     _intentDataStreamSubscription?.cancel();
     _intentFileStreamSubscription?.cancel();
     super.dispose();
-  }
-
-  Future<void> _toggleFavouriteRoom(BuildContext context) {
-    final room = Matrix.of(context).client.getRoomById(_selectedRoomIds.single);
-    return SimpleDialogs(context).tryRequestWithLoadingDialog(
-      room.setFavourite(!room.isFavourite),
-    );
-  }
-
-  Future<void> _toggleMuted(BuildContext context) {
-    final room = Matrix.of(context).client.getRoomById(_selectedRoomIds.single);
-    return SimpleDialogs(context).tryRequestWithLoadingDialog(
-      room.setPushRuleState(room.pushRuleState == PushRuleState.notify
-          ? PushRuleState.mentions_only
-          : PushRuleState.notify),
-    );
   }
 
   Future<void> _archiveAction(BuildContext context) async {
@@ -328,6 +237,7 @@ class _ChatListState extends State<ChatList> {
                 if (selectMode == SelectMode.share) {
                   _selectedRoomIds.clear();
                 }
+                var situacionNew = Situacion();
                 return Scaffold(
                   drawer: selectMode != SelectMode.normal
                       ? null
@@ -344,7 +254,7 @@ class _ChatListState extends State<ChatList> {
                                   ),
                                   title: Text(L10n.of(context).projectName),
                                   onTap: () => _drawerTapAction(
-                                    EniaMenuView(),
+                                    EniaMenuView(situacionNew),
                                   ),
                                 ),
                                 Divider(height: 1),
@@ -386,10 +296,9 @@ class _ChatListState extends State<ChatList> {
                                   leading: Icon(Icons.share),
                                   title: Text(L10n.of(context).inviteContact),
                                   onTap: () {
-                                    Navigator.of(context).pop();
-                                    Share.share(L10n.of(context).inviteText(
-                                        Matrix.of(context).client.userID,
-                                        'https://matrix.to/#/${Matrix.of(context).client.userID}'));
+                                    _drawerTapAction(
+                                      EniaMenuView(situacionNew),
+                                    );
                                   },
                                 ),
                                 Divider(height: 1),
@@ -419,64 +328,24 @@ class _ChatListState extends State<ChatList> {
                               )
                             : null,
                     titleSpacing: 0,
-                    actions: selectMode == SelectMode.select
+                    actions: selectMode != SelectMode.select
                         ? null
                         : [
-                            /* if (_selectedRoomIds.length == 1)
-                              IconButton(
-                                icon: Icon(Icons.favorite_border_outlined),
-                                onPressed: () => _toggleFavouriteRoom(context),
-                              ),
-                            if (_selectedRoomIds.length == 1)
-                              IconButton(
-                                icon: Icon(Icons.notifications_none),
-                                onPressed: () => _toggleMuted(context),
-                              ), */
                             IconButton(
                               icon: Icon(Icons.archive),
                               onPressed: () => _archiveAction(context),
                             ),
                           ],
-
-                    /*
-                          
-                    title: selectMode == SelectMode.share
-                        ? Text(L10n.of(context).share)
-                        : selectMode == SelectMode.select
-                            ? Text(_selectedRoomIds.length.toString())
-                            : Container(
-                                height: 40,
-                                padding: EdgeInsets.only(right: 8),
-                                child: Material(
-                                  color: Theme.of(context).secondaryHeaderColor,
-                                  borderRadius: BorderRadius.circular(32),
-                                  child: TextField(
-                                    autocorrect: false,
-                                    controller: searchController,
-                                    focusNode: _searchFocusNode,
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.only(
-                                        top: 8,
-                                        bottom: 8,
-                                        left: 16,
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(32),
-                                      ),
-                                      hintText: L10n.of(context).searchForAChat,
-                                      suffixIcon: searchMode
-                                          ? IconButton(
-                                              icon: Icon(Icons.backspace),
-                                              onPressed: () => setState(() {
-                                                searchController.clear();
-                                                _searchFocusNode.unfocus();
-                                              }),
-                                            )
-                                          : null,
-                                    ),
-                                  ), 
-                                ), 
-                              ), */
+                    title: Container(
+                      height: 40,
+                      padding: EdgeInsets.only(left: 284),
+                      child: ListTile(
+                        leading: Icon(Icons.archive),
+                        onTap: () => _drawerTapAction(
+                          Archive(),
+                        ),
+                      ),
+                    ),
                   ),
                   floatingActionButton: (selectMode != SelectMode.normal)
                       ? null
@@ -489,7 +358,7 @@ class _ChatListState extends State<ChatList> {
                               onPressed: () => Navigator.of(context)
                                   .pushAndRemoveUntil(
                                       AppRoute.defaultRoute(
-                                          context, EniaMenuView()),
+                                          context, EniaMenuView(situacionNew)),
                                       (r) => r.isFirst),
                             ),
                           ],
@@ -499,7 +368,16 @@ class _ChatListState extends State<ChatList> {
                       ConnectionStatusHeader(),
                       Expanded(
                         child: StreamBuilder(
-                            stream: _postsController.stream,
+                            stream:
+                                Matrix.of(context).client.onSync.stream.where(
+                                      (s) =>
+                                          s.hasRoomUpdate ||
+                                          s.accountData
+                                              .where((a) =>
+                                                  a.type ==
+                                                  MatrixState.userStatusesType)
+                                              .isNotEmpty,
+                                    ),
                             builder: (context, snapshot) {
                               return FutureBuilder<void>(
                                 future: waitForFirstSync(context),
@@ -507,16 +385,15 @@ class _ChatListState extends State<ChatList> {
                                   if (snapshot.hasData) {
                                     var rooms = List<Room>.from(
                                         Matrix.of(context).client.rooms);
-                                    rooms.removeWhere((Room room) =>
-                                        room.lastEvent == null ||
-                                        (searchMode &&
-                                            !room.displayname
-                                                .toLowerCase()
-                                                .contains(searchController.text
-                                                        .toLowerCase() ??
-                                                    '')));
-
-                                    final totalCount = rooms.length;
+                                    final client = Matrix.of(context).client;
+                                    final username = client.userID;
+                                    //vvar situaciones = getSituaciones(username);
+                                    var Json = json.decode(
+                                        '[{"id":5,"efector":1,"persona-consulta-fecha":"2021-07-28","persona-dni":25385786,"persona-nombre":"jm","persona-apellido":"hl","persona-nacimiento-fecha":"2001-01-01","persona-identidad-de-genero":"varon-trans","persona-con-discapacidad":"no-consignado","persona-obra-social":"si","partos":2,"cesareas":1,"abortos":2,"consulta-situacion":"ile","semanas-gestacion":14.6,"consulta-causal":"vida","consulta-origen":"ong","consulta-derivacion":"si","derivacion-efector":0,"derivacion-motivo":"contraindicacion","tratamiento-fecha":"2021-07-28","tratamiento-tipo":"quirurgico","tratamiento-comprimidos":0,"tratamiento-quirurgico":"rue-o-legrado","semanas-resolucion":14.6,"complicaciones":"complicaciones-anestesia","aipe":"anticoncepcion-inyectable","observaciones":"Prueba","user":"@juanma:matrix.codigoi.com.ar"},{"id":6,"efector":1,"persona-consulta-fecha":"2021-07-29","persona-dni":25385786,"persona-nombre":"jm","persona-apellido":"hl","persona-nacimiento-fecha":"2001-01-01","persona-identidad-de-genero":"varon-trans","persona-con-discapacidad":"no-consignado","persona-obra-social":"si","partos":2,"cesareas":1,"abortos":2,"consulta-situacion":"ile","semanas-gestacion":14.6,"consulta-causal":"vida","consulta-origen":"otro","consulta-derivacion":"no","derivacion-efector":0,"derivacion-motivo":"","tratamiento-fecha":"2021-07-29","tratamiento-tipo":"quirurgico","tratamiento-comprimidos":0,"tratamiento-quirurgico":"rue-o-legrado","semanas-resolucion":14.6,"complicaciones":"complicaciones-anestesia","aipe":"anticoncepcion-inyectable","observaciones":"Prueba","user":"@juanma:matrix.codigoi.com.ar"},{"id":7,"efector":1,"persona-consulta-fecha":"2021-07-29","persona-dni":25385786,"persona-nombre":"jm","persona-apellido":"hl","persona-nacimiento-fecha":"2001-01-01","persona-identidad-de-genero":"varon-trans","persona-con-discapacidad":"no-consignado","persona-obra-social":"si","partos":2,"cesareas":1,"abortos":2,"consulta-situacion":"ive","semanas-gestacion":14.6,"consulta-causal":"vida","consulta-origen":"otro","consulta-derivacion":"no","derivacion-efector":0,"derivacion-motivo":"","tratamiento-fecha":"2021-07-29","tratamiento-tipo":"quirurgico","tratamiento-comprimidos":0,"tratamiento-quirurgico":"rue-o-legrado","semanas-resolucion":14.6,"complicaciones":"complicaciones-anestesia","aipe":"anticoncepcion-inyectable","observaciones":"Prueba","user":"@juanma:matrix.codigoi.com.ar"},{"id":8,"efector":1,"persona-consulta-fecha":"2021-07-29","persona-dni":25385786,"persona-nombre":"jm","persona-apellido":"hl","persona-nacimiento-fecha":"2001-01-01","persona-identidad-de-genero":"varon-trans","persona-con-discapacidad":"no-consignado","persona-obra-social":"si","partos":2,"cesareas":1,"abortos":2,"consulta-situacion":"ile","semanas-gestacion":14.6,"consulta-causal":"vida","consulta-origen":"otro","consulta-derivacion":"no","derivacion-efector":0,"derivacion-motivo":"","tratamiento-fecha":"2021-07-29","tratamiento-tipo":"quirurgico","tratamiento-comprimidos":0,"tratamiento-quirurgico":"rue-o-legrado","semanas-resolucion":14.6,"complicaciones":"complicaciones-anestesia","aipe":"anticoncepcion-inyectable","observaciones":"Prueba","user":"@juanma:matrix.codigoi.com.ar"},{"id":9,"efector":1,"persona-consulta-fecha":"2021-08-03","persona-dni":25385786,"persona-nombre":"jm","persona-apellido":"hl","persona-nacimiento-fecha":"2001-01-01","persona-identidad-de-genero":"varon-trans","persona-con-discapacidad":"no-consignado","persona-obra-social":"si","partos":2,"cesareas":1,"abortos":2,"consulta-situacion":"ile","semanas-gestacion":14.6,"consulta-causal":"vida","consulta-origen":"otro","consulta-derivacion":"no","derivacion-efector":0,"derivacion-motivo":"","tratamiento-fecha":"2021-08-03","tratamiento-tipo":"quirurgico","tratamiento-comprimidos":0,"tratamiento-quirurgico":"rue-o-legrado","semanas-resolucion":14.6,"complicaciones":"complicaciones-anestesia","aipe":"anticoncepcion-inyectable","observaciones":"Prueba","user":"@juanma:matrix.codigoi.com.ar"},{"id":10,"efector":1,"persona-consulta-fecha":"2021-08-04","persona-dni":25385786,"persona-nombre":"jm","persona-apellido":"hl","persona-nacimiento-fecha":"2001-01-01","persona-identidad-de-genero":"varon-trans","persona-con-discapacidad":"no-consignado","persona-obra-social":"si","partos":2,"cesareas":1,"abortos":2,"consulta-situacion":"ile","semanas-gestacion":14.6,"consulta-causal":"vida","consulta-origen":"otro","consulta-derivacion":"no","derivacion-efector":0,"derivacion-motivo":"","tratamiento-fecha":"2021-08-04","tratamiento-tipo":"quirurgico","tratamiento-comprimidos":0,"tratamiento-quirurgico":"rue-o-legrado","semanas-resolucion":14.6,"complicaciones":"complicaciones-anestesia","aipe":"anticoncepcion-inyectable","observaciones":"Prueba","user":"@juanma:matrix.codigoi.com.ar"},{"id":11,"efector":1,"persona-consulta-fecha":"2021-08-04","persona-dni":35464777,"persona-nombre":"jh","persona-apellido":"df","persona-nacimiento-fecha":"2001-01-01","persona-identidad-de-genero":"varon-trans","persona-con-discapacidad":"no","persona-obra-social":"no","partos":0,"cesareas":0,"abortos":0,"consulta-situacion":"ive","semanas-gestacion":14.6,"consulta-causal":"no-corresponde","consulta-origen":"recomendada","consulta-derivacion":"no","derivacion-efector":0,"derivacion-motivo":"no-corresponde","tratamiento-fecha":"2021-08-04","tratamiento-tipo":"quirurgico","tratamiento-comprimidos":0,"tratamiento-quirurgico":"rue-o-legrado","semanas-resolucion":14.6,"complicaciones":"aborto-incompleto","aipe":"anticoncepcion-inyectable","observaciones":"","user":"@juanma:matrix.codigoi.com.ar"}]');
+                                    var situaciones =
+                                        Json.map((i) => Situacion.fromJson(i))
+                                            .toList();
+                                    final totalCount = situaciones.length;
                                     return ListView.separated(
                                         controller: _scrollController,
                                         separatorBuilder: (BuildContext context,
@@ -552,21 +429,15 @@ class _ChatListState extends State<ChatList> {
                                             );
                                           }
                                           i--;
-                                          return i < rooms.length
+                                          return i < situaciones.length
                                               ? ChatListItem(
-                                                  rooms[i],
+                                                  situaciones[i],
                                                   selected: _selectedRoomIds
                                                       .contains(rooms[i].id),
-                                                  onTap: selectMode ==
-                                                          SelectMode.select
-                                                      ? () => _toggleSelection(
-                                                          rooms[i].id)
-                                                      : null,
-                                                  onLongPress: selectMode !=
-                                                          SelectMode.share
-                                                      ? () => _toggleSelection(
-                                                          rooms[i].id)
-                                                      : null,
+                                                  onTap: () => _drawerTapAction(
+                                                    EniaMenuView(
+                                                        situaciones[i]),
+                                                  ),
                                                   activeChat:
                                                       widget.activeChat ==
                                                           rooms[i].id,

@@ -1,3 +1,4 @@
+import 'package:fluffychat/stats_dashboard/models/situacion_model.dart';
 import 'package:flutter/material.dart';
 
 import 'chat_list.dart';
@@ -12,6 +13,10 @@ import 'package:intl/intl.dart';
 import 'dart:convert';
 
 class EniaMenuView extends StatelessWidget {
+  const EniaMenuView(this.situacion);
+
+  final Situacion situacion;
+
   @override
   Widget build(BuildContext context) {
     return AdaptivePageLayout(
@@ -36,34 +41,6 @@ class _EniaMenuState extends State<EniaMenu> {
   bool megolmBackupCached;
   String bullet = '\u2022';
   double semanasResolucionMin = 5.0;
-
-  var initialValues = {
-    'efector': 1,
-    'persona-consulta-fecha': DateTime.now(),
-    'persona-dni': '25385786',
-    'persona-nombre': 'jm',
-    'persona-apellido': 'hl',
-    'persona-nacimiento-fecha': DateTime(2001),
-    'persona-identidad-de-genero': 'varon-trans',
-    'persona-con-discapacidad': 'no-consignado',
-    'persona-obra-social': 'si',
-    'partos': 2,
-    'cesareas': 1,
-    'abortos': 2,
-    'consulta-situacion': 'ile',
-    'consulta-origen': 'otro',
-    'consulta-derivacion': 'no',
-    'semanas-gestacion': 14.6,
-    'consulta-causal': 'vida',
-    'tratamiento-tipo': 'quirurgico',
-    'tratamiento-comprimidos': 0,
-    'tratamiento-quirurgico': 'rue-o-legrado',
-    'semanas-resolucion': 14.6,
-    'complicaciones': 'complicaciones-anestesia',
-    'aipe': 'anticoncepcion-inyectable',
-    'observaciones': 'Prueba',
-    'user': 'juanma@matrix.codigoi.com.ar',
-  };
 
   bool showTratamiento = true;
   bool isCausalEnabled = true;
@@ -130,21 +107,90 @@ class _EniaMenuState extends State<EniaMenu> {
     final client = Matrix.of(context).client;
     final username = client.userID;
     var efectorName = '';
+    var efector = 1;
 
     if (username == '@maria.jose.mattioli:matrix.codigoi.com.ar') {
       efectorName = 'Hospital de Clínicas “José de San Martín”';
+      efector = 2;
     } else if (username == '@julieta.minasi:matrix.codigoi.com.ar' ||
         username == '@graciela.beatriz.rodriguez:matrix.codigoi.com.ar' ||
         username == '@maria.elida.del.pino:matrix.codigoi.com.ar' ||
         username == '@estefania.cioffi:matrix.codigoi.com.ar') {
       efectorName = 'Hospital Iriarte (Quilmes)”';
+      efector = 3;
     } else {
       efectorName = 'Hospital General de Agudos “Dr. Teodoro Álvarez”';
+      efector = 1;
     }
     profileFuture ??= client.ownProfile.then((p) {
       if (mounted) setState(() => profile = p);
       return p;
     });
+
+    var initialValuesJM = {
+      'id': 1,
+      'efector': efector,
+      'persona-consulta-fecha': DateTime.now(),
+      'persona-dni': '25385786',
+      'persona-nombre': 'jm',
+      'persona-apellido': 'hl',
+      'persona-nacimiento-fecha': DateTime(2001),
+      'persona-identidad-de-genero': 'varon-trans',
+      'persona-con-discapacidad': 'no-consignado',
+      'persona-obra-social': 'si',
+      'partos': 2,
+      'cesareas': 1,
+      'abortos': 2,
+      'consulta-situacion': 'ile',
+      'semanas-gestacion': 14.6,
+      'consulta-causal': 'vida',
+      'consulta-origen': 'otro',
+      'consulta-derivacion': 'no',
+      'derivacion-efector': '',
+      'derivacion-motivo': '',
+      'tratamiento-fecha': DateTime.now(),
+      'tratamiento-tipo': 'quirurgico',
+      'tratamiento-comprimidos': 0,
+      'tratamiento-quirurgico': 'rue-o-legrado',
+      'semanas-resolucion': 14.6,
+      'complicaciones': 'complicaciones-anestesia',
+      'aipe': 'anticoncepcion-inyectable',
+      'observaciones': 'Prueba',
+      'user': username,
+    };
+
+    var initialValues = {
+      'id': 1,
+      'efector': 1,
+      'persona-consulta-fecha': DateTime.now(),
+      'persona-dni': '',
+      'persona-nombre': '',
+      'persona-apellido': '',
+      'persona-nacimiento-fecha': DateTime(2001),
+      'persona-identidad-de-genero': '',
+      'persona-con-discapacidad': '',
+      'persona-obra-social': '',
+      'partos': 0,
+      'cesareas': 0,
+      'abortos': 0,
+      'consulta-situacion': '',
+      'semanas-gestacion': 14.6,
+      'consulta-causal': '',
+      'consulta-origen': '',
+      'consulta-derivacion': '',
+      'derivacion-efector': '',
+      'derivacion-motivo': '',
+      'tratamiento-fecha': DateTime.now(),
+      'tratamiento-tipo': '',
+      'tratamiento-comprimidos': 0,
+      'tratamiento-quirurgico': '',
+      'semanas-resolucion': 14.6,
+      'complicaciones': '',
+      'aipe': '',
+      'observaciones': '',
+      'user': username,
+    };
+
     crossSigningCachedFuture ??=
         client.encryption.crossSigning.isCached().then((c) {
       if (mounted) setState(() => crossSigningCached = c);
@@ -230,7 +276,7 @@ class _EniaMenuState extends State<EniaMenu> {
                       if (val == null) {
                         return '* Requerido';
                       } else {
-                        DateTime now = DateTime.now();
+                        var now = DateTime.now();
                         if (calculateDifference(val, now) > 0) {
                           return 'La fecha de consulta no puede ser definida en el futuro';
                         }
@@ -820,7 +866,7 @@ class _EniaMenuState extends State<EniaMenu> {
                       },
                       validator: FormBuilderValidators.compose([
                         FormBuilderValidators.required(context,
-                            errorText: "* Requerido")
+                            errorText: '* Requerido')
                       ]),
                     ),
                   ),
@@ -1085,7 +1131,7 @@ class _EniaMenuState extends State<EniaMenu> {
                   Visibility(
                     visible: false,
                     maintainState: true,
-                    child: FormBuilderTextField(
+                    child: FormBuilderTouchSpin(
                       name: 'id',
                       decoration: InputDecoration(
                         labelText: 'id',
@@ -1105,7 +1151,7 @@ class _EniaMenuState extends State<EniaMenu> {
                   child: MaterialButton(
                     color: Theme.of(context).accentColor,
                     child: Text(
-                      "Guardar",
+                      'Guardar',
                       style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () {
@@ -1125,8 +1171,6 @@ class _EniaMenuState extends State<EniaMenu> {
                                   Text('El registro se guardo correctamente')),
                         );
                       } else {
-                        print("La validación del formulario falló");
-
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                               duration: Duration(seconds: 6),

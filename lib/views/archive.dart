@@ -25,22 +25,6 @@ class _ArchiveState extends State<Archive> {
         appBar: AppBar(
           title: Text(L10n.of(context).archive),
         ),
-        body: FutureBuilder<List<Room>>(
-          future: getArchive(context),
-          builder: (BuildContext context, snapshot) {
-            if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
-            } else {
-              archive = snapshot.data;
-              return ListView.builder(
-                itemCount: archive.length,
-                itemBuilder: (BuildContext context, int i) => ChatListItem(
-                    archive[i],
-                    onForget: () => setState(() => archive.removeAt(i))),
-              );
-            }
-          },
-        ),
       ),
       secondScaffold: Scaffold(
         body: Center(

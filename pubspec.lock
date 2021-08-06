@@ -850,7 +850,7 @@ packages:
       name: pool
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.5.0-nullsafety.3"
+    version: "1.5.0-nullsafety.2"
   process:
     dependency: transitive
     description:
@@ -967,14 +967,14 @@ packages:
       name: source_map_stack_trace
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.0-nullsafety.4"
+    version: "2.1.0-nullsafety.3"
   source_maps:
     dependency: transitive
     description:
       name: source_maps
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.10.10-nullsafety.3"
+    version: "0.10.10-nullsafety.2"
   source_span:
     dependency: transitive
     description:
@@ -1058,7 +1058,7 @@ packages:
       name: test
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.16.0-nullsafety.13"
+    version: "1.16.0-nullsafety.17"
   test_api:
     dependency: transitive
     description:
@@ -1072,7 +1072,7 @@ packages:
       name: test_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.12-nullsafety.12"
+    version: "0.3.12-nullsafety.15"
   typed_data:
     dependency: transitive
     description:

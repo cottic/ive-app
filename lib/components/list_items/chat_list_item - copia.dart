@@ -37,26 +37,17 @@ class ChatListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var dniStr = situacion.persona_dni.toString();
-    var fechaStr = situacion.persona_consulta_fecha.toString();
-    var semanasStr = situacion.semanas_gestacion.toString();
-
     return Center(
       child: Material(
         color: chatListItemColor(context, activeChat, selected),
         child: ListTile(
           onLongPress: onLongPress,
-          leading: Avatar(Uri.parse(''),
-              situacion.consulta_situacion.toUpperCase()), // LOGO
+          leading: Avatar(Uri.parse(''), 'IVE'), // LOGO
           title: Row(
             children: <Widget>[
               Expanded(
                 child: Text(
-                  situacion.persona_apellido.toUpperCase() +
-                      ' ' +
-                      situacion.persona_nombre.toUpperCase() +
-                      ' ' +
-                      dniStr, // TITULO DEL ITEM
+                  'Name', // TITULO DEL ITEM
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   softWrap: false,
@@ -83,7 +74,7 @@ class ChatListItem extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(left: 4.0),
                 child: Text(
-                  fechaStr.substring(0, 10), // FEcha
+                  '30/8', // FEcha
                   style: TextStyle(
                     fontSize: 13,
                   ),
@@ -96,14 +87,13 @@ class ChatListItem extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: Text(
-                  'semanas de gestación: ' +
-                      semanasStr +
-                      ' - ' +
-                      'causal: ' +
-                      situacion.consulta_causal, // SUBTITULO
+                  'subtitulo', // SUBTITULO
                   softWrap: false,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    decoration: TextDecoration.lineThrough,
+                  ),
                 ),
               ),
               SizedBox(width: 8),

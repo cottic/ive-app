@@ -32,8 +32,8 @@ class Avatar extends StatelessWidget {
     );
     final src = thumbnail;
     var fallbackLetters = '@';
-    if ((name?.length ?? 0) >= 2) {
-      fallbackLetters = name.substring(0, 2);
+    if ((name?.length ?? 0) >= 3) {
+      fallbackLetters = name.substring(0, 3);
     } else if ((name?.length ?? 0) == 1) {
       fallbackLetters = name;
     }
@@ -42,14 +42,7 @@ class Avatar extends StatelessWidget {
       onTap: onTap,
       child: CircleAvatar(
         radius: size / 2,
-        backgroundImage: !noPic
-            ? PlatformInfos.isBetaDesktop
-                ? NetworkImage(src)
-                : CachedNetworkImageProvider(src)
-            : null,
-        backgroundColor: noPic
-            ? name?.lightColor ?? Theme.of(context).secondaryHeaderColor
-            : Theme.of(context).secondaryHeaderColor,
+        backgroundColor: Theme.of(context).primaryColor,
         child: noPic
             ? Text(fallbackLetters, style: TextStyle(color: Colors.white))
             : null,
