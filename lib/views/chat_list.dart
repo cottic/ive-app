@@ -16,6 +16,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:fluffychat/stats_dashboard/services/dashboard_services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 // import 'package:share/share.dart';
 import 'dart:convert';
@@ -86,20 +87,16 @@ class _ChatListState extends State<ChatList> {
 
   bool _scrolledToTop = true;
 
-  getSituaciones(user) async {
-    var situacionesInfoJson;
-    final result =
-        await DashboardService().getSituaciones(user).then((String result) {
-      setState(() {
-        situacionesInfoJson = result;
-      });
-    });
-    ;
+  Future _getSituaciones(user) async {
+    var situacionesInfoJson = await DashboardService().getSituaciones(user);
+
     var parsedJson = json.decode(situacionesInfoJson);
-    print(situacionesInfoJson);
     var situaciones = parsedJson.map((i) => Situacion.fromJson(i)).toList();
-    print(situaciones);
-    return situaciones;
+
+    if (situaciones.isNotEmpty) {
+      return situaciones;
+    }
+    return null;
   }
 
   @override
@@ -387,65 +384,79 @@ class _ChatListState extends State<ChatList> {
                                         Matrix.of(context).client.rooms);
                                     final client = Matrix.of(context).client;
                                     final username = client.userID;
-                                    //vvar situaciones = getSituaciones(username);
-                                    var Json = json.decode(
-                                        '[{"id":5,"efector":1,"persona-consulta-fecha":"2021-07-28","persona-dni":25385786,"persona-nombre":"jm","persona-apellido":"hl","persona-nacimiento-fecha":"2001-01-01","persona-identidad-de-genero":"varon-trans","persona-con-discapacidad":"no-consignado","persona-obra-social":"si","partos":2,"cesareas":1,"abortos":2,"consulta-situacion":"ile","semanas-gestacion":14.6,"consulta-causal":"vida","consulta-origen":"ong","consulta-derivacion":"si","derivacion-efector":0,"derivacion-motivo":"contraindicacion","tratamiento-fecha":"2021-07-28","tratamiento-tipo":"quirurgico","tratamiento-comprimidos":0,"tratamiento-quirurgico":"rue-o-legrado","semanas-resolucion":14.6,"complicaciones":"complicaciones-anestesia","aipe":"anticoncepcion-inyectable","observaciones":"Prueba","user":"@juanma:matrix.codigoi.com.ar"},{"id":6,"efector":1,"persona-consulta-fecha":"2021-07-29","persona-dni":25385786,"persona-nombre":"jm","persona-apellido":"hl","persona-nacimiento-fecha":"2001-01-01","persona-identidad-de-genero":"varon-trans","persona-con-discapacidad":"no-consignado","persona-obra-social":"si","partos":2,"cesareas":1,"abortos":2,"consulta-situacion":"ile","semanas-gestacion":14.6,"consulta-causal":"vida","consulta-origen":"otro","consulta-derivacion":"no","derivacion-efector":0,"derivacion-motivo":"","tratamiento-fecha":"2021-07-29","tratamiento-tipo":"quirurgico","tratamiento-comprimidos":0,"tratamiento-quirurgico":"rue-o-legrado","semanas-resolucion":14.6,"complicaciones":"complicaciones-anestesia","aipe":"anticoncepcion-inyectable","observaciones":"Prueba","user":"@juanma:matrix.codigoi.com.ar"},{"id":7,"efector":1,"persona-consulta-fecha":"2021-07-29","persona-dni":25385786,"persona-nombre":"jm","persona-apellido":"hl","persona-nacimiento-fecha":"2001-01-01","persona-identidad-de-genero":"varon-trans","persona-con-discapacidad":"no-consignado","persona-obra-social":"si","partos":2,"cesareas":1,"abortos":2,"consulta-situacion":"ive","semanas-gestacion":14.6,"consulta-causal":"vida","consulta-origen":"otro","consulta-derivacion":"no","derivacion-efector":0,"derivacion-motivo":"","tratamiento-fecha":"2021-07-29","tratamiento-tipo":"quirurgico","tratamiento-comprimidos":0,"tratamiento-quirurgico":"rue-o-legrado","semanas-resolucion":14.6,"complicaciones":"complicaciones-anestesia","aipe":"anticoncepcion-inyectable","observaciones":"Prueba","user":"@juanma:matrix.codigoi.com.ar"},{"id":8,"efector":1,"persona-consulta-fecha":"2021-07-29","persona-dni":25385786,"persona-nombre":"jm","persona-apellido":"hl","persona-nacimiento-fecha":"2001-01-01","persona-identidad-de-genero":"varon-trans","persona-con-discapacidad":"no-consignado","persona-obra-social":"si","partos":2,"cesareas":1,"abortos":2,"consulta-situacion":"ile","semanas-gestacion":14.6,"consulta-causal":"vida","consulta-origen":"otro","consulta-derivacion":"no","derivacion-efector":0,"derivacion-motivo":"","tratamiento-fecha":"2021-07-29","tratamiento-tipo":"quirurgico","tratamiento-comprimidos":0,"tratamiento-quirurgico":"rue-o-legrado","semanas-resolucion":14.6,"complicaciones":"complicaciones-anestesia","aipe":"anticoncepcion-inyectable","observaciones":"Prueba","user":"@juanma:matrix.codigoi.com.ar"},{"id":9,"efector":1,"persona-consulta-fecha":"2021-08-03","persona-dni":25385786,"persona-nombre":"jm","persona-apellido":"hl","persona-nacimiento-fecha":"2001-01-01","persona-identidad-de-genero":"varon-trans","persona-con-discapacidad":"no-consignado","persona-obra-social":"si","partos":2,"cesareas":1,"abortos":2,"consulta-situacion":"ile","semanas-gestacion":14.6,"consulta-causal":"vida","consulta-origen":"otro","consulta-derivacion":"no","derivacion-efector":0,"derivacion-motivo":"","tratamiento-fecha":"2021-08-03","tratamiento-tipo":"quirurgico","tratamiento-comprimidos":0,"tratamiento-quirurgico":"rue-o-legrado","semanas-resolucion":14.6,"complicaciones":"complicaciones-anestesia","aipe":"anticoncepcion-inyectable","observaciones":"Prueba","user":"@juanma:matrix.codigoi.com.ar"},{"id":10,"efector":1,"persona-consulta-fecha":"2021-08-04","persona-dni":25385786,"persona-nombre":"jm","persona-apellido":"hl","persona-nacimiento-fecha":"2001-01-01","persona-identidad-de-genero":"varon-trans","persona-con-discapacidad":"no-consignado","persona-obra-social":"si","partos":2,"cesareas":1,"abortos":2,"consulta-situacion":"ile","semanas-gestacion":14.6,"consulta-causal":"vida","consulta-origen":"otro","consulta-derivacion":"no","derivacion-efector":0,"derivacion-motivo":"","tratamiento-fecha":"2021-08-04","tratamiento-tipo":"quirurgico","tratamiento-comprimidos":0,"tratamiento-quirurgico":"rue-o-legrado","semanas-resolucion":14.6,"complicaciones":"complicaciones-anestesia","aipe":"anticoncepcion-inyectable","observaciones":"Prueba","user":"@juanma:matrix.codigoi.com.ar"},{"id":11,"efector":1,"persona-consulta-fecha":"2021-08-04","persona-dni":35464777,"persona-nombre":"jh","persona-apellido":"df","persona-nacimiento-fecha":"2001-01-01","persona-identidad-de-genero":"varon-trans","persona-con-discapacidad":"no","persona-obra-social":"no","partos":0,"cesareas":0,"abortos":0,"consulta-situacion":"ive","semanas-gestacion":14.6,"consulta-causal":"no-corresponde","consulta-origen":"recomendada","consulta-derivacion":"no","derivacion-efector":0,"derivacion-motivo":"no-corresponde","tratamiento-fecha":"2021-08-04","tratamiento-tipo":"quirurgico","tratamiento-comprimidos":0,"tratamiento-quirurgico":"rue-o-legrado","semanas-resolucion":14.6,"complicaciones":"aborto-incompleto","aipe":"anticoncepcion-inyectable","observaciones":"","user":"@juanma:matrix.codigoi.com.ar"}]');
-                                    var situaciones =
-                                        Json.map((i) => Situacion.fromJson(i))
-                                            .toList();
-                                    final totalCount = situaciones.length;
-                                    return ListView.separated(
-                                        controller: _scrollController,
-                                        separatorBuilder: (BuildContext context,
-                                                int i) =>
-                                            i == totalCount
-                                                ? ListTile(
-                                                    title: Text(
-                                                      L10n.of(context)
-                                                              .publicRooms +
-                                                          ':',
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Theme.of(context)
-                                                            .primaryColor,
-                                                      ),
+
+                                    return FutureBuilder(
+                                      future: _getSituaciones(username),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot snapshot) {
+                                        if (snapshot.hasData) {
+                                          List<Situacion> situaciones = snapshot.data;
+                                          final totalCount = situaciones.length;
+                                          return ListView.separated(
+                                            controller: _scrollController,
+                                            itemCount: totalCount,
+                                            separatorBuilder:
+                                                (BuildContext context, int i) =>
+                                                    i == totalCount
+                                                        ? ListTile(
+                                                            title: Text(
+                                                              L10n.of(context)
+                                                                      .publicRooms +
+                                                                  ':',
+                                                              style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Theme.of(
+                                                                        context)
+                                                                    .primaryColor,
+                                                              ),
+                                                            ),
+                                                          )
+                                                        : Container(),
+                                            itemBuilder:
+                                                (BuildContext context, int i) {
+                                              if (i == 0) {
+                                                return Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    AnimatedContainer(
+                                                      duration: Duration(
+                                                          milliseconds: 300),
+                                                      height: 1,
                                                     ),
-                                                  )
-                                                : Container(),
-                                        itemCount: totalCount,
-                                        itemBuilder:
-                                            (BuildContext context, int i) {
-                                          if (i == 0) {
-                                            return Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                AnimatedContainer(
-                                                  duration: Duration(
-                                                      milliseconds: 300),
-                                                  height: 1,
-                                                ),
-                                              ],
-                                            );
-                                          }
-                                          i--;
-                                          return i < situaciones.length
-                                              ? ChatListItem(
-                                                  situaciones[i],
-                                                  selected: _selectedRoomIds
-                                                      .contains(rooms[i].id),
-                                                  onTap: () => _drawerTapAction(
-                                                    EniaMenuView(
-                                                        situaciones[i]),
-                                                  ),
-                                                  activeChat:
-                                                      widget.activeChat ==
-                                                          rooms[i].id,
-                                                )
-                                              : PublicRoomListItem(
-                                                  publicRoomsResponse
-                                                      .chunk[i - rooms.length]);
-                                        });
+                                                  ],
+                                                );
+                                              }
+                                              i--;
+                                              return i < situaciones.length
+                                                  ? ChatListItem(
+                                                      situaciones[i],
+                                                      selected: _selectedRoomIds
+                                                          .contains(
+                                                              rooms[i].id),
+                                                      onTap: () =>
+                                                          _drawerTapAction(
+                                                        EniaMenuView(
+                                                            situaciones[i]),
+                                                      ),
+                                                      activeChat:
+                                                          widget.activeChat ==
+                                                              rooms[i].id,
+                                                    )
+                                                  : PublicRoomListItem(
+                                                      publicRoomsResponse.chunk[
+                                                          i - rooms.length]);
+                                            },
+                                          );
+                                        }
+
+                                        return Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                      },
+                                    );
                                   } else {
                                     return Center(
                                       child: CircularProgressIndicator(),

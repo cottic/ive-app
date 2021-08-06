@@ -52,11 +52,8 @@ class DashboardService {
         },*/
     );
 
-    var _source = Utf8Decoder().convert(response.bodyBytes);
-
     if (response.statusCode == 200) {
-      chartFromApi = _source;
-      return chartFromApi;
+      return Utf8Decoder().convert(response.bodyBytes);
     }
     return null;
   }
