@@ -22,12 +22,15 @@ class EniaMenuView extends StatelessWidget {
     return AdaptivePageLayout(
       primaryPage: FocusPage.SECOND,
       firstScaffold: ChatList(),
-      secondScaffold: EniaMenu(),
+      secondScaffold: EniaMenu(situacion),
     );
   }
 }
 
 class EniaMenu extends StatefulWidget {
+  const EniaMenu(this.situacion);
+
+  final Situacion situacion;
   @override
   _EniaMenuState createState() => _EniaMenuState();
 }
@@ -106,6 +109,7 @@ class _EniaMenuState extends State<EniaMenu> {
   Widget build(BuildContext context) {
     final client = Matrix.of(context).client;
     final username = client.userID;
+    final situacion = widget.situacion;
     var efectorName = '';
     var efector = 1;
 
@@ -126,13 +130,44 @@ class _EniaMenuState extends State<EniaMenu> {
       if (mounted) setState(() => profile = p);
       return p;
     });
-    var Json = json.decode(
-        '[{"id":5,"efector":1,"persona-consulta-fecha":"2021-07-28","persona-dni":25385786,"persona-nombre":"GH","persona-apellido":"hl","persona-nacimiento-fecha":"2001-01-01","persona-identidad-de-genero":"varon-trans","persona-con-discapacidad":"no-consignado","persona-obra-social":"si","partos":2,"cesareas":1,"abortos":2,"consulta-situacion":"ile","semanas-gestacion":14.6,"consulta-causal":"vida","consulta-origen":"ong","consulta-derivacion":"si","derivacion-efector":0,"derivacion-motivo":"contraindicacion","tratamiento-fecha":"2021-07-28","tratamiento-tipo":"quirurgico","tratamiento-comprimidos":0,"tratamiento-quirurgico":"rue-o-legrado","semanas-resolucion":14.6,"complicaciones":"complicaciones-anestesia","aipe":"anticoncepcion-inyectable","observaciones":"Prueba","user":"@juanma:matrix.codigoi.com.ar"}]');
-    var situaciones = Json.map((i) => Situacion.fromJson(i)).toList();
+    // var Json = json.decode(  '[{"id":5,"efector":1,"persona-consulta-fecha":"2021-07-28","persona-dni":2538578699,"persona-nombre":"GH","persona-apellido":"hl","persona-nacimiento-fecha":"2001-01-01","persona-identidad-de-genero":"varon-trans","persona-con-discapacidad":"no-consignado","persona-obra-social":"si","partos":2,"cesareas":1,"abortos":2,"consulta-situacion":"ile","semanas-gestacion":14.6,"consulta-causal":"vida","consulta-origen":"ong","consulta-derivacion":"si","derivacion-efector":0,"derivacion-motivo":"contraindicacion","tratamiento-fecha":"2021-07-28","tratamiento-tipo":"quirurgico","tratamiento-comprimidos":0,"tratamiento-quirurgico":"rue-o-legrado","semanas-resolucion":14.6,"complicaciones":"complicaciones-anestesia","aipe":"anticoncepcion-inyectable","observaciones":"Prueba","user":"@juanma:matrix.codigoi.com.ar"}]');
+    // var situaciones = Json.map((i) => Situacion.fromJson(i)).toList();
 
     // TODO derivacion efector listado sin ID y recoleccion desde modelo
 
-    var initialFromSituacion = {
+    var situacionData = {
+      'id': situacion.id,
+      'efector': situacion.efector,
+      'persona-consulta-fecha': situacion.persona_consulta_fecha,
+      'persona-dni': situacion.persona_dni.toString(),
+      'persona-nombre': situacion.persona_nombre,
+      'persona-apellido': situacion.persona_apellido,
+      'persona-nacimiento-fecha': situacion.persona_nacimiento_fecha,
+      'persona-identidad-de-genero': situacion.persona_identidad_de_genero,
+      'persona-con-discapacidad': situacion.persona_con_discapacidad,
+      'persona-obra-social': situacion.persona_obra_social,
+      'partos': situacion.partos,
+      'cesareas': situacion.cesareas,
+      'abortos': situacion.abortos,
+      'consulta-situacion': situacion.consulta_situacion,
+      'semanas-gestacion': situacion.semanas_gestacion,
+      'consulta-causal': situacion.consulta_causal,
+      'consulta-origen': situacion.consulta_origen,
+      'consulta-derivacion': situacion.consulta_derivacion,
+      'derivacion-efector': situacion.derivacion_efector.toString(),
+      'derivacion-motivo': situacion.derivacion_motivo,
+      'tratamiento-fecha': situacion.tratamiento_fecha,
+      'tratamiento-tipo': situacion.tratamiento_tipo,
+      'tratamiento-comprimidos': situacion.tratamiento_comprimidos,
+      'tratamiento-quirurgico': situacion.tratamiento_quirurgico,
+      'semanas-resolucion': situacion.semanas_resolucion,
+      'complicaciones': situacion.complicaciones,
+      'aipe': situacion.aipe,
+      'observaciones': situacion.observaciones,
+      'user': username,
+    };
+
+    /* var initialFromSituacion = {
       'id': situaciones[0].id,
       'efector': situaciones[0].efector,
       'persona-consulta-fecha': situaciones[0].persona_consulta_fecha,
@@ -162,39 +197,39 @@ class _EniaMenuState extends State<EniaMenu> {
       'aipe': situaciones[0].aipe,
       'observaciones': situaciones[0].observaciones,
       'user': username,
-    };
-    // TODO
-    var initialValuesJM = {
-      'id': 1,
-      'efector': efector,
-      'persona-consulta-fecha': DateTime.now(),
-      'persona-dni': '25385786',
-      'persona-nombre': 'jm',
-      'persona-apellido': 'hl',
-      'persona-nacimiento-fecha': DateTime(2001),
-      'persona-identidad-de-genero': 'varon-trans',
-      'persona-con-discapacidad': 'no-consignado',
-      'persona-obra-social': 'si',
-      'partos': 2,
-      'cesareas': 1,
-      'abortos': 2,
-      'consulta-situacion': 'ile',
-      'semanas-gestacion': 14.6,
-      'consulta-causal': 'vida',
-      'consulta-origen': 'otro',
-      'consulta-derivacion': 'no',
-      'derivacion-efector': '',
-      'derivacion-motivo': '',
-      'tratamiento-fecha': DateTime.now(),
-      'tratamiento-tipo': 'quirurgico',
-      'tratamiento-comprimidos': 0,
-      'tratamiento-quirurgico': 'rue-o-legrado',
-      'semanas-resolucion': 14.6,
-      'complicaciones': 'complicaciones-anestesia',
-      'aipe': 'anticoncepcion-inyectable',
-      'observaciones': 'Prueba',
-      'user': username,
-    };
+    }; */
+
+    var initialValuesSituacionEjemplo = Situacion(
+      id: 1,
+      efector: 1,
+      persona_dni: 0,
+      persona_consulta_fecha: DateTime.now(),
+      persona_nombre: '',
+      persona_apellido: '',
+      persona_nacimiento_fecha: DateTime(2001),
+      persona_identidad_de_genero: '',
+      persona_con_discapacidad: '',
+      persona_obra_social: '',
+      partos: 0,
+      cesareas: 0,
+      abortos: 0,
+      consulta_situacion: '',
+      semanas_gestacion: 14.6,
+      consulta_causal: '',
+      consulta_origen: '',
+      consulta_derivacion: '',
+      derivacion_efector: 0,
+      derivacion_motivo: '',
+      tratamiento_fecha: DateTime.now(),
+      tratamiento_tipo: '',
+      tratamiento_comprimidos: 0,
+      tratamiento_quirurgico: '',
+      semanas_resolucion: 14.6,
+      complicaciones: '',
+      aipe: '',
+      observaciones: '',
+      user: username,
+    );
 
     var initialValues = {
       'id': 1,
@@ -228,7 +263,10 @@ class _EniaMenuState extends State<EniaMenu> {
       'user': username,
     };
 
-    initialValues = initialFromSituacion;
+    // Con esto verficia si es un formulario nuevo o si esta levantando uno
+    if (situacionData['id'] != null) {
+      initialValues = situacionData;
+    }
 
     crossSigningCachedFuture ??=
         client.encryption.crossSigning.isCached().then((c) {
@@ -266,6 +304,9 @@ class _EniaMenuState extends State<EniaMenu> {
               autovalidateMode: AutovalidateMode.always,
               child: Column(
                 children: <Widget>[
+                  Text(situacion.id.toString()),
+                  // Text(situacion.efector.toString()),
+                  // Text(situacion.persona_dni.toString()),
                   FormBuilderDropdown(
                     name: 'efector',
                     decoration: InputDecoration(
@@ -333,16 +374,18 @@ class _EniaMenuState extends State<EniaMenu> {
                       contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     onChanged: (value) {},
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.numeric(context,
-                          errorText: 'Solo se permiten números'),
-                      FormBuilderValidators.minLength(context, 8,
-                          allowEmpty: true,
-                          errorText: 'No es un formato de DNI válido'),
-                      FormBuilderValidators.maxLength(context, 8,
-                          errorText:
-                              'Los DNI solo pueden tener hasta 8 digitos'),
-                    ]),
+                    validator: FormBuilderValidators.compose(
+                      [
+                        FormBuilderValidators.numeric(context,
+                            errorText: 'Solo se permiten números'),
+                        FormBuilderValidators.minLength(context, 8,
+                            allowEmpty: true,
+                            errorText: 'No es un formato de DNI válido'),
+                        FormBuilderValidators.maxLength(context, 8,
+                            errorText:
+                                'Los DNI solo pueden tener hasta 8 digitos'),
+                      ],
+                    ),
                     keyboardType: TextInputType.number,
                   ),
                   FormBuilderTextField(
@@ -419,7 +462,7 @@ class _EniaMenuState extends State<EniaMenu> {
                       FormBuilderFieldOption(
                           value: 'mujer', child: Text('Mujer')),
                       FormBuilderFieldOption(
-                          value: 'varon-trans', child: Text('Varón trans')),
+                          value: 'trans', child: Text('Transgenero')),
                       FormBuilderFieldOption(
                           value: 'otra',
                           child: Text('Otra identidad de género no binaria')),
@@ -1197,9 +1240,10 @@ class _EniaMenuState extends State<EniaMenu> {
                       _formKey.currentState.save();
                       if (_formKey.currentState.validate()) {
                         sendSituacion(json.encode(_formKey.currentState.value));
+
                         print(json.encode(_formKey.currentState.value));
-                        _formKey.currentState.reset();
-                        FocusScope.of(context).requestFocus(FocusNode());
+                        // _formKey.currentState.reset();
+                        // FocusScope.of(context).requestFocus(FocusNode());
                         // FocusScope.of(context).unfocus();
 
                         ScaffoldMessenger.of(context).showSnackBar(

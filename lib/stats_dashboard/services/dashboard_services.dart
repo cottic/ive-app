@@ -25,17 +25,23 @@ class DashboardService {
   Future<String> sendSituacion(String formdata) async {
     final url = '$_baseUrl/users/';
 
-    var response = await http.post(url,
-        /* headers: {
+    print('situacion a eniar');
+
+    var response = await http.post(
+      url,
+      /* headers: {
           "content-type": "application/json",
           "accept": "application/json",
         },*/
-        body: formdata);
-
-    var _source = Utf8Decoder().convert(response.bodyBytes);
+      body: formdata,
+    );
 
     if (response.statusCode == 200) {
-      chartFromApi = _source;
+      var _source = Utf8Decoder().convert(response.bodyBytes);
+      print('ENVIO SITUACION, respuesta:');
+      print(_source);
+
+      // chartFromApi = _source;
       return chartFromApi;
     }
     return null;
