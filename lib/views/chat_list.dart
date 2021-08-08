@@ -390,7 +390,7 @@ class _ChatListState extends State<ChatList> {
                                       builder: (BuildContext context,
                                           AsyncSnapshot snapshot) {
                                         if (snapshot.hasData) {
-                                          List<Situacion> situaciones = snapshot.data;
+                                          List situaciones = snapshot.data;
                                           final totalCount = situaciones.length;
                                           return ListView.separated(
                                             controller: _scrollController,
