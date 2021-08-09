@@ -24,7 +24,7 @@ import 'dart:convert';
 
 import '../stats_dashboard/models/situacion_model.dart';
 import '../components/adaptive_page_layout.dart';
-import '../components/list_items/chat_list_item.dart';
+// import '../components/list_items/chat_list_item.dart';
 import '../components/matrix.dart';
 import '../utils/app_route.dart';
 import '../utils/matrix_file_extension.dart';
@@ -410,7 +410,6 @@ class _SituacionesListState extends State<SituacionesList> {
                                       // print('situaciones[i].id');
                                       // print(situaciones[i].id);
 
-
                                       if (i == 0) {
                                         return Column(
                                           mainAxisSize: MainAxisSize.min,
@@ -432,7 +431,6 @@ class _SituacionesListState extends State<SituacionesList> {
                                                   SituacionFormView(
                                                     situacion: situaciones[i],
                                                     roomId: rooms[i].id,
-
                                                   ),
                                                 );
                                               },

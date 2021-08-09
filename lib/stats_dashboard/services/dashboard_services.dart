@@ -38,8 +38,8 @@ class DashboardService {
 
     if (response.statusCode == 200) {
       var _source = Utf8Decoder().convert(response.bodyBytes);
-      print('ENVIO SITUACION, respuesta:');
-      print(_source);
+      // print('ENVIO SITUACION, respuesta:');
+      // print(_source);
 
       // chartFromApi = _source;
       return chartFromApi;

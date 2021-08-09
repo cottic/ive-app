@@ -41,9 +41,9 @@ class SituacionListItem extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: Text(
-                  situacion.persona_apellido.toUpperCase() +
+                  situacion.persona_nombre.toUpperCase() +
                       ' ' +
-                      situacion.persona_nombre.toUpperCase() +
+                      situacion.persona_apellido.toUpperCase() +
                       ' ' +
                       dniStr, // TITULO DEL ITEM
                   maxLines: 1,

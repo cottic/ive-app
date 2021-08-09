@@ -2,7 +2,6 @@ import 'package:fluffychat/stats_dashboard/models/situacion_model.dart';
 import 'package:fluffychat/views/situaciones_list.dart';
 import 'package:flutter/material.dart';
 
-import 'chat_list.dart';
 import '../components/adaptive_page_layout.dart';
 import '../components/dialogs/simple_dialogs.dart';
 import '../components/matrix.dart';
@@ -386,7 +385,6 @@ class _SituacionesFormState extends State<SituacionesForm> {
                       labelText: 'Fecha de consulta',
                       contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
-                    initialValue: DateTime.now(),
                     valueTransformer: (value) => value.toString(),
                     validator: (val) {
                       if (val == null) {
@@ -462,7 +460,6 @@ class _SituacionesFormState extends State<SituacionesForm> {
                   FormBuilderDateTimePicker(
                     name: 'persona-nacimiento-fecha',
                     format: DateFormat('dd/MM/yyyy'),
-                    initialDate: DateTime(2001),
                     valueTransformer: (value) => value.toString(),
                     // onChanged: (value){},
                     validator: (val) {
@@ -785,7 +782,7 @@ class _SituacionesFormState extends State<SituacionesForm> {
                       }
                       if (val == 'si') {
                         setState(() {
-                          showTratamiento = false;
+                          showTratamiento = false; // SHOW TRATAMIENTO
                         });
                       }
                     },
@@ -926,7 +923,6 @@ class _SituacionesFormState extends State<SituacionesForm> {
                         contentPadding:
                             EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                       ),
-                      initialValue: DateTime.now(),
                       valueTransformer: (value) => value.toString(),
                       validator: (val) {
                         if (val == null) {
@@ -982,10 +978,16 @@ class _SituacionesFormState extends State<SituacionesForm> {
                           _formKey.currentState.save();
                         }
                       },
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(context,
-                            errorText: '* Requerido')
-                      ]),
+                      validator: (val) {
+                        final selected = _formKey
+                            .currentState.fields['consulta-derivacion']?.value;
+                        if (selected == 'no') {
+                          if (val == null || val.isEmpty) {
+                            return '* Requerido';
+                          }
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   Visibility(
@@ -1060,22 +1062,25 @@ class _SituacionesFormState extends State<SituacionesForm> {
                         ]), */
                       validator: (val) {
                         final selected = _formKey
-                            .currentState.fields['tratamiento-tipo']?.value;
-                        if (selected == 'farmacologico') {
-                          if (val == 'ameu' ||
-                              val == 'rue-o-legrado' ||
-                              val == 'ameurue' ||
-                              val == 'dilatacion-evacuacion' ||
-                              val == 'otros' ||
-                              val == 'sin-datos') {
-                            return 'No es posible esta opción si el tratamiento es solo Farmacológico. Debe indicarse "No corresponde"';
-                          }
-                        } else {
-                          if (val == null || val.isEmpty) {
-                            return '* Requerido';
+                            .currentState.fields['consulta-derivacion']?.value;
+                        if (selected == 'no') {
+                          final selected2 = _formKey
+                              .currentState.fields['tratamiento-tipo']?.value;
+                          if (selected2 == 'farmacologico') {
+                            if (val == 'ameu' ||
+                                val == 'rue-o-legrado' ||
+                                val == 'ameurue' ||
+                                val == 'dilatacion-evacuacion' ||
+                                val == 'otros' ||
+                                val == 'sin-datos') {
+                              return 'No es posible esta opción si el tratamiento es solo Farmacológico. Debe indicarse "No corresponde"';
+                            }
+                          } else {
+                            if (val == null || val.isEmpty) {
+                              return '* Requerido';
+                            }
                           }
                         }
-
                         return null;
                       },
                     ),
@@ -1162,10 +1167,16 @@ class _SituacionesFormState extends State<SituacionesForm> {
                             child: Text(
                                 'Complicaciones relacionadas con la anestesia')),
                       ],
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(context,
-                            errorText: '* Requerido')
-                      ]),
+                      validator: (val) {
+                        final selected = _formKey
+                            .currentState.fields['consulta-derivacion']?.value;
+                        if (selected == 'no') {
+                          if (val == null || val.isEmpty) {
+                            return '* Requerido';
+                          }
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   Visibility(
@@ -1214,10 +1225,16 @@ class _SituacionesFormState extends State<SituacionesForm> {
                             value: 'ligadura-tubaria',
                             child: Text('Ligadura tubaria')),
                       ],
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(context,
-                            errorText: '* Requerido')
-                      ]),
+                      validator: (val) {
+                        final selected = _formKey
+                            .currentState.fields['consulta-derivacion']?.value;
+                        if (selected == 'no') {
+                          if (val == null || val.isEmpty) {
+                            return '* Requerido';
+                          }
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   Visibility(
@@ -1278,7 +1295,12 @@ class _SituacionesFormState extends State<SituacionesForm> {
                         sendSituacion(json.encode(_formKey.currentState.value));
 
                         print(json.encode(_formKey.currentState.value));
-                        // _formKey.currentState.reset();
+                        final selected =
+                            _formKey.currentState.fields['id']?.value;
+                        if (selected == 1) {
+                          _formKey.currentState.reset();
+                        }
+
                         // FocusScope.of(context).requestFocus(FocusNode());
                         // FocusScope.of(context).unfocus();
 

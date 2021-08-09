@@ -14,7 +14,7 @@ final ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
   // PRIMARY COLOR ENIA
   primaryColor: Color(0xFF69d0a3),
-  accentColor: Color(0xff8edcb9),
+  accentColor: Color(0xFF8966CF),
   backgroundColor: Colors.white,
   secondaryHeaderColor: Color(0xFFd2f4d0),
   scaffoldBackgroundColor: Colors.white,

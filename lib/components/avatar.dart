@@ -37,12 +37,17 @@ class Avatar extends StatelessWidget {
     } else if ((name?.length ?? 0) == 1) {
       fallbackLetters = name;
     }
+    var color = Theme.of(context).primaryColor;
+    if (name.substring(0, 3) == 'IVE') {
+      print(name.substring(0, 3));
+      color = Theme.of(context).accentColor;
+    }
     final noPic = mxContent == null || mxContent.toString().isEmpty;
     return InkWell(
       onTap: onTap,
       child: CircleAvatar(
         radius: size / 2,
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: color,
         child: noPic
             ? Text(fallbackLetters, style: TextStyle(color: Colors.white))
             : null,
