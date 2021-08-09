@@ -11,6 +11,7 @@ import 'package:fluffychat/components/list_items/public_room_list_item.dart';
 import 'package:fluffychat/components/list_items/situacion_list_item.dart';
 import 'package:fluffychat/stats_dashboard/dashboard_menu_screen.dart';
 import 'package:fluffychat/utils/platform_infos.dart';
+import 'package:fluffychat/views/situaciones_form.dart';
 // import 'package:fluffychat/views/status_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -35,12 +36,12 @@ import 'settings.dart';
 
 enum SelectMode { normal, share, select }
 
-class ChatListView extends StatelessWidget {
+class SituacionesListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AdaptivePageLayout(
       primaryPage: FocusPage.FIRST,
-      firstScaffold: ChatList(),
+      firstScaffold: SituacionesList(),
       secondScaffold: Scaffold(
         body: Center(
           child: Image.asset('assets/logo.png', width: 100, height: 100),
@@ -50,16 +51,16 @@ class ChatListView extends StatelessWidget {
   }
 }
 
-class ChatList extends StatefulWidget {
-  final String activeChat;
+class SituacionesList extends StatefulWidget {
+  final int activeChat;
 
-  const ChatList({this.activeChat, Key key}) : super(key: key);
+  const SituacionesList({this.activeChat, Key key}) : super(key: key);
 
   @override
-  _ChatListState createState() => _ChatListState();
+  _SituacionesListState createState() => _SituacionesListState();
 }
 
-class _ChatListState extends State<ChatList> {
+class _SituacionesListState extends State<SituacionesList> {
   Timer coolDown;
   PublicRoomsResponse publicRoomsResponse;
   bool loadingPublicRooms = false;
@@ -234,7 +235,7 @@ class _ChatListState extends State<ChatList> {
                 if (selectMode == SelectMode.share) {
                   _selectedRoomIds.clear();
                 }
-                var situacionNew = Situacion();
+                // var situacionNew = Situacion();
                 return Scaffold(
                   drawer: selectMode != SelectMode.normal
                       ? null
@@ -250,9 +251,9 @@ class _ChatListState extends State<ChatList> {
                                     width: 22,
                                   ),
                                   title: Text(L10n.of(context).projectName),
-                                  /* onTap: () => _drawerTapAction(
-                                    // SituacionFormView(),
-                                  ), */
+                                  onTap: () => _drawerTapAction(
+                                    SituacionFormView(),
+                                  ),
                                 ),
                                 Divider(height: 1),
                                 ListTile(
@@ -292,11 +293,11 @@ class _ChatListState extends State<ChatList> {
                                 ListTile(
                                   leading: Icon(Icons.share),
                                   title: Text(L10n.of(context).inviteContact),
-                                  /* onTap: () {
+                                  onTap: () {
                                     _drawerTapAction(
                                       SituacionFormView(),
                                     );
-                                  }, */
+                                  },
                                 ),
                                 Divider(height: 1),
                                 ListTile(
@@ -344,7 +345,7 @@ class _ChatListState extends State<ChatList> {
                       ),
                     ),
                   ),
-                  /* floatingActionButton: (selectMode != SelectMode.normal)
+                  floatingActionButton: (selectMode != SelectMode.normal)
                       ? null
                       : Column(
                           mainAxisSize: MainAxisSize.min,
@@ -359,7 +360,7 @@ class _ChatListState extends State<ChatList> {
                                       (r) => r.isFirst),
                             ),
                           ],
-                        ), */
+                        ),
                   body: Column(
                     children: [
                       ConnectionStatusHeader(),
@@ -377,7 +378,7 @@ class _ChatListState extends State<ChatList> {
                               future: _getSituaciones(username),
                               builder: (BuildContext context,
                                   AsyncSnapshot snapshotSituaciones) {
-                                /* if (snapshotSituaciones.hasData) {
+                                if (snapshotSituaciones.hasData) {
                                   List situaciones = snapshotSituaciones.data;
                                   final totalCount = situaciones.length;
                                   // var situacionSeleccionada = ;
@@ -403,6 +404,13 @@ class _ChatListState extends State<ChatList> {
                                             : Container(),
                                     itemBuilder: (BuildContext context, int i) {
                                       // print(rooms[i].id);
+                                      // print(' widget.activeChat');
+                                      // print( widget.activeChat);
+
+                                      // print('situaciones[i].id');
+                                      // print(situaciones[i].id);
+
+
                                       if (i == 0) {
                                         return Column(
                                           mainAxisSize: MainAxisSize.min,
@@ -424,6 +432,7 @@ class _ChatListState extends State<ChatList> {
                                                   SituacionFormView(
                                                     situacion: situaciones[i],
                                                     roomId: rooms[i].id,
+
                                                   ),
                                                 );
                                               },
@@ -436,7 +445,7 @@ class _ChatListState extends State<ChatList> {
                                                   .chunk[i - rooms.length]);
                                     },
                                   );
-                                } */
+                                }
 
                                 return Center(
                                   child: CircularProgressIndicator(),

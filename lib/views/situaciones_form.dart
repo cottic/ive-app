@@ -1,4 +1,5 @@
 import 'package:fluffychat/stats_dashboard/models/situacion_model.dart';
+import 'package:fluffychat/views/situaciones_list.dart';
 import 'package:flutter/material.dart';
 
 import 'chat_list.dart';
@@ -12,30 +13,33 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
 
-class EniaMenuView extends StatelessWidget {
-  const EniaMenuView(this.situacion);
+class SituacionFormView extends StatelessWidget {
+  const SituacionFormView({this.situacion, this.roomId});
 
   final Situacion situacion;
+  final String roomId;
 
   @override
   Widget build(BuildContext context) {
     return AdaptivePageLayout(
       primaryPage: FocusPage.SECOND,
-      firstScaffold: ChatList(),
-      secondScaffold: EniaMenu(situacion),
+      firstScaffold: situacion != null
+          ? SituacionesList(activeChat: situacion.id)
+          : SituacionesList(),
+      secondScaffold: SituacionesForm(situacion),
     );
   }
 }
 
-class EniaMenu extends StatefulWidget {
-  const EniaMenu(this.situacion);
+class SituacionesForm extends StatefulWidget {
+  const SituacionesForm(this.situacion);
 
   final Situacion situacion;
   @override
-  _EniaMenuState createState() => _EniaMenuState();
+  _SituacionesFormState createState() => _SituacionesFormState();
 }
 
-class _EniaMenuState extends State<EniaMenu> {
+class _SituacionesFormState extends State<SituacionesForm> {
   Future<dynamic> profileFuture;
   dynamic profile;
   Future<bool> crossSigningCachedFuture;
@@ -135,7 +139,7 @@ class _EniaMenuState extends State<EniaMenu> {
 
     // TODO derivacion efector listado sin ID y recoleccion desde modelo
 
-    var situacionData = {
+    /* var situacionData =  {
       'id': situacion.id,
       'efector': situacion.efector,
       'persona-consulta-fecha': situacion.persona_consulta_fecha,
@@ -165,7 +169,7 @@ class _EniaMenuState extends State<EniaMenu> {
       'aipe': situacion.aipe,
       'observaciones': situacion.observaciones,
       'user': username,
-    };
+    }; */
 
     /* var initialFromSituacion = {
       'id': situaciones[0].id,
@@ -199,7 +203,7 @@ class _EniaMenuState extends State<EniaMenu> {
       'user': username,
     }; */
 
-    var initialValuesSituacionEjemplo = Situacion(
+    /*  var initialValuesSituacionEjemplo = Situacion(
       id: 1,
       efector: 1,
       persona_dni: 0,
@@ -229,7 +233,7 @@ class _EniaMenuState extends State<EniaMenu> {
       aipe: '',
       observaciones: '',
       user: username,
-    );
+    ); */
 
     var initialValues = {
       'id': 1,
@@ -264,8 +268,38 @@ class _EniaMenuState extends State<EniaMenu> {
     };
 
     // Con esto verficia si es un formulario nuevo o si esta levantando uno
-    if (situacionData['id'] != null) {
-      initialValues = situacionData;
+    if (widget.situacion != null) {
+      initialValues = {
+        'id': situacion.id,
+        'efector': situacion.efector,
+        'persona-consulta-fecha': situacion.persona_consulta_fecha,
+        'persona-dni': situacion.persona_dni.toString(),
+        'persona-nombre': situacion.persona_nombre,
+        'persona-apellido': situacion.persona_apellido,
+        'persona-nacimiento-fecha': situacion.persona_nacimiento_fecha,
+        'persona-identidad-de-genero': situacion.persona_identidad_de_genero,
+        'persona-con-discapacidad': situacion.persona_con_discapacidad,
+        'persona-obra-social': situacion.persona_obra_social,
+        'partos': situacion.partos,
+        'cesareas': situacion.cesareas,
+        'abortos': situacion.abortos,
+        'consulta-situacion': situacion.consulta_situacion,
+        'semanas-gestacion': situacion.semanas_gestacion,
+        'consulta-causal': situacion.consulta_causal,
+        'consulta-origen': situacion.consulta_origen,
+        'consulta-derivacion': situacion.consulta_derivacion,
+        'derivacion-efector': situacion.derivacion_efector.toString(),
+        'derivacion-motivo': situacion.derivacion_motivo,
+        'tratamiento-fecha': situacion.tratamiento_fecha,
+        'tratamiento-tipo': situacion.tratamiento_tipo,
+        'tratamiento-comprimidos': situacion.tratamiento_comprimidos,
+        'tratamiento-quirurgico': situacion.tratamiento_quirurgico,
+        'semanas-resolucion': situacion.semanas_resolucion,
+        'complicaciones': situacion.complicaciones,
+        'aipe': situacion.aipe,
+        'observaciones': situacion.observaciones,
+        'user': username,
+      };
     }
 
     crossSigningCachedFuture ??=
@@ -289,7 +323,9 @@ class _EniaMenuState extends State<EniaMenu> {
             backgroundColor: Theme.of(context).primaryColor,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
-                'Situaciones IVE/ILE',
+                widget.situacion != null
+                    ? 'Situaciones IVE/ILE'
+                    : 'Nueva Situacion IVE/ILE',
                 style: TextStyle(color: Theme.of(context).backgroundColor),
               ),
             ),
@@ -304,7 +340,7 @@ class _EniaMenuState extends State<EniaMenu> {
               autovalidateMode: AutovalidateMode.always,
               child: Column(
                 children: <Widget>[
-                  Text(situacion.id.toString()),
+                  // Text(situacion.id.toString()),
                   // Text(situacion.efector.toString()),
                   // Text(situacion.persona_dni.toString()),
                   FormBuilderDropdown(

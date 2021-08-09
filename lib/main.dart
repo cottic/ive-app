@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:famedlysdk/famedlysdk.dart';
 import 'package:fluffychat/views/homeserver_picker.dart';
+import 'package:fluffychat/views/situaciones_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -102,7 +103,7 @@ class App extends StatelessWidget {
                     );
                   }
                   if (Matrix.of(context).client.isLogged()) {
-                    return ChatListView();
+                    return SituacionesListView();
                   }
                   return HomeserverPicker();
                 },
