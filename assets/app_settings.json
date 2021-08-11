@@ -71,30 +71,30 @@
       "filter": true,
       "charts": [
         {
-          "title": "% Farmacologicos",
+          "title": "Farmacológicos",
           "type": "card",
-          "description": "% Farmacologicos",
+          "description": "Farmacológicos",
           "api_url": "d1c0",
           "media_url": "adolescente"
         },
         {
-          "title": "% Quirurgicos",
+          "title": "Quirúrgicos",
           "type": "card",
-          "description": "% Quirurgicos",
+          "description": "Quirúrgicos",
           "api_url": "d1c1",
           "media_url": "implante"
         },
         {
-          "title": "% Farmacologicos/Quirurgicos",
+          "title": "Farmacologicos/Quirurgicos",
           "type": "card",
-          "description": "% Farmacologicos/Quirurgicos",
+          "description": "Farmacológicos/Quirúrgicos",
           "api_url": "d1c2",
           "media_url": "diu"
         },
         {
-          "title": "% AMEU",
+          "title": "AMEU",
           "type": "card",
-          "description": "% AMEU",
+          "description": "AMEU",
           "api_url": "d1c3",
           "media_url": "hospital"
         },
@@ -131,35 +131,35 @@
       "filter": true,
       "charts": [
         {
-          "title": "",
+          "title": "Hasta 12 semanas",
           "type": "card",
-          "description": "",
+          "description": "Hasta 12 semanas",
           "api_url": "d2c0",
           "media_url": "adolescente"
         },
         {
-          "title": "10 a 14 años",
+          "title": "de 12 a 15 semanas",
           "type": "card",
-          "description": "10 a 14 años",
+          "description": "de 12 a 15 semanas",
           "api_url": "d2c1",
           "media_url": "ninios"
         },
         {
-          "title": "15 a 19 años",
+          "title": "16 semanas o más",
           "type": "card",
-          "description": "15 a 19 años",
+          "description": "16 semanas o más",
           "api_url": "d2c2",
           "media_url": "adolescente"
         },
         {
-          "title": "20 años o más",
+          "title": "",
           "type": "card",
-          "description": "20 años o más",
+          "description": "",
           "api_url": "d2c3",
           "media_url": "adolescente"
         },
         {
-          "title": "",
+          "title": "Procedimientos según edad gestacional y jurisdicción",
           "type": "bar",
           "description": "",
           "api_url": "d2c4"
@@ -171,7 +171,7 @@
           "api_url": "d2c5"
         },
         {
-          "title": "Por tipo de procedimiento",
+          "title": "Por edad gestacional",
           "type": "pie",
           "description": "",
           "api_url": "d2c6"

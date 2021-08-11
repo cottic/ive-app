@@ -595,9 +595,10 @@ class _SettingsState extends State<Settings> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Image.asset('assets/logoUnicef.png', width: 220,),
-                Image.asset('assets/logoMinSalud.png', width: 220,)
-
+                Image.asset(
+                  'assets/logoMinSalud.png',
+                  width: 220,
+                )
               ],
             ),
           ],
