@@ -17,6 +17,8 @@ import 'components/theme_switcher.dart';
 import 'utils/famedlysdk_store.dart';
 import 'views/chat_list.dart';
 
+import 'views/situaciones_list_refactor.dart';
+
 final sentry = SentryClient(dsn: '8591d0d863b646feb4f3dda7e5dcab38');
 
 void captureException(error, stackTrace) async {
@@ -103,7 +105,11 @@ class App extends StatelessWidget {
                     );
                   }
                   if (Matrix.of(context).client.isLogged()) {
-                    return SituacionesListView();
+                    // Esto lo mando al provider
+                    var clientUserId = Matrix.of(context).client.userID;
+
+
+                    return SituacionesListRefactorView(userId: clientUserId,);
                   }
                   return HomeserverPicker();
                 },
