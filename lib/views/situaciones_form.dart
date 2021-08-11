@@ -349,7 +349,7 @@ class _SituacionesFormState extends State<SituacionesForm> {
                       contentPadding: EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                     ),
                     allowClear: true,
-                    initialValue: 1,
+                    initialValue: initialValues['efector'],
                     hint: Text('Efector:'),
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(
@@ -360,7 +360,17 @@ class _SituacionesFormState extends State<SituacionesForm> {
                     items: [
                       DropdownMenuItem(
                         value: 1,
-                        child: Text(efectorName),
+                        child:
+                            Text('Hospital de Clínicas “José de San Martín”'),
+                      ),
+                      DropdownMenuItem(
+                        value: 2,
+                        child: Text('Hospital Iriarte (Quilmes)”'),
+                      ),
+                      DropdownMenuItem(
+                        value: 3,
+                        child: Text(
+                            'Hospital General de Agudos “Dr. Teodoro Álvarez”'),
                       )
                     ],
                   ),
