@@ -73,6 +73,7 @@ dependencies:
   scroll_to_index: ^1.0.6
   swipe_to_action: ^0.1.0
 
+
   fl_chart: ^0.12.0
   font_awesome_flutter: ^8.10.0
   hexcolor: ^1.0.6
@@ -80,6 +81,7 @@ dependencies:
 
   flutter_form_builder: ^4.2.0
   csv: ^4.0.3
+  provider: ^4.3.3
 
 dev_dependencies:
   flutter_test:

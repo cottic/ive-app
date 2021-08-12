@@ -1,36 +1,42 @@
+// To parse this JSON data, do
+//
+//     final situacion = situacionFromJson(jsonString);
+
 import 'dart:convert';
 
-Situacion situacionFromJson(String str) => Situacion.fromJson(json.decode(str));
+List<Situacion> situacionFromJson(String str) =>
+    List<Situacion>.from(json.decode(str).map((x) => Situacion.fromJson(x)));
 
-String situacionToJson(Situacion data) => json.encode(data.toJson());
+String situacionToJson(List<Situacion> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Situacion {
   Situacion({
     this.id,
     this.efector,
-    this.persona_consulta_fecha,
-    this.persona_dni,
-    this.persona_nombre,
-    this.persona_apellido,
-    this.persona_nacimiento_fecha,
-    this.persona_identidad_de_genero,
-    this.persona_con_discapacidad,
-    this.persona_obra_social,
+    this.personaConsultaFecha,
+    this.personaDni,
+    this.personaNombre,
+    this.personaApellido,
+    this.personaNacimientoFecha,
+    this.personaIdentidadDeGenero,
+    this.personaConDiscapacidad,
+    this.personaObraSocial,
     this.partos,
     this.cesareas,
     this.abortos,
-    this.consulta_situacion,
-    this.semanas_gestacion,
-    this.consulta_causal,
-    this.consulta_origen,
-    this.consulta_derivacion,
-    this.derivacion_efector,
-    this.derivacion_motivo,
-    this.tratamiento_fecha,
-    this.tratamiento_tipo,
-    this.tratamiento_comprimidos,
-    this.tratamiento_quirurgico,
-    this.semanas_resolucion,
+    this.consultaSituacion,
+    this.semanasGestacion,
+    this.consultaCausal,
+    this.consultaOrigen,
+    this.consultaDerivacion,
+    this.derivacionEfector,
+    this.derivacionMotivo,
+    this.tratamientoFecha,
+    this.tratamientoTipo,
+    this.tratamientoComprimidos,
+    this.tratamientoQuirurgico,
+    this.semanasResolucion,
     this.complicaciones,
     this.aipe,
     this.observaciones,
@@ -39,96 +45,99 @@ class Situacion {
 
   int id;
   int efector;
-  DateTime persona_consulta_fecha;
-  int persona_dni;
-  String persona_nombre;
-  String persona_apellido;
-  DateTime persona_nacimiento_fecha;
-  String persona_identidad_de_genero;
-  String persona_con_discapacidad;
-  String persona_obra_social;
+  DateTime personaConsultaFecha;
+  int personaDni;
+  String personaNombre;
+  String personaApellido;
+  DateTime personaNacimientoFecha;
+  String personaIdentidadDeGenero;
+  String personaConDiscapacidad;
+  String personaObraSocial;
   int partos;
   int cesareas;
   int abortos;
-  String consulta_situacion;
-  double semanas_gestacion;
-  String consulta_causal;
-  String consulta_origen;
-  String consulta_derivacion;
-  int derivacion_efector;
-  String derivacion_motivo;
-  DateTime tratamiento_fecha;
-  String tratamiento_tipo;
-  int tratamiento_comprimidos;
-  String tratamiento_quirurgico;
-  double semanas_resolucion;
+  String consultaSituacion;
+  double semanasGestacion;
+  String consultaCausal;
+  String consultaOrigen;
+  String consultaDerivacion;
+  int derivacionEfector;
+  String derivacionMotivo;
+  DateTime tratamientoFecha;
+  String tratamientoTipo;
+  int tratamientoComprimidos;
+  String tratamientoQuirurgico;
+  double semanasResolucion;
   String complicaciones;
   String aipe;
   String observaciones;
   String user;
 
   factory Situacion.fromJson(Map<String, dynamic> json) => Situacion(
-        id: json['id'],
-        efector: json['efector'],
-        persona_consulta_fecha: DateTime.parse(json['persona-consulta-fecha']),
-        persona_dni: json['persona-dni'],
-        persona_nombre: json['persona-nombre'],
-        persona_apellido: json['persona-apellido'],
-        persona_nacimiento_fecha:
-            DateTime.parse(json['persona-nacimiento-fecha']),
-        persona_identidad_de_genero: json['persona-identidad-de-genero'],
-        persona_con_discapacidad: json['persona-con-discapacidad'],
-        persona_obra_social: json['persona-obra-social'],
-        partos: json['partos'],
-        cesareas: json['cesareas'],
-        abortos: json['abortos'],
-        consulta_situacion: json['consulta-situacion'],
-        semanas_gestacion: json['semanas-gestacion'],
-        consulta_causal: json['consulta-causal'],
-        consulta_origen: json['consulta-origen'],
-        consulta_derivacion: json['consulta-derivacion'],
-        derivacion_efector: json['derivacion-efector'],
-        derivacion_motivo: json['derivacion-motivo'],
-        tratamiento_fecha: DateTime.parse(json['tratamiento-fecha']),
-        tratamiento_tipo: json['tratamiento-tipo'],
-        tratamiento_comprimidos: json['tratamiento-comprimidos'],
-        tratamiento_quirurgico: json['tratamiento-quirurgico'],
-        semanas_resolucion: json['semanas-resolucion'],
-        complicaciones: json['complicaciones'],
-        aipe: json['aipe'],
-        observaciones: json['observaciones'],
-        user: json['user'],
+        id: json["id"],
+        efector: json["efector"],
+        personaConsultaFecha: DateTime.parse(json["persona-consulta-fecha"]),
+        personaDni: json["persona-dni"],
+        personaNombre: json["persona-nombre"],
+        personaApellido: json["persona-apellido"],
+        personaNacimientoFecha:
+            DateTime.parse(json["persona-nacimiento-fecha"]),
+        personaIdentidadDeGenero: json["persona-identidad-de-genero"],
+        personaConDiscapacidad: json["persona-con-discapacidad"],
+        personaObraSocial: json["persona-obra-social"],
+        partos: json["partos"],
+        cesareas: json["cesareas"],
+        abortos: json["abortos"],
+        consultaSituacion: json["consulta-situacion"],
+        semanasGestacion: json["semanas-gestacion"].toDouble(),
+        consultaCausal: json["consulta-causal"],
+        consultaOrigen: json["consulta-origen"],
+        consultaDerivacion: json["consulta-derivacion"],
+        derivacionEfector: json["derivacion-efector"],
+        derivacionMotivo: json["derivacion-motivo"],
+        tratamientoFecha: DateTime.parse(json["tratamiento-fecha"]),
+        tratamientoTipo: json["tratamiento-tipo"],
+        tratamientoComprimidos: json["tratamiento-comprimidos"],
+        tratamientoQuirurgico: json["tratamiento-quirurgico"],
+        semanasResolucion: json["semanas-resolucion"].toDouble(),
+        complicaciones: json["complicaciones"],
+        aipe: json["aipe"],
+        observaciones: json["observaciones"],
+        user: json["user"],
       );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'efector': efector,
-        'persona-consulta-fecha': persona_consulta_fecha,
-        'persona-dni': persona_dni,
-        'persona-nombre': persona_nombre,
-        'persona-apellido': persona_apellido,
-        'persona-nacimiento-fecha': persona_nacimiento_fecha,
-        'persona-identidad-de-genero': persona_identidad_de_genero,
-        'persona-con-discapacidad': persona_con_discapacidad,
-        'persona-obra-social': persona_obra_social,
-        'partos': partos,
-        'cesareas': cesareas,
-        'abortos': abortos,
-        'consulta-situacion': consulta_situacion,
-        'semanas-gestacion': semanas_gestacion,
-        'consulta-causal': consulta_causal,
-        'consulta-origen': consulta_origen,
-        'consulta-derivacion': consulta_derivacion,
-        'derivacion-efector': derivacion_efector,
-        'derivacion-motivo': derivacion_motivo,
-        'tratamiento-fecha': tratamiento_fecha,
-        'tratamiento-tipo': tratamiento_tipo,
-        'tratamiento-comprimidos': tratamiento_comprimidos,
-        'tratamiento-quirurgico': tratamiento_quirurgico,
-        'semanas-resolucion': semanas_resolucion,
-        'complicaciones': complicaciones,
-        'aipe': aipe,
-        'observaciones': observaciones,
-        'user': user,
+        "id": id,
+        "efector": efector,
+        "persona-consulta-fecha":
+            "${personaConsultaFecha.year.toString().padLeft(4, '0')}-${personaConsultaFecha.month.toString().padLeft(2, '0')}-${personaConsultaFecha.day.toString().padLeft(2, '0')}",
+        "persona-dni": personaDni,
+        "persona-nombre": personaNombre,
+        "persona-apellido": personaApellido,
+        "persona-nacimiento-fecha":
+            "${personaNacimientoFecha.year.toString().padLeft(4, '0')}-${personaNacimientoFecha.month.toString().padLeft(2, '0')}-${personaNacimientoFecha.day.toString().padLeft(2, '0')}",
+        "persona-identidad-de-genero": personaIdentidadDeGenero,
+        "persona-con-discapacidad": personaConDiscapacidad,
+        "persona-obra-social": personaObraSocial,
+        "partos": partos,
+        "cesareas": cesareas,
+        "abortos": abortos,
+        "consulta-situacion": consultaSituacion,
+        "semanas-gestacion": semanasGestacion,
+        "consulta-causal": consultaCausal,
+        "consulta-origen": consultaOrigen,
+        "consulta-derivacion": consultaDerivacion,
+        "derivacion-efector": derivacionEfector,
+        "derivacion-motivo": derivacionMotivo,
+        "tratamiento-fecha":
+            "${tratamientoFecha.year.toString().padLeft(4, '0')}-${tratamientoFecha.month.toString().padLeft(2, '0')}-${tratamientoFecha.day.toString().padLeft(2, '0')}",
+        "tratamiento-tipo": tratamientoTipo,
+        "tratamiento-comprimidos": tratamientoComprimidos,
+        "tratamiento-quirurgico": tratamientoQuirurgico,
+        "semanas-resolucion": semanasResolucion,
+        "complicaciones": complicaciones,
+        "aipe": aipe,
+        "observaciones": observaciones,
+        "user": user,
       };
 }

@@ -1,29 +1,25 @@
-import 'dart:async';
 import 'package:csv/csv.dart';
 import 'package:fluffychat/components/connection_status_header.dart';
-import 'package:fluffychat/components/dialogs/simple_dialogs.dart';
 
 import 'package:fluffychat/components/list_items/situacion_list_item.dart';
+import 'package:fluffychat/provider/situaciones_provider.dart';
 import 'package:fluffychat/stats_dashboard/widgets/drawer_ive.dart';
 import 'package:fluffychat/views/situaciones_form.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:fluffychat/stats_dashboard/services/dashboard_services.dart';
+import 'package:provider/provider.dart';
 
-import 'dart:convert';
 import 'dart:html' as html;
 
 import '../stats_dashboard/models/situacion_model.dart';
 import '../components/adaptive_page_layout.dart';
-import '../components/matrix.dart';
 import '../utils/app_route.dart';
 
 enum SelectMode { normal, share, select }
 
 class SituacionesListRefactorView extends StatelessWidget {
-  SituacionesListRefactorView({this.userId});
-
+  SituacionesListRefactorView(this.userId);
   final String userId;
 
   @override
@@ -33,11 +29,7 @@ class SituacionesListRefactorView extends StatelessWidget {
       firstScaffold: SituacionesListRefactor(
         userId: userId,
       ),
-      secondScaffold: Scaffold(
-        body: Center(
-          child: Image.asset('assets/logo.png', width: 100, height: 100),
-        ),
-      ),
+      secondScaffold: SituacionesForm(),
     );
   }
 }
@@ -55,31 +47,6 @@ class SituacionesListRefactor extends StatefulWidget {
 }
 
 class _SituacionesListRefactorState extends State<SituacionesListRefactor> {
-  dynamic listadoParaExporta;
-
-  Future _getSituaciones() async {
-    print('ENtro get situaciones');
-    var situacionesInfoJson =
-        await DashboardService().getSituaciones(widget.userId);
-
-    var parsedJson = json.decode(situacionesInfoJson);
-
-    listadoParaExporta = parsedJson;
-
-    var situaciones = parsedJson.map((i) => Situacion.fromJson(i)).toList();
-
-    return situaciones;
-  }
-
-  void logoutAction(BuildContext context) async {
-    if (await SimpleDialogs(context).askConfirmation() == false) {
-      return;
-    }
-    var matrix = Matrix.of(context);
-    await SimpleDialogs(context)
-        .tryRequestWithLoadingDialog(matrix.client.logout());
-  }
-
   void _drawerTapAction(Widget view) {
     Navigator.of(context).pop();
     Navigator.of(context).pushAndRemoveUntil(
@@ -92,7 +59,15 @@ class _SituacionesListRefactorState extends State<SituacionesListRefactor> {
   }
 
   @override
+  void initState() {
+    context.read<SituacionesProvider>().getSituaciones(widget.userId);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       drawer: DrawerIle(),
       appBar: AppBar(
@@ -104,7 +79,8 @@ class _SituacionesListRefactorState extends State<SituacionesListRefactor> {
           padding: EdgeInsets.only(left: 284),
           child: ListTile(
             leading: Icon(Icons.archive),
-            onTap: () => downloadFile(listadoParaExporta),
+            onTap: () => downloadFile(
+                context.read<SituacionesProvider>().listadoParaExportar),
           ),
         ),
       ),
@@ -112,30 +88,62 @@ class _SituacionesListRefactorState extends State<SituacionesListRefactor> {
         mainAxisSize: MainAxisSize.min,
         children: [
           FloatingActionButton(
-            child: Icon(Icons.add),
-            backgroundColor: Theme.of(context).primaryColor,
-            onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-                AppRoute.defaultRoute(context, SituacionFormView()),
-                (r) => r.isFirst),
-          ),
+              child: Icon(Icons.add),
+              backgroundColor: Theme.of(context).primaryColor,
+              onPressed: () {
+                context
+                    .read<SituacionesProvider>()
+                    .setSituacionActiva(Situacion(
+                      id: 1,
+                      efector: 1,
+                      personaDni: 0,
+                      personaConsultaFecha: DateTime.now(),
+                      personaNombre: '',
+                      personaApellido: '',
+                      personaNacimientoFecha: DateTime(2001),
+                      personaIdentidadDeGenero: '',
+                      personaConDiscapacidad: '',
+                      personaObraSocial: '',
+                      partos: 0,
+                      cesareas: 0,
+                      abortos: 0,
+                      consultaSituacion: '',
+                      semanasGestacion: 14.6,
+                      consultaCausal: '',
+                      consultaOrigen: '',
+                      consultaDerivacion: '',
+                      derivacionEfector: 0,
+                      derivacionMotivo: '',
+                      tratamientoFecha: DateTime.now(),
+                      tratamientoTipo: '',
+                      tratamientoComprimidos: 0,
+                      tratamientoQuirurgico: '',
+                      semanasResolucion: 14.6,
+                      complicaciones: '',
+                      aipe: '',
+                      observaciones: '',
+                      user: widget.userId,
+                    ));
+                _drawerTapAction(
+                  SituacionFormView(
+                    situacion: null,
+                    userId: widget.userId,
+                  ),
+                );
+              }),
         ],
       ),
       body: Column(
         children: [
           ConnectionStatusHeader(),
           Expanded(
-            child: FutureBuilder(
-              future: _getSituaciones(),
-              builder:
-                  (BuildContext context, AsyncSnapshot snapshotSituaciones) {
-                if (snapshotSituaciones.hasData) {
-                  List situaciones = snapshotSituaciones.data;
-                  final totalCount = situaciones.length;
-
+            child: Consumer<SituacionesProvider>(
+              builder: (context, postsProvider, child) {
+                if (postsProvider.listadoSituaciones.isNotEmpty) {
                   return ListView.separated(
-                    itemCount: totalCount,
+                    itemCount: postsProvider.listadoSituaciones.length,
                     separatorBuilder: (BuildContext context, int i) =>
-                        i == totalCount
+                        i == postsProvider.listadoSituaciones.length
                             ? ListTile(
                                 title: Text(
                                   L10n.of(context).publicRooms + ':',
@@ -147,40 +155,37 @@ class _SituacionesListRefactorState extends State<SituacionesListRefactor> {
                               )
                             : Container(),
                     itemBuilder: (BuildContext context, int i) {
-                      if (i == 0) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            AnimatedContainer(
-                              duration: Duration(milliseconds: 300),
-                              height: 1,
-                            ),
-                          ],
-                        );
-                      }
-                      i--;
-                      return i < situaciones.length
+                      return i < postsProvider.listadoSituaciones.length
                           ? SituacionListItem(
-                              situaciones[i],
+                              postsProvider.listadoSituaciones[i],
                               onTap: () {
+                                context
+                                    .read<SituacionesProvider>()
+                                    .setSituacionActiva(
+                                        postsProvider.listadoSituaciones[i]);
+                                //TODO: que no abra una nueva pagina, sino que actualice la abierta
                                 _drawerTapAction(
                                   SituacionFormView(
-                                    situacion: situaciones[i],
-                                    // roomId: rooms[i].id,
+                                    situacion:
+                                        postsProvider.listadoSituaciones[i],
+                                    userId: widget.userId,
                                   ),
                                 );
                               },
                               situacionFueSleccionada:
-                                  widget.activeChat == situaciones[i].id,
+                                  postsProvider.situacionActiva != null
+                                      ? postsProvider.situacionActiva.id ==
+                                          postsProvider.listadoSituaciones[i].id
+                                      : false,
                             )
                           : Container();
                     },
                   );
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
                 }
-
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
               },
             ),
           ),
@@ -234,29 +239,29 @@ void downloadFile(listadoParaExporta) {
 
     listaSituacion.add(situacion.id);
     listaSituacion.add(situacion.efector);
-    listaSituacion.add(situacion.persona_consulta_fecha);
-    listaSituacion.add(situacion.persona_dni);
-    listaSituacion.add(situacion.persona_nombre);
-    listaSituacion.add(situacion.persona_apellido);
-    listaSituacion.add(situacion.persona_nacimiento_fecha);
-    listaSituacion.add(situacion.persona_identidad_de_genero);
-    listaSituacion.add(situacion.persona_con_discapacidad);
-    listaSituacion.add(situacion.persona_obra_social);
+    listaSituacion.add(situacion.personaConsultaFecha);
+    listaSituacion.add(situacion.personaDni);
+    listaSituacion.add(situacion.personaNombre);
+    listaSituacion.add(situacion.personaApellido);
+    listaSituacion.add(situacion.personaNacimientoFecha);
+    listaSituacion.add(situacion.personaIdentidadDeGenero);
+    listaSituacion.add(situacion.personaConDiscapacidad);
+    listaSituacion.add(situacion.personaObraSocial);
     listaSituacion.add(situacion.partos);
     listaSituacion.add(situacion.cesareas);
     listaSituacion.add(situacion.abortos);
-    listaSituacion.add(situacion.consulta_situacion);
-    listaSituacion.add(situacion.semanas_gestacion);
-    listaSituacion.add(situacion.consulta_causal);
-    listaSituacion.add(situacion.consulta_origen);
-    listaSituacion.add(situacion.consulta_derivacion);
-    listaSituacion.add(situacion.derivacion_efector);
-    listaSituacion.add(situacion.derivacion_motivo);
-    listaSituacion.add(situacion.tratamiento_fecha);
-    listaSituacion.add(situacion.tratamiento_tipo);
-    listaSituacion.add(situacion.tratamiento_comprimidos);
-    listaSituacion.add(situacion.tratamiento_quirurgico);
-    listaSituacion.add(situacion.semanas_resolucion);
+    listaSituacion.add(situacion.consultaSituacion);
+    listaSituacion.add(situacion.semanasGestacion);
+    listaSituacion.add(situacion.consultaCausal);
+    listaSituacion.add(situacion.consultaOrigen);
+    listaSituacion.add(situacion.consultaDerivacion);
+    listaSituacion.add(situacion.derivacionEfector);
+    listaSituacion.add(situacion.derivacionMotivo);
+    listaSituacion.add(situacion.tratamientoFecha);
+    listaSituacion.add(situacion.tratamientoTipo);
+    listaSituacion.add(situacion.tratamientoComprimidos);
+    listaSituacion.add(situacion.tratamientoQuirurgico);
+    listaSituacion.add(situacion.semanasResolucion);
     listaSituacion.add(situacion.complicaciones);
     listaSituacion.add(situacion.aipe);
     listaSituacion.add(situacion.observaciones);

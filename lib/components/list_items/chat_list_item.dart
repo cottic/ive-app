@@ -37,9 +37,9 @@ class ChatListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var dniStr = situacion.persona_dni.toString();
-    var fechaStr = situacion.persona_consulta_fecha.toString();
-    var semanasStr = situacion.semanas_gestacion.toString();
+    var dniStr = situacion.personaDni.toString();
+    var fechaStr = situacion.personaConsultaFecha.toString();
+    var semanasStr = situacion.semanasGestacion.toString();
 
     return Center(
       child: Material(
@@ -47,14 +47,14 @@ class ChatListItem extends StatelessWidget {
         child: ListTile(
           onLongPress: onLongPress,
           leading: Avatar(Uri.parse(''),
-              situacion.consulta_situacion.toUpperCase()), // LOGO
+              situacion.consultaSituacion.toUpperCase()), // LOGO
           title: Row(
             children: <Widget>[
               Expanded(
                 child: Text(
-                  situacion.persona_apellido.toUpperCase() +
+                  situacion.personaApellido.toUpperCase() +
                       ' ' +
-                      situacion.persona_nombre.toUpperCase() +
+                      situacion.personaNombre.toUpperCase() +
                       ' ' +
                       dniStr, // TITULO DEL ITEM
                   maxLines: 1,
@@ -100,7 +100,7 @@ class ChatListItem extends StatelessWidget {
                       semanasStr +
                       ' - ' +
                       'causal: ' +
-                      situacion.consulta_causal, // SUBTITULO
+                      situacion.consultaCausal, // SUBTITULO
                   softWrap: false,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
