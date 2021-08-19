@@ -94,7 +94,7 @@ class _SituacionesListRefactorState extends State<SituacionesListRefactor> {
                 context
                     .read<SituacionesProvider>()
                     .setSituacionActiva(Situacion(
-                      id: 1,
+                      id: 0,
                       efector: 1,
                       personaDni: 0,
                       personaConsultaFecha: DateTime.now(),
@@ -164,6 +164,9 @@ class _SituacionesListRefactorState extends State<SituacionesListRefactor> {
                                     .setSituacionActiva(
                                         postsProvider.listadoSituaciones[i]);
                                 //TODO: que no abra una nueva pagina, sino que actualice la abierta
+                                // print('postsProvider.listadoSituaciones[i].derivacionEfector');
+                                // print(postsProvider.listadoSituaciones[i].derivacionEfector);
+
                                 _drawerTapAction(
                                   SituacionFormView(
                                     situacion:
