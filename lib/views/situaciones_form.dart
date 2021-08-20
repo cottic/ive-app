@@ -47,6 +47,19 @@ class _SituacionesFormState extends State<SituacionesForm> {
         .inDays;
   }
 
+  List getDropdownDerivacion(Map mapaDerivacion) {
+    List<DropdownMenuItem<Object>> listaDropDerivacion = [];
+    mapaDerivacion.forEach(
+      (key, text) => listaDropDerivacion.add(
+        DropdownMenuItem(
+          child: Text(text),
+          value: key,
+        ),
+      ),
+    );
+    return listaDropDerivacion;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<SituacionesProvider>(
@@ -595,6 +608,30 @@ class _SituacionesFormState extends State<SituacionesForm> {
                       Visibility(
                         visible: !showTratamiento,
                         maintainState: true,
+                        child: FormBuilderDropdown(
+                          name: 'derivacion-efector',
+                          decoration: InputDecoration(
+                            labelText: 'Efector:',
+                            contentPadding:
+                                EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
+                          ),
+                          allowClear: true,
+                          initialValue: situacionesProvider
+                              .initialValues['derivacion-efector'],
+                          hint: Text('Efector:'),
+                          validator: FormBuilderValidators.compose([
+                            FormBuilderValidators.required(
+                              context,
+                              errorText: '* Requerido',
+                            )
+                          ]),
+                          items: getDropdownDerivacion(mapaDerivacionEfectores),
+                        ),
+                      ),
+
+                      /* Visibility(
+                        visible: !showTratamiento,
+                        maintainState: true,
                         child: FormBuilderTypeAhead(
                           decoration: InputDecoration(
                             labelText: 'Efector al que fue derivado',
@@ -640,7 +677,7 @@ class _SituacionesFormState extends State<SituacionesForm> {
                                 .setValue(keyToSend); */
 
                             // por ultimo quedaria interpretar el key, para que se muestre cuando se abre un form previamente cargado.
-                            
+
                             print(_formKey.currentState
                                 .fields['derivacion-efector']?.value);
                           },
@@ -674,7 +711,7 @@ class _SituacionesFormState extends State<SituacionesForm> {
                             }
                           },
                         ),
-                      ),
+                      ), */
                       FormBuilderChoiceChip(
                         spacing: 20.0,
                         runSpacing: 5.0,
@@ -1136,7 +1173,7 @@ class _SituacionesFormState extends State<SituacionesForm> {
                           if (_formKey.currentState.validate()) {
                             print('_formKey.currentState.value');
                             print(_formKey.currentState.value);
-                            _formKey.currentState.fields['derivacion-efector'].setValue(1222);
+                            
 
                             situacionesProvider.enviarSituacion(
                                 json.encode(_formKey.currentState.value));
@@ -1147,7 +1184,6 @@ class _SituacionesFormState extends State<SituacionesForm> {
                             if (selected == 1) {
                               _formKey.currentState.reset();
                             } */
-
 
                             FocusScope.of(context).requestFocus(FocusNode());
                             FocusScope.of(context).unfocus();
@@ -1209,8 +1245,8 @@ class Contact {
 }
 
 const Map<int, String> mapaDerivacionEfectores = {
-  111:
-      'UNIDAD SANITARIA GLEW II	DE NAVAZIO Y DI CARLO S/N BO. ALMAFUERTE - GLEW	BUENOS AIRES	ALMIRANTE BROWN	GLEW',
+  0: '',
+  111: 'UNIDAD SANITARIA GLEW II	DE NAVAZIO Y DI CARLO S/N BO. ALMAFUERTE - GLEW	BUENOS AIRES	ALMIRANTE BROWN	GLEW',
   112:
       'UNIDAD SANITARIA N° 10 28 DE DICIEMBRE DE RAFAEL CALZADA	GORRION ENTRE JORGE Y ARROYO RAFAEL CALZADA	BUENOS AIRES	ALMIRANTE BROWN	RAFAEL CALZADA',
   113:
