@@ -15,16 +15,15 @@ import 'dart:convert';
 import 'package:provider/provider.dart';
 
 class SituacionFormView extends StatelessWidget {
-  const SituacionFormView({this.situacion, this.userId});
+  const SituacionFormView({this.situacion});
 
   final Situacion situacion;
-  final String userId;
 
   @override
   Widget build(BuildContext context) {
     return AdaptivePageLayout(
       primaryPage: FocusPage.SECOND,
-      firstScaffold: SituacionesListRefactor(userId: userId),
+      firstScaffold: SituacionesListRefactor(),
       secondScaffold: SituacionesForm(),
     );
   }
@@ -638,9 +637,10 @@ class _SituacionesFormState extends State<SituacionesForm> {
                             // Luego seteo el valor en el _formKey.currentState
 
                             /* _formKey.currentState.fields['derivacion-efector']
-                                .setValue('12121'); */
+                                .setValue(keyToSend); */
 
                             // por ultimo quedaria interpretar el key, para que se muestre cuando se abre un form previamente cargado.
+                            
                             print(_formKey.currentState
                                 .fields['derivacion-efector']?.value);
                           },
@@ -1136,6 +1136,7 @@ class _SituacionesFormState extends State<SituacionesForm> {
                           if (_formKey.currentState.validate()) {
                             print('_formKey.currentState.value');
                             print(_formKey.currentState.value);
+                            _formKey.currentState.fields['derivacion-efector'].setValue(1222);
 
                             situacionesProvider.enviarSituacion(
                                 json.encode(_formKey.currentState.value));
@@ -1146,6 +1147,7 @@ class _SituacionesFormState extends State<SituacionesForm> {
                             if (selected == 1) {
                               _formKey.currentState.reset();
                             } */
+
 
                             FocusScope.of(context).requestFocus(FocusNode());
                             FocusScope.of(context).unfocus();

@@ -16,7 +16,6 @@ import 'package:universal_html/prefer_universal/html.dart' as html;
 import 'components/matrix.dart';
 import 'components/theme_switcher.dart';
 import 'utils/famedlysdk_store.dart';
-import 'views/chat_list.dart';
 
 import 'views/situaciones_list_refactor.dart';
 
@@ -113,11 +112,11 @@ class App extends StatelessWidget {
                     );
                   }
                   if (Matrix.of(context).client.isLogged()) {
-                    // Esto lo mando al provider
-                    var clientUserId = Matrix.of(context).client.userID;
-                    print(clientUserId);
+                    context
+                        .read<SituacionesProvider>()
+                        .setUserId(Matrix.of(context).client.userID);
 
-                    return SituacionesListRefactorView(clientUserId);
+                    return SituacionesListRefactorView();
                   }
                   return HomeserverPicker();
                 },

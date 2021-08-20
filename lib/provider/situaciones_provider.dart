@@ -92,9 +92,8 @@ class SituacionesProvider with ChangeNotifier, DiagnosticableTreeMixin {
     setIsLoading(false);
   }
 
-  void getSituaciones(userId) async {
-    // print('Entro get situaciones');
-    setUserId(userId);
+  void getSituaciones() async {
+
     var situacionesInfoJson = await DashboardService().getSituaciones(userId);
 
     var situaciones = situacionFromJson(situacionesInfoJson);
@@ -108,6 +107,9 @@ class SituacionesProvider with ChangeNotifier, DiagnosticableTreeMixin {
 
   void enviarSituacion(formdata) async {
     setIsLoading(true);
+
+    print('formdata');
+    print(formdata);
 
     var respuestaSendSituacion =
         await DashboardService().sendSituacion(formdata);

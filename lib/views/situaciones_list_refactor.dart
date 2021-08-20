@@ -19,16 +19,11 @@ import '../utils/app_route.dart';
 enum SelectMode { normal, share, select }
 
 class SituacionesListRefactorView extends StatelessWidget {
-  SituacionesListRefactorView(this.userId);
-  final String userId;
-
   @override
   Widget build(BuildContext context) {
     return AdaptivePageLayout(
       primaryPage: FocusPage.FIRST,
-      firstScaffold: SituacionesListRefactor(
-        userId: userId,
-      ),
+      firstScaffold: SituacionesListRefactor(),
       secondScaffold: SituacionesForm(),
     );
   }
@@ -36,10 +31,8 @@ class SituacionesListRefactorView extends StatelessWidget {
 
 class SituacionesListRefactor extends StatefulWidget {
   final int activeChat;
-  final String userId;
 
-  const SituacionesListRefactor({this.activeChat, this.userId, Key key})
-      : super(key: key);
+  const SituacionesListRefactor({this.activeChat, Key key}) : super(key: key);
 
   @override
   _SituacionesListRefactorState createState() =>
@@ -60,14 +53,13 @@ class _SituacionesListRefactorState extends State<SituacionesListRefactor> {
 
   @override
   void initState() {
-    context.read<SituacionesProvider>().getSituaciones(widget.userId);
+    context.read<SituacionesProvider>().getSituaciones();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-
-
+    final userId = context.read<SituacionesProvider>().userId;
     return Scaffold(
       drawer: DrawerIle(),
       appBar: AppBar(
@@ -122,12 +114,11 @@ class _SituacionesListRefactorState extends State<SituacionesListRefactor> {
                       complicaciones: '',
                       aipe: '',
                       observaciones: '',
-                      user: widget.userId,
+                      user: userId,
                     ));
                 _drawerTapAction(
                   SituacionFormView(
                     situacion: null,
-                    userId: widget.userId,
                   ),
                 );
               }),
@@ -171,7 +162,6 @@ class _SituacionesListRefactorState extends State<SituacionesListRefactor> {
                                   SituacionFormView(
                                     situacion:
                                         postsProvider.listadoSituaciones[i],
-                                    userId: widget.userId,
                                   ),
                                 );
                               },
