@@ -50,7 +50,7 @@ class DashboardService {
   Future<String> getSituaciones(String user) async {
     final url = '$_baseUrl/users/?user=' + user;
 
-    print(url);
+    // print(url);
 
     var response = await http.get(
       url,
@@ -61,7 +61,11 @@ class DashboardService {
     );
 
     if (response.statusCode == 200) {
-      return Utf8Decoder().convert(response.bodyBytes);
+      if (response.body.toString() == '{}') {
+        return null;
+      } else {
+        return Utf8Decoder().convert(response.bodyBytes);
+      }
     }
     return null;
   }

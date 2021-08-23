@@ -130,7 +130,7 @@ class _SituacionesListRefactorState extends State<SituacionesListRefactor> {
           Expanded(
             child: Consumer<SituacionesProvider>(
               builder: (context, postsProvider, child) {
-                if (postsProvider.listadoSituaciones.isNotEmpty) {
+                if (postsProvider.listadoSituaciones != null) {
                   return ListView.separated(
                     itemCount: postsProvider.listadoSituaciones.length,
                     separatorBuilder: (BuildContext context, int i) =>
@@ -175,9 +175,8 @@ class _SituacionesListRefactorState extends State<SituacionesListRefactor> {
                     },
                   );
                 } else {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  //ACA puede ir un mensaje cuando todavia no hay una situacion cargada
+                  return Container();
                 }
               },
             ),

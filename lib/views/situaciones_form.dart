@@ -47,17 +47,17 @@ class _SituacionesFormState extends State<SituacionesForm> {
         .inDays;
   }
 
-  List getDropdownDerivacion(Map mapaDerivacion) {
-    List<DropdownMenuItem<Object>> listaDropDerivacion = [];
-    mapaDerivacion.forEach(
-      (key, text) => listaDropDerivacion.add(
-        DropdownMenuItem(
-          child: Text(text),
-          value: key,
-        ),
-      ),
-    );
-    return listaDropDerivacion;
+  List<DropdownMenuItem> getDropDownListDerivacionEfectores(
+      mapaDerivacionEfectores) {
+    List<DropdownMenuItem> listaFinal = [];
+
+    mapaDerivacionEfectores.forEach((value, text) {
+      listaFinal.add(DropdownMenuItem(
+        value: value,
+        child: Text(text),
+      ));
+    });
+    return listaFinal;
   }
 
   @override
@@ -196,7 +196,6 @@ class _SituacionesFormState extends State<SituacionesForm> {
                           contentPadding:
                               EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                         ),
-                        onChanged: (value) {},
                         validator: FormBuilderValidators.compose(
                           [
                             FormBuilderValidators.numeric(context,
@@ -212,21 +211,24 @@ class _SituacionesFormState extends State<SituacionesForm> {
                         keyboardType: TextInputType.number,
                       ),
                       FormBuilderTextField(
-                          name: 'persona-nombre',
-                          maxLengthEnforced: true,
-                          maxLength: 2,
-                          decoration: InputDecoration(
-                            labelText: 'Primeras 2 letras del nombre',
-                          ),
-                          onChanged: (value) {},
-                          validator: FormBuilderValidators.compose([
+                        name: 'persona-nombre',
+                        maxLengthEnforced: true,
+                        maxLength: 2,
+                        decoration: InputDecoration(
+                          labelText: 'Primeras 2 letras del nombre',
+                        ),
+                        onChanged: (value) {},
+                        validator: FormBuilderValidators.compose(
+                          [
                             FormBuilderValidators.required(context,
                                 errorText: '* Requerido'),
                             FormBuilderValidators.maxLength(context, 2,
                                 errorText: 'Solo las 2 primeras letras'),
                             FormBuilderValidators.match(context, '[A-Za-z]',
                                 errorText: 'Solo se permiten letras'),
-                          ])),
+                          ],
+                        ),
+                      ),
                       FormBuilderTextField(
                           name: 'persona-apellido',
                           maxLengthEnforced: true,
@@ -605,113 +607,30 @@ class _SituacionesFormState extends State<SituacionesForm> {
                               errorText: '* Requerido')
                         ]),
                       ),
-                      Visibility(
-                        visible: !showTratamiento,
-                        maintainState: true,
-                        child: FormBuilderDropdown(
-                          name: 'derivacion-efector',
-                          decoration: InputDecoration(
-                            labelText: 'Efector:',
-                            contentPadding:
-                                EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
-                          ),
-                          allowClear: true,
-                          initialValue: situacionesProvider
-                              .initialValues['derivacion-efector'],
-                          hint: Text('Efector:'),
-                          validator: FormBuilderValidators.compose([
-                            FormBuilderValidators.required(
-                              context,
-                              errorText: '* Requerido',
-                            )
-                          ]),
-                          items: getDropdownDerivacion(mapaDerivacionEfectores),
+                      FormBuilderDropdown(
+                        name: 'derivacion-efector',
+                        decoration: InputDecoration(
+                          labelText: 'Efector:',
+                          contentPadding:
+                              EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
                         ),
+                        allowClear: true,
+                        initialValue: situacionesProvider
+                            .initialValues['derivacion-efector'],
+                        hint: Text('Efector:'),
+                        validator: (val) {
+                          final selected = _formKey.currentState
+                              .fields['consulta-derivacion']?.value;
+                          if (selected == 'si') {
+                            if (val == 0) {
+                              return '* Requerido';
+                            }
+                          }
+                          return null;
+                        },
+                        items: getDropDownListDerivacionEfectores(
+                            mapaDerivacionEfectores),
                       ),
-
-                      /* Visibility(
-                        visible: !showTratamiento,
-                        maintainState: true,
-                        child: FormBuilderTypeAhead(
-                          decoration: InputDecoration(
-                            labelText: 'Efector al que fue derivado',
-                            contentPadding:
-                                EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
-                          ),
-                          name: 'derivacion-efector',
-                          itemBuilder: (context, country) {
-                            return ListTile(
-                              title: Text(country),
-                            );
-                          },
-                          validator: (val) {
-                            var estaEnLaLista = listadoDerivacionEfectores
-                                .where((element) => element == val);
-
-                            if (val == null || val.isEmpty) {
-                              return '* Requerido';
-                            }
-                            if (estaEnLaLista.isEmpty) {
-                              return '* Requerido';
-                            }
-                            return null;
-                          },
-                          onSuggestionSelected: (selectedValue) {
-                            print('item seleccionado $selectedValue');
-
-                            // El selected value se tiene que traducir en el ID que tiene el mapa.
-                            // busco en el mapa el value igual al selected y selecciono el
-
-                            var keyToSend = mapaDerivacionEfectores.keys
-                                .firstWhere(
-                                    (key) =>
-                                        mapaDerivacionEfectores[key] ==
-                                        selectedValue,
-                                    orElse: () => null);
-
-                            print(keyToSend);
-
-                            // Luego seteo el valor en el _formKey.currentState
-
-                            /* _formKey.currentState.fields['derivacion-efector']
-                                .setValue(keyToSend); */
-
-                            // por ultimo quedaria interpretar el key, para que se muestre cuando se abre un form previamente cargado.
-
-                            print(_formKey.currentState
-                                .fields['derivacion-efector']?.value);
-                          },
-                          getImmediateSuggestions: true,
-                          noItemsFoundBuilder: (BuildContext context) {
-                            return Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Text(
-                                'No se encontraron resultado',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            );
-                          },
-                          suggestionsCallback: (query) {
-                            if (query.isNotEmpty) {
-                              var lowercaseQuery = query.toLowerCase();
-                              return listadoDerivacionEfectores
-                                  .where((country) {
-                                return country
-                                    .toLowerCase()
-                                    .contains(lowercaseQuery);
-                              }).toList(growable: false)
-                                    ..sort((a, b) => a
-                                        .toLowerCase()
-                                        .indexOf(lowercaseQuery)
-                                        .compareTo(b
-                                            .toLowerCase()
-                                            .indexOf(lowercaseQuery)));
-                            } else {
-                              return listadoDerivacionEfectores;
-                            }
-                          },
-                        ),
-                      ), */
                       FormBuilderChoiceChip(
                         spacing: 20.0,
                         runSpacing: 5.0,
@@ -1173,7 +1092,8 @@ class _SituacionesFormState extends State<SituacionesForm> {
                           if (_formKey.currentState.validate()) {
                             print('_formKey.currentState.value');
                             print(_formKey.currentState.value);
-                            
+                            _formKey.currentState.fields['derivacion-efector']
+                                .setValue(1222);
 
                             situacionesProvider.enviarSituacion(
                                 json.encode(_formKey.currentState.value));
@@ -1243,75 +1163,3 @@ class Contact {
     return name;
   }
 }
-
-const Map<int, String> mapaDerivacionEfectores = {
-  0: '',
-  111: 'UNIDAD SANITARIA GLEW II	DE NAVAZIO Y DI CARLO S/N BO. ALMAFUERTE - GLEW	BUENOS AIRES	ALMIRANTE BROWN	GLEW',
-  112:
-      'UNIDAD SANITARIA N° 10 28 DE DICIEMBRE DE RAFAEL CALZADA	GORRION ENTRE JORGE Y ARROYO RAFAEL CALZADA	BUENOS AIRES	ALMIRANTE BROWN	RAFAEL CALZADA',
-  113:
-      'UNIDAD SANITARIA N° 11 LA GLORIA DE SAN JOSE	LA CALANDRIA ENTRE BYNON Y MITRE S/N LA TABLADA SAN JOSE	BUENOS AIRES	ALMIRANTE BROWN	SAN JOSE',
-  114:
-      'UNIDAD SANITARIA N° 12 DON ORIONE DE CLAYPOLE	CALLE 11 Y AV. EVA PERON - BARRIO DON ORIONE	BUENOS AIRES	ALMIRANTE BROWN	CLAYPOLE',
-  115:
-      'UNIDAD SANITARIA N° 13 DE BURZACO	ALSINA Y MARTIN FIERRO	BUENOS AIRES	ALMIRANTE BROWN	BURZACO',
-  116:
-      'UNIDAD SANITARIA N° 16 DE RAFAEL CALZADA	AV. SAN MARTIN 4900 Y SAN CARLOS BARRIO SAN GERONIMO RAFAEL CALZADA	BUENOS AIRES	ALMIRANTE BROWN	RAFAEL CALZADA',
-  117:
-      'UNIDAD SANITARIA N° 4 SAN JOSE DE ALMIRANTE BROWN	SAN LUIS 166 SAN JOSE	BUENOS AIRES	ALMIRANTE BROWN	SAN JOSE',
-  118:
-      'UNIDAD SANITARIA N° 7 13 DE JULIO DE CLAYPOLE	ANEMONAS 6545 ENTRE CLAVEL Y CAMELIA	BUENOS AIRES	ALMIRANTE BROWN	CLAYPOLE',
-  119:
-      'UNIDAD SANITARIA Nº 23 RAMON CARRILLO	ZUFRIATEGUI 3550	BUENOS AIRES	ALMIRANTE BROWN	GLEW',
-  120:
-      'CENTRO DE ATENCION PRIMARIA DE LA SALUD SAKURA	MOLINA MASSEY 3212 E/ LORETO Y MONTE SANTIAGO	BUENOS AIRES	ALMIRANTE BROWN	LONGCHAMPS',
-  121:
-      'UNIDAD SANITARIA E. MAGUILLANSKY N° 1	CALLE 38 1169 BARRIO SAN FRANCISCO	BUENOS AIRES	AZUL	AZUL',
-  122:
-      'UNIDAD SANITARIA N° 44 DR RAMON CARRILLO	CALLE 122 BIS	BUENOS AIRES	BERISSO	BERISSO',
-  123:
-      'CENTRO PERIFERICO N° 4 DE CAMPANA	ZARATE ENTRE S.DELLEPIANE Y UGARTEMENDIA - SAN CAYETANO	BUENOS AIRES	CAMPANA	CAMPANA',
-  124:
-      'UNIDAD SANITARIA SAGRADO CORAZON DE JESUS MAXIMO PAZ	PERU Y BENAVIDEZ S/Nº Bº SAN CARLOS	BUENOS AIRES	CAÑUELAS	MAXIMO PAZ',
-  125:
-      'CENTRO DE ATENCION PRIMARIA DR. PASCUAL GUIDICE	ESTADOS UNIDOS Y SAN MARTIN	BUENOS AIRES	ENSENADA	ENSENADA',
-  126:
-      'UNIDAD SANITARIA 1° DE MAYO DE ENSENADA	ECUADOR Y SAENZ PEÑA BARRIO 1° DE MAYO 17	BUENOS AIRES	ENSENADA	ENSENADA',
-  127:
-      'UNIDAD SANITARIA N° 5	BELGRANO Y CANALE	BUENOS AIRES	EZEIZA	TRISTAN SUAREZ',
-  128:
-      'UNIDAD SANITARIA BARRIO 2 DE ABRIL DE MAR DEL PLATA	SOLDADO PACHEOLZUK 850 - BARRIO 2 DE ABRIL	BUENOS AIRES	GENERAL PUEYRREDON	PUNTA MOGOTES',
-  129:
-      'SUBCENTRO DE SALUD JORGE NEWBERY	MORENO 9375 - BARRIO JORGE NEWBERY	BUENOS AIRES	GENERAL PUEYRREDON	MAR DEL PLATA',
-  130:
-      'UNIDAD SANITARIA MARENGO	CALLE 51 (REPUBLICA) 10 ESQUINA CALLE 110 (PUEYRREDON)	BUENOS AIRES	GENERAL SAN MARTIN	VILLA BALLESTER',
-  131:
-      'UNIDAD SANITARIA BARRIO ANGEL	POTOSI Y LEVALLE - BARRIO SAN DAMIAN	BUENOS AIRES	HURLINGHAM	HURLINGHAM',
-  132:
-      'HOSPITAL DE ATENCION MEDICA PRIMARIA DE ITUZAINGO	BRANDSEN 3859	BUENOS AIRES	ITUZAINGO	ITUZAINGO SUR',
-  133:
-      'CENTRO DE SALUD SAKAMOTO	NICOLAS DAVILA 2110	BUENOS AIRES	LA MATANZA	RAFAEL CASTILLO',
-  134:
-      'CENTRO DE SALUD LA LOMA	LOS HELECHOS ESQUINA LOS TULIPANES S/N BARRIO LA LOMA	BUENOS AIRES	LUJAN	LUJAN',
-  135:
-      'UNIDAD SANITARIA BARRIO LOS LAURELES	LAS ESTRELLAS Y VENUS S/N BARRIO LOS LAURELES	BUENOS AIRES	LUJAN	LUJAN',
-  136:
-      'UNIDAD SANITARIA N° 11 DE MERLO	AV. SAN MARTIN Y BARILOCHE	BUENOS AIRES	MERLO	MERLO',
-  137:
-      'UNIDAD SANITARIA N° 4 LA FORTUNA DE MORENO	ENRIQUE LARRETA 10471	BUENOS AIRES	MORENO	TRUJUI',
-  138:
-      'UNIDAD SANITARIA SAMBRIZZI SANGUINETTI	CORRIENTES 2301 - BARRIO SANGUINETTI	BUENOS AIRES	MORENO	PASO DEL REY',
-  139:
-      'CENTRO DE SALUD MERCEDES SOSA	EVA PERON ESQUINA BARADERO	BUENOS AIRES	MORON	MORON',
-  140:
-      'CENTRO DE SALUD SANTA LAURA	GRAL. CORNELIO SAAVEDRA 1265 - BARRIO SANTA LAURA	BUENOS AIRES	MORON	MORON',
-  141:
-      'UNIDAD SANITARIA PRESIDENTE IBAÑEZ	PRESIDENTE IBAÑEZ 1824 - BARRIO SAN JOSE	BUENOS AIRES	MORON	MORON',
-  142:
-      'CENTRO DE ATENCION PRIMARIA RAMON CARRILLO DE PERGAMINO	DEAN FUNES Y COSTA RICA BARRIO GUEMES	BUENOS AIRES	PERGAMINO	PERGAMINO',
-  143:
-      'UNIDAD SANITARIA VILLA ROSA	SERRANO Y PERON	BUENOS AIRES	PILAR	VILLA ROSA'
-};
-
-List<String> listadoDerivacionEfectores =
-    mapaDerivacionEfectores.entries.map((entry) => entry.value).toList();
