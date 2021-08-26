@@ -26,9 +26,9 @@ class SituacionListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var dniStr = situacion.persona_dni.toString();
-    var fechaStr = situacion.persona_consulta_fecha.toString();
-    var semanasStr = situacion.semanas_gestacion.toString();
+    var dniStr = situacion.personaDni.toString();
+    var fechaStr = situacion.personaConsultaFecha.toString();
+    var semanasStr = situacion.semanasGestacion.toString();
 
     return Center(
       child: Material(
@@ -36,14 +36,14 @@ class SituacionListItem extends StatelessWidget {
         child: ListTile(
           onLongPress: onLongPress,
           leading: Avatar(Uri.parse(''),
-              situacion.consulta_situacion.toUpperCase()), // LOGO
+              situacion.consultaSituacion.toUpperCase()), // LOGO
           title: Row(
             children: <Widget>[
               Expanded(
                 child: Text(
-                  situacion.persona_nombre.toUpperCase() +
+                  situacion.personaNombre.toUpperCase() +
                       ' ' +
-                      situacion.persona_apellido.toUpperCase() +
+                      situacion.personaApellido.toUpperCase() +
                       ' ' +
                       dniStr, // TITULO DEL ITEM
                   maxLines: 1,
@@ -89,7 +89,7 @@ class SituacionListItem extends StatelessWidget {
                       semanasStr +
                       ' - ' +
                       'causal: ' +
-                      situacion.consulta_causal, // SUBTITULO
+                      situacion.consultaCausal, // SUBTITULO
                   softWrap: false,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

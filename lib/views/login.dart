@@ -4,11 +4,14 @@ import 'dart:math';
 import 'package:famedlysdk/famedlysdk.dart';
 import 'package:fluffychat/components/dialogs/simple_dialogs.dart';
 import 'package:fluffychat/components/matrix.dart';
+import 'package:fluffychat/provider/situaciones_provider.dart';
 import 'package:fluffychat/utils/app_route.dart';
 import 'package:fluffychat/utils/firebase_controller.dart';
+import 'package:fluffychat/views/situaciones_list_refactor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:provider/provider.dart';
 
 import 'chat_list.dart';
 
@@ -27,6 +30,7 @@ class _LoginState extends State<Login> {
 
   void login(BuildContext context) async {
     var matrix = Matrix.of(context);
+
     if (usernameController.text.isEmpty) {
       setState(() => usernameError = L10n.of(context).pleaseEnterYourUsername);
     } else {
@@ -68,9 +72,13 @@ class _LoginState extends State<Login> {
         return setState(() => loading = false);
       }
     }
+    context
+        .read<SituacionesProvider>()
+        .setUserId(Matrix.of(context).client.userID);
     setState(() => loading = false);
     await Navigator.of(context).pushAndRemoveUntil(
-        AppRoute.defaultRoute(context, ChatListView()), (r) => false);
+        AppRoute.defaultRoute(context, SituacionesListRefactorView()),
+        (r) => false);
   }
 
   Timer _coolDown;

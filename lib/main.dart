@@ -3,19 +3,21 @@ import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:famedlysdk/famedlysdk.dart';
+import 'package:fluffychat/provider/situaciones_provider.dart';
 import 'package:fluffychat/views/homeserver_picker.dart';
-import 'package:fluffychat/views/situaciones_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:provider/provider.dart';
 import 'package:sentry/sentry.dart';
 import 'package:universal_html/prefer_universal/html.dart' as html;
 
 import 'components/matrix.dart';
 import 'components/theme_switcher.dart';
 import 'utils/famedlysdk_store.dart';
-import 'views/chat_list.dart';
+
+import 'views/situaciones_list_refactor.dart';
 
 final sentry = SentryClient(dsn: '8591d0d863b646feb4f3dda7e5dcab38');
 
@@ -35,7 +37,14 @@ void main() {
   SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   runZonedGuarded(
-    () => runApp(App()),
+    () => runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => SituacionesProvider()),
+        ],
+        child: App(),
+      ),
+    ),
     captureException,
   );
 }
@@ -103,7 +112,11 @@ class App extends StatelessWidget {
                     );
                   }
                   if (Matrix.of(context).client.isLogged()) {
-                    return SituacionesListView();
+                    context
+                        .read<SituacionesProvider>()
+                        .setUserId(Matrix.of(context).client.userID);
+
+                    return SituacionesListRefactorView();
                   }
                   return HomeserverPicker();
                 },

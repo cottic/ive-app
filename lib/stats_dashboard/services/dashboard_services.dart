@@ -25,7 +25,7 @@ class DashboardService {
   Future<String> sendSituacion(String formdata) async {
     final url = '$_baseUrl/users/';
 
-    print('situacion a eniar');
+    // print('situacion a eniar');
 
     var response = await http.post(
       url,
@@ -41,7 +41,7 @@ class DashboardService {
       // print('ENVIO SITUACION, respuesta:');
       // print(_source);
 
-      // chartFromApi = _source;
+      chartFromApi = _source;
       return chartFromApi;
     }
     return null;
@@ -49,6 +49,8 @@ class DashboardService {
 
   Future<String> getSituaciones(String user) async {
     final url = '$_baseUrl/users/?user=' + user;
+
+    // print(url);
 
     var response = await http.get(
       url,
@@ -59,7 +61,11 @@ class DashboardService {
     );
 
     if (response.statusCode == 200) {
-      return Utf8Decoder().convert(response.bodyBytes);
+      if (response.body.toString() == '{}') {
+        return null;
+      } else {
+        return Utf8Decoder().convert(response.bodyBytes);
+      }
     }
     return null;
   }

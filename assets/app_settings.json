@@ -1,7 +1,7 @@
 {
-  "name": "Estadisticas enia@virtual",
-  "api_base_url": "enia.codigoi.com.ar:8000/api",
-  "media_base_url": "enia.codigoi.com.ar:8000/media",
+  "name": "Estadisticas SIILVE",
+  "api_base_url": "siilve.codigoi.com.ar:8000/api",
+  "media_base_url": "siilve.codigoi.com.ar:8000/media",
   "version": 1,
   "boards": [
     {
@@ -99,7 +99,7 @@
           "media_url": "hospital"
         },
         {
-          "title": "Por tipo de procedimientos y jurisdicción",
+          "title": "Por jurisdicción",
           "type": "bar",
           "description": "",
           "api_url": "d1c4"
@@ -125,8 +125,8 @@
       ]
     },
     {
-      "name": "Procedimientos segun edad gestacional",
-      "description": "",
+      "name": "Procedimientos según edad gestacional",
+      "description": "Hasta 12 semanas, de 12 a 15 y más de 16",
       "template": "normal",
       "filter": true,
       "charts": [
@@ -177,10 +177,190 @@
           "api_url": "d2c6"
         },
         {
-          "title": "Evolución mensual de los procedimientos",
+          "title": "Evolución mensual de los procedimientos según la edad gestacional",
           "type": "line",
           "description": "",
           "api_url": "d2c7"
+        }
+      ]
+    },
+    {
+      "name": "Procedimientos por grupo etario",
+      "description": "10-14 años, 15-19 años, 20-29 años y 30 años o más",
+      "template": "normal",
+      "filter": true,
+      "charts": [
+        {
+          "title": "10-14 años",
+          "type": "card",
+          "description": "10-14 años",
+          "api_url": "d3c0",
+          "media_url": "adolescente"
+        },
+        {
+          "title": "15-19 años",
+          "type": "card",
+          "description": "15-19 años",
+          "api_url": "d3c1",
+          "media_url": "ninios"
+        },
+        {
+          "title": "20-29 años",
+          "type": "card",
+          "description": "20-29 años",
+          "api_url": "d3c2",
+          "media_url": "adolescente"
+        },
+        {
+          "title": "30 años o más",
+          "type": "card",
+          "description": "30 años o más",
+          "api_url": "d3c3",
+          "media_url": "adolescente"
+        },
+        {
+          "title": "Procedimientos según grupo etario y jurisdicción",
+          "type": "bar",
+          "description": "",
+          "api_url": "d3c4"
+        },
+        {
+          "title": "",
+          "type": "pieSingle",
+          "description": "",
+          "api_url": "d3c5"
+        },
+        {
+          "title": "Por grupo etario",
+          "type": "pie",
+          "description": "",
+          "api_url": "d3c6"
+        },
+        {
+          "title": "Evolución mensual de los procedimientos según el grupo etario",
+          "type": "line",
+          "description": "",
+          "api_url": "d3c7"
+        }
+      ]
+    },
+    {
+      "name": "Provisión de AIPE",
+      "description": "Métodos temporales, métodos de larga duración",
+      "template": "normal",
+      "filter": true,
+      "charts": [
+        {
+          "title": "Total",
+          "type": "card",
+          "description": "Total",
+          "api_url": "d4c0",
+          "media_url": "adolescente"
+        },
+        {
+          "title": "Adoptó método temporal",
+          "type": "card",
+          "description": "Adoptó método temporal",
+          "api_url": "d4c1",
+          "media_url": "ninios"
+        },
+        {
+          "title": "Adoptó metodo de larga duración",
+          "type": "card",
+          "description": "Adoptó metodo de larga duración",
+          "api_url": "d4c2",
+          "media_url": "adolescente"
+        },
+        {
+          "title": "No adoptó metodo",
+          "type": "card",
+          "description": "No adoptó metodo",
+          "api_url": "d4c3",
+          "media_url": "adolescente"
+        },
+        {
+          "title": "Situaciones según método y jurisdicción",
+          "type": "bar",
+          "description": "",
+          "api_url": "d4c4"
+        },
+        {
+          "title": "",
+          "type": "pieSingle",
+          "description": "",
+          "api_url": "d4c5"
+        },
+        {
+          "title": "Por tipo de metodo",
+          "type": "pie",
+          "description": "",
+          "api_url": "d4c6"
+        },
+        {
+          "title": "Evolución mensual de las situaciones según método",
+          "type": "line",
+          "description": "",
+          "api_url": "d4c7"
+        }
+      ]
+    },
+    {
+      "name": "Plazos de resolución",
+      "description": "En 10 días o menos, más de 10 días",
+      "template": "normal",
+      "filter": true,
+      "charts": [
+        {
+          "title": "Total",
+          "type": "card",
+          "description": "Total",
+          "api_url": "d5c0",
+          "media_url": "adolescente"
+        },
+        {
+          "title": "en 10 días o menos",
+          "type": "card",
+          "description": "en 10 días o menos",
+          "api_url": "d5c1",
+          "media_url": "ninios"
+        },
+        {
+          "title": "en más de 10 días",
+          "type": "card",
+          "description": "en más de 10 días",
+          "api_url": "d5c2",
+          "media_url": "adolescente"
+        },
+        {
+          "title": "promedio de días",
+          "type": "card",
+          "description": "promedio de días",
+          "api_url": "d5c3",
+          "media_url": "adolescente"
+        },
+        {
+          "title": "Procedimientos según plazos de resolución y jurusdiscción",
+          "type": "bar",
+          "description": "",
+          "api_url": "d5c4"
+        },
+        {
+          "title": "",
+          "type": "pieSingle",
+          "description": "",
+          "api_url": "d5c5"
+        },
+        {
+          "title": "Por plazos de resolución",
+          "type": "pie",
+          "description": "",
+          "api_url": "d5c6"
+        },
+        {
+          "title": "Evolución mensual de los procedimientos según plazos de resolución",
+          "type": "line",
+          "description": "",
+          "api_url": "d5c7"
         }
       ]
     }

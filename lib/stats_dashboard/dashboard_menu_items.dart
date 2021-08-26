@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:fluffychat/stats_dashboard/dashboard_01.dart';
 import 'package:fluffychat/utils/app_route.dart';
 import 'package:fluffychat/views/chat_list.dart';
 
@@ -11,8 +10,12 @@ import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 import 'models/app_settings_model.dart';
 import 'widgets/dashboard_menu_item_widget.dart';
+import 'dashboard_01.dart';
 import 'dashboard_02.dart';
 import 'dashboard_03.dart';
+import 'dashboard_04.dart';
+import 'dashboard_05.dart';
+import 'dashboard_06.dart';
 
 class DashboardMainMenu extends StatefulWidget {
   @override
@@ -137,6 +140,27 @@ class _DashboardMainMenuState extends State<DashboardMainMenu> {
                                     subTitle: dashboard.boards[2].description,
                                     onTap: () => _drawerTapAction(
                                       StatsEniaMenu03View(),
+                                    ),
+                                  ),
+                                  DashboardMenuItem(
+                                    title: dashboard.boards[3].name,
+                                    subTitle: dashboard.boards[3].description,
+                                    onTap: () => _drawerTapAction(
+                                      StatsEniaMenu04View(),
+                                    ),
+                                  ),
+                                  DashboardMenuItem(
+                                    title: dashboard.boards[4].name,
+                                    subTitle: dashboard.boards[4].description,
+                                    onTap: () => _drawerTapAction(
+                                      StatsEniaMenu05View(),
+                                    ),
+                                  ),
+                                  DashboardMenuItem(
+                                    title: dashboard.boards[5].name,
+                                    subTitle: dashboard.boards[5].description,
+                                    onTap: () => _drawerTapAction(
+                                      StatsEniaMenu06View(),
                                     ),
                                   ),
                                 ],

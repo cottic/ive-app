@@ -307,53 +307,6 @@ class _StatsEniaMenu06State extends State<StatsEniaMenu06> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Container(
-                                          //height: 50,
-                                          width: double.infinity,
-                                          child: Text(
-                                            pieSingleChart.title,
-                                            style: mainTitleCharts,
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 2,
-                                          ),
-                                        ),
-                                        PieSingleChartWidget(
-                                          apiUrl: pieSingleChart.apiUrl +
-                                              initialDateFilter +
-                                              endDateFilter +
-                                              provinciaFilter,
-                                        ),
-                                        Text(
-                                          pieSingleChart.description,
-                                          style: descriptionCharts,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: Container(
-                                height: 400,
-                                child: Card(
-                                  margin: EdgeInsets.all(10.0),
-                                  elevation: 3.0,
-                                  color: Color(0XFFF9F9F9),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20.0),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
                                           width: double.infinity,
                                           child: Text(
                                             pieChart.title,
@@ -378,8 +331,14 @@ class _StatsEniaMenu06State extends State<StatsEniaMenu06> {
                                 ),
                               ),
                             ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Expanded(
-                              flex: 3,
+                              flex: 4,
                               child: Container(
                                 height: 400,
                                 child: Card(
