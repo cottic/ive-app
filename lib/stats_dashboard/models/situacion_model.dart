@@ -61,7 +61,7 @@ class Situacion {
   String consultaCausal;
   String consultaOrigen;
   String consultaDerivacion;
-  int derivacionEfector;
+  String derivacionEfector;
   String derivacionMotivo;
   DateTime tratamientoFecha;
   String tratamientoTipo;
