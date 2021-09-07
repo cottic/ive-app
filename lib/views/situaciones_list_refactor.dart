@@ -104,7 +104,7 @@ class _SituacionesListRefactorState extends State<SituacionesListRefactor> {
                       consultaCausal: '',
                       consultaOrigen: '',
                       consultaDerivacion: '',
-                      derivacionEfector: 0,
+                      derivacionEfector: '0',
                       derivacionMotivo: '',
                       tratamientoFecha: DateTime.now(),
                       tratamientoTipo: '',

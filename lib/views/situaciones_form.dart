@@ -4,10 +4,6 @@ import 'package:fluffychat/views/situaciones_list_refactor.dart';
 import 'package:flutter/material.dart';
 
 import '../components/adaptive_page_layout.dart';
-import '../components/dialogs/simple_dialogs.dart';
-import '../components/matrix.dart';
-import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:fluffychat/stats_dashboard/services/dashboard_services.dart';
 
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
@@ -47,19 +43,6 @@ class _SituacionesFormState extends State<SituacionesForm> {
         .inDays;
   }
 
-  List<DropdownMenuItem> getDropDownListDerivacionEfectores(
-      mapaDerivacionEfectores) {
-    List<DropdownMenuItem> listaFinal = [];
-
-    mapaDerivacionEfectores.forEach((value, text) {
-      listaFinal.add(DropdownMenuItem(
-        value: value,
-        child: Text(text),
-      ));
-    });
-    return listaFinal;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<SituacionesProvider>(
@@ -78,6 +61,7 @@ class _SituacionesFormState extends State<SituacionesForm> {
             ),
           );
         }
+
         return Scaffold(
           body: NestedScrollView(
             headerSliverBuilder:
@@ -101,12 +85,6 @@ class _SituacionesFormState extends State<SituacionesForm> {
             body: ListView(
               padding: EdgeInsets.symmetric(horizontal: 40.0),
               children: <Widget>[
-                /* FutureBuilder(
-                  future: situacionesProvider.displayInitialFormData(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    return ;
-                  },
-                ), */
                 FormBuilder(
                   key: _formKey,
                   initialValue:
@@ -151,6 +129,7 @@ class _SituacionesFormState extends State<SituacionesForm> {
                           )
                         ],
                       ),
+
                       ListTile(
                         title: Text(
                           'Datos de la persona',
@@ -607,7 +586,7 @@ class _SituacionesFormState extends State<SituacionesForm> {
                               errorText: '* Requerido')
                         ]),
                       ),
-                      FormBuilderDropdown(
+                      /* FormBuilderDropdown(
                         name: 'derivacion-efector',
                         decoration: InputDecoration(
                           labelText: 'Efector:',
@@ -630,7 +609,104 @@ class _SituacionesFormState extends State<SituacionesForm> {
                         },
                         items: getDropDownListDerivacionEfectores(
                             mapaDerivacionEfectores),
+                      ), */
+/*  DropdownSearch<UserModel>(
+                        label: 'Name',
+                        onFind: (String filter) => getData(filter),
+                        itemAsString: (UserModel u) => u.userAsString(),
+                        onChanged: (UserModel data) => print(data),
                       ),
+
+                      DropdownSearch<UserModel>(
+                        label: 'Name2',
+                        onFind: (String filter) => getData(filter),
+                        itemAsString: (UserModel u) => u.userAsString(),
+                        onChanged: (UserModel data) => print(data),
+                      ), */
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Expanded(
+                            child: FormBuilderTypeAhead(
+                              decoration: InputDecoration(
+                                labelText: 'Efector al que fue derivado',
+                                contentPadding:
+                                    EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
+                              ),
+                              name: 'derivacion-efector',
+                              onChanged: (value) {},
+                              validator: (val) {
+                                var estaEnLaLista = situacionesProvider
+                                    .listadoNombresEfectores
+                                    .where((element) => element == val);
+
+                                final selected = _formKey.currentState
+                                    .fields['consulta-derivacion']?.value;
+                                if (selected == 'si') {
+                                  if (val == null || val.isEmpty) {
+                                    return '* Requerido';
+                                  }
+                                  if (estaEnLaLista.isEmpty) {
+                                    return '* Requerido';
+                                  }
+                                }
+
+                                return null;
+                              },
+                              valueTransformer: (value) => situacionesProvider
+                                  .transfromStringToIntInEfectores(value),
+                              getImmediateSuggestions: true,
+                              noItemsFoundBuilder: (BuildContext context) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Text(
+                                    'No se encontraron resultados',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                );
+                              },
+                              itemBuilder: (context, listadoEfectores) {
+                                return ListTile(
+                                  title: Text(listadoEfectores),
+                                );
+                              },
+                              controller: TextEditingController(
+                                  text: situacionesProvider
+                                      .initialValues['derivacion-efector']),
+                              suggestionsCallback: (query) {
+                                if (query.isNotEmpty) {
+                                  var lowercaseQuery = query.toLowerCase();
+                                  return situacionesProvider
+                                      .listadoNombresEfectores
+                                      .where((efectores) {
+                                    return efectores
+                                        .toLowerCase()
+                                        .contains(lowercaseQuery);
+                                  }).toList(growable: true)
+                                        ..sort((a, b) => a
+                                            .toLowerCase()
+                                            .indexOf(lowercaseQuery)
+                                            .compareTo(b
+                                                .toLowerCase()
+                                                .indexOf(lowercaseQuery)));
+                                } else {
+                                  return situacionesProvider
+                                      .listadoNombresEfectores;
+                                }
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 38.0),
+                            child: IgnorePointer(
+                                child: RaisedButton(
+                              child: Text('Buscar'),
+                              onPressed: () {},
+                            )),
+                          ),
+                        ],
+                      ),
+
                       FormBuilderChoiceChip(
                         spacing: 20.0,
                         runSpacing: 5.0,
@@ -1092,13 +1168,10 @@ class _SituacionesFormState extends State<SituacionesForm> {
                           if (_formKey.currentState.validate()) {
                             print('_formKey.currentState.value');
                             print(_formKey.currentState.value);
-                            _formKey.currentState.fields['derivacion-efector']
-                                .setValue(1222);
 
                             situacionesProvider.enviarSituacion(
                                 json.encode(_formKey.currentState.value));
 
-                            // print(json.encode(_formKey.currentState.value));
                             /* final selected =
                                 _formKey.currentState.fields['id']?.value;
                             if (selected == 1) {
@@ -1119,10 +1192,10 @@ class _SituacionesFormState extends State<SituacionesForm> {
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                  duration: Duration(seconds: 6),
-                                  backgroundColor: Colors.redAccent,
-                                  content:
-                                      Text('El formulario esta incompleto')),
+                                duration: Duration(seconds: 6),
+                                backgroundColor: Colors.redAccent,
+                                content: Text('El formulario esta incompleto'),
+                              ),
                             );
                           }
                         },
@@ -1138,28 +1211,5 @@ class _SituacionesFormState extends State<SituacionesForm> {
         );
       },
     );
-  }
-}
-
-class Contact {
-  final String name;
-  final String email;
-  final String imageUrl;
-
-  const Contact(this.name, this.email, this.imageUrl);
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Contact &&
-          runtimeType == other.runtimeType &&
-          name == other.name;
-
-  @override
-  int get hashCode => name.hashCode;
-
-  @override
-  String toString() {
-    return name;
   }
 }
