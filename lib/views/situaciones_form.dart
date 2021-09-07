@@ -623,90 +623,93 @@ class _SituacionesFormState extends State<SituacionesForm> {
                         itemAsString: (UserModel u) => u.userAsString(),
                         onChanged: (UserModel data) => print(data),
                       ), */
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Expanded(
-                            child: FormBuilderTypeAhead(
-                              decoration: InputDecoration(
-                                labelText: 'Efector al que fue derivado',
-                                contentPadding:
-                                    EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
-                              ),
-                              name: 'derivacion-efector',
-                              onChanged: (value) {},
-                              validator: (val) {
-                                var estaEnLaLista = situacionesProvider
-                                    .listadoNombresEfectores
-                                    .where((element) => element == val);
-
-                                final selected = _formKey.currentState
-                                    .fields['consulta-derivacion']?.value;
-                                if (selected == 'si') {
-                                  if (val == null || val.isEmpty) {
-                                    return '* Requerido';
-                                  }
-                                  if (estaEnLaLista.isEmpty) {
-                                    return '* Requerido';
-                                  }
-                                }
-
-                                return null;
-                              },
-                              valueTransformer: (value) => situacionesProvider
-                                  .transfromStringToIntInEfectores(value),
-                              getImmediateSuggestions: true,
-                              noItemsFoundBuilder: (BuildContext context) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Text(
-                                    'No se encontraron resultados',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                );
-                              },
-                              itemBuilder: (context, listadoEfectores) {
-                                return ListTile(
-                                  title: Text(listadoEfectores),
-                                );
-                              },
-                              controller: TextEditingController(
-                                  text: situacionesProvider
-                                      .initialValues['derivacion-efector']),
-                              suggestionsCallback: (query) {
-                                if (query.isNotEmpty) {
-                                  var lowercaseQuery = query.toLowerCase();
-                                  return situacionesProvider
+                      Visibility(
+                        visible: !showTratamiento,
+                        maintainState: true,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Expanded(
+                              child: FormBuilderTypeAhead(
+                                decoration: InputDecoration(
+                                  labelText: 'Efector al que fue derivado',
+                                  contentPadding:
+                                      EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 10.0),
+                                ),
+                                name: 'derivacion-efector',
+                                onChanged: (value) {},
+                                validator: (val) {
+                                  var estaEnLaLista = situacionesProvider
                                       .listadoNombresEfectores
-                                      .where((efectores) {
-                                    return efectores
-                                        .toLowerCase()
-                                        .contains(lowercaseQuery);
-                                  }).toList(growable: true)
-                                        ..sort((a, b) => a
-                                            .toLowerCase()
-                                            .indexOf(lowercaseQuery)
-                                            .compareTo(b
-                                                .toLowerCase()
-                                                .indexOf(lowercaseQuery)));
-                                } else {
-                                  return situacionesProvider
-                                      .listadoNombresEfectores;
-                                }
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 38.0),
-                            child: IgnorePointer(
-                                child: RaisedButton(
-                              child: Text('Buscar'),
-                              onPressed: () {},
-                            )),
-                          ),
-                        ],
-                      ),
+                                      .where((element) => element == val);
 
+                                  final selected = _formKey.currentState
+                                      .fields['consulta-derivacion']?.value;
+                                  if (selected == 'si') {
+                                    if (val == null || val.isEmpty) {
+                                      return '* Requerido';
+                                    }
+                                    if (estaEnLaLista.isEmpty) {
+                                      return '* Requerido';
+                                    }
+                                  }
+
+                                  return null;
+                                },
+                                valueTransformer: (value) => situacionesProvider
+                                    .transfromStringToIntInEfectores(value),
+                                getImmediateSuggestions: true,
+                                noItemsFoundBuilder: (BuildContext context) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Text(
+                                      'No se encontraron resultados',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  );
+                                },
+                                itemBuilder: (context, listadoEfectores) {
+                                  return ListTile(
+                                    title: Text(listadoEfectores),
+                                  );
+                                },
+                                controller: TextEditingController(
+                                    text: situacionesProvider
+                                        .initialValues['derivacion-efector']),
+                                suggestionsCallback: (query) {
+                                  if (query.isNotEmpty) {
+                                    var lowercaseQuery = query.toLowerCase();
+                                    return situacionesProvider
+                                        .listadoNombresEfectores
+                                        .where((efectores) {
+                                      return efectores
+                                          .toLowerCase()
+                                          .contains(lowercaseQuery);
+                                    }).toList(growable: true)
+                                          ..sort((a, b) => a
+                                              .toLowerCase()
+                                              .indexOf(lowercaseQuery)
+                                              .compareTo(b
+                                                  .toLowerCase()
+                                                  .indexOf(lowercaseQuery)));
+                                  } else {
+                                    return situacionesProvider
+                                        .listadoNombresEfectores;
+                                  }
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 38.0),
+                              child: IgnorePointer(
+                                  child: RaisedButton(
+                                child: Text('Buscar'),
+                                onPressed: () {},
+                              )),
+                            ),
+                          ],
+                        ),
+                      ),
                       FormBuilderChoiceChip(
                         spacing: 20.0,
                         runSpacing: 5.0,
