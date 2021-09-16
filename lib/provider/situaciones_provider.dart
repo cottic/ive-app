@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
+import 'package:fluffychat/data/mapa_efectores.dart';
 
 import 'package:csv/csv.dart';
 
@@ -30,7 +31,7 @@ class SituacionesProvider with ChangeNotifier, DiagnosticableTreeMixin {
   List<String> _listadoNombresEfectores;
   List<String> get listadoNombresEfectores => _listadoNombresEfectores;
 
-  Map<int, String> _mapaDerivacionEfectores;
+  final Map<int, String> _mapaDerivacionEfectores = mapaEfectoresOriginal;
   Map<int, String> get mapaDerivacionEfectores => _mapaDerivacionEfectores;
 
   void setUserId(String userId) {
@@ -162,8 +163,12 @@ class SituacionesProvider with ChangeNotifier, DiagnosticableTreeMixin {
   }
 
   void decodeCsvEfectores() async {
-    var myData = await rootBundle.loadString('/csv/EfectoresILE.csv');
+    /* var myData = await rootBundle.loadString('/csv/EfectoresILE.csv');
     final csvTable = CsvToListConverter(eol: '\r\n').convert(myData);
+
+    print('csvTable');
+    print(csvTable);
+
 
     final data = [];
     csvTable.forEach((value) {
@@ -180,14 +185,14 @@ class SituacionesProvider with ChangeNotifier, DiagnosticableTreeMixin {
     });
 
     _mapaDerivacionEfectores = mapaEfDecodeado;
-    notifyListeners();
+    notifyListeners(); */
 
     final List<String> listadoEfectoresValues = [];
 
-    mapaEfDecodeado.values
+    mapaDerivacionEfectores.values
         .forEach((value) => listadoEfectoresValues.add(value));
     _listadoNombresEfectores = listadoEfectoresValues;
-    notifyListeners();
+    // notifyListeners();
 
     // print(mapaEfDecodeado);
   }
