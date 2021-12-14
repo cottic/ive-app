@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-# ive-app
-=======
-# ENIA VIRTUAL 
-
+# SIILVE
 <p>Este proyecto es un derivado de <a href="https://gitlab.com/ChristianPauly/fluffychat-flutter">FluffyChat</a>
 
 # Features

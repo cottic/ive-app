@@ -27,21 +27,10 @@ class Matrix extends StatefulWidget {
   static const String callNamespace = 'chat.fluffy.jitsi_call';
 
   // Here you set the Matrix server of the Chat
-  static const String defaultHomeserver = 'matrix.codigoi.com.ar';
+  static const String defaultHomeserver = 'siilve.codigoi.com.ar';
 
-  static const String mainGroup = '!guhSKhxLdnEsOJwCTb:matrix.codigoi.com.ar';
-
-  //in ENIA is HELP
-  static const String secondGroup = '!OOffUaJrpbQdoFIkrC:matrix.codigoi.com.ar';
-
-  //in ENIA is HELP
-  static const List<String> thirdGroup = [
-    '!jNEFvzHCHlreAihImF:matrix.codigoi.com.ar',
-    '!BaWhhGGEEUVycuxsYL:matrix.codigoi.com.ar'
-  ];
-
-  //ENIA VERSION
-  static const String versionENIA = 'Versión 1.0.3 (26/8/2021)';
+  //SIILVE VERSION
+  static const String versionSIILVE = 'Versión 1.1.0 (14/12/2021)';
 
   final Widget child;
 

@@ -4,7 +4,7 @@ import 'package:fluffychat/views/situaciones_list_refactor.dart';
 import 'package:flutter/material.dart';
 
 import '../components/adaptive_page_layout.dart';
-
+import '../components/matrix.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
@@ -47,6 +47,29 @@ class _SituacionesFormState extends State<SituacionesForm> {
   Widget build(BuildContext context) {
     return Consumer<SituacionesProvider>(
       builder: (context, situacionesProvider, child) {
+        final client = Matrix.of(context).client;
+        final username = client.userID;
+        var efectorName = '';
+        var efector = '';
+
+        if (username == '@maria.jose.mattioli:siilve.codigoi.com.ar') {
+          efectorName = 'Hospital de Clínicas “José de San Martín”';
+          efector = '10020012515209';
+        } else if (username == '@julieta.minasi:siilve.codigoi.com.ar' ||
+            username == '@graciela.beatriz.rodriguez:siilve.codigoi.com.ar' ||
+            username == '@maria.elida.del.pino:siilve.codigoi.com.ar') {
+          efectorName = 'Hospital Iriarte (Quilmes)”';
+          efector = '10060582100385';
+        } else if (username == '@juanma:siilve.codigoi.com.ar' ||
+            username == '@estefania.cioffi:siilve.codigoi.com.ar') {
+          efectorName =
+              'HOSPITAL SUBZONAL ESPECIALIZADO MATERNO INFANTIL SAN FRANCISCO SOLANO”';
+          efector = '12060582200557';
+        } else {
+          efectorName = 'Hospital General de Agudos “Dr. Teodoro Álvarez”';
+          efector = '10020012215221';
+        }
+
         if (situacionesProvider.isLoading != null) {
           if (situacionesProvider.isLoading) {
             return Center(
@@ -114,18 +137,8 @@ class _SituacionesFormState extends State<SituacionesForm> {
                         ]),
                         items: [
                           DropdownMenuItem(
-                            value: 1,
-                            child: Text(
-                                'Hospital de Clínicas “José de San Martín”'),
-                          ),
-                          DropdownMenuItem(
-                            value: 2,
-                            child: Text('Hospital Iriarte (Quilmes)”'),
-                          ),
-                          DropdownMenuItem(
-                            value: 3,
-                            child: Text(
-                                'Hospital General de Agudos “Dr. Teodoro Álvarez”'),
+                            value: efector,
+                            child: Text(efectorName),
                           )
                         ],
                       ),

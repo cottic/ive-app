@@ -104,7 +104,7 @@ class App extends StatelessWidget {
                             height: MediaQuery.of(context).size.height * 0.05,
                           ),
                           Text(
-                            Matrix.versionENIA,
+                            Matrix.versionSIILVE,
                             style: TextStyle(color: Colors.white, fontSize: 12),
                           ),
                         ],

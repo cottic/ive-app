@@ -579,7 +579,7 @@ class _SettingsState extends State<Settings> {
             ListTile(
               trailing: Icon(Icons.code),
               title: Text(L10n.of(context).sourceCode),
-              subtitle: Text(Matrix.versionENIA),
+              subtitle: Text(Matrix.versionSIILVE),
               onTap: () => launch('https://github.com/cottic/enia-virtual'),
             ),
             Divider(thickness: 1),

@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import '../../components/matrix.dart';
 
 class DashboardService {
   String chartFromApi;
 
   static final String _baseUrl =
-      'https://proyecto.codigoi.com.ar/ile/ile-api-tableros';
+      'https://proyecto.codigoi.com.ar/siilve/ile-api-tableros';
 
   Future<String> loadChartFromApi(String chartNumber) async {
     final url = '$_baseUrl/dashboard0/?chart=${chartNumber}';
@@ -23,7 +24,7 @@ class DashboardService {
   }
 
   Future<String> sendSituacion(String formdata) async {
-    final url = '$_baseUrl/users/';
+    final url = '$_baseUrl/situaciones/';
 
     // print('situacion a eniar');
 
@@ -48,7 +49,7 @@ class DashboardService {
   }
 
   Future<String> getSituaciones(String user) async {
-    final url = '$_baseUrl/users/?user=' + user;
+    final url = '$_baseUrl/situaciones/?user=' + user;
 
     // print(url);
 
